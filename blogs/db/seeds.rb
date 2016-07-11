@@ -1,10 +1,14 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
+# This file should contain all the record creation needed to seed the
+# database with its default values.
+# The data can then be loaded with the rake db:seed (or created
+# alongside the db with db:setup).
 #
 # Examples:
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
+#
+
 require 'open-uri'
 
 def rand_int(from, to)
@@ -62,6 +66,12 @@ fetch_block do |block|
 	else
 		hidden = false
 	end
-	Article.create! title: title, content: content, published_at: rand_time(10.years.ago), hidden: hidden
+  record = { 
+    :title        = >title,
+    :content      = >content,
+    :published_at = >rand_time(10.years.ago),
+    :hidden       = >hidden
+  }
+	Article.create! record
 end
 
