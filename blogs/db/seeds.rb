@@ -67,10 +67,10 @@ fetch_block do |block|
 		hidden = false
 	end
   record = { 
-    :title        = >title,
-    :content      = >content,
-    :published_at = >rand_time(10.years.ago),
-    :hidden       = >hidden
+    :title        =>title,
+    :content      =>content,
+    :published_at =>rand_time(10.years.ago),
+    :hidden       =>hidden
   }
 	Article.create! record
 end
