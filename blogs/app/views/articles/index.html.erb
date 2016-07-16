@@ -4,20 +4,22 @@
 
 <% @articles.each do |article| %>
 	<p>
-		<%= article.title %>
-  </p>
+		<%= link_to article.title, article %>
+</p>
 	<p>
 		<%= article.content %>
-  </p>
+</p>
 	<p>
 		<%= article.published_at %>
-  </p>
+</p>
 	<p>
 		<%= article.hidden %>
-  </p>
+</p>
+<p>
 		<%= link_to 'Show', article %> |
 		<%= link_to 'Edit', edit_article_path(article) %> |
 		<%= link_to 'Destroy', article, method: :delete, data: { confirm: 'Are you sure?' } %>
+	<p>
 <% end %>
 
 <br>
