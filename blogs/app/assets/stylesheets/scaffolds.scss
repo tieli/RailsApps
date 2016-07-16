@@ -1,5 +1,5 @@
 body {
-  background-color: #fff;
+  background-color: #3300CC;
   color: #333;
   font-family: verdana, arial, helvetica, sans-serif;
   font-size: 13px;
@@ -13,7 +13,7 @@ p, ol, ul, td {
 }
 
 pre {
-  background-color: #eee;
+  background-color: rgb(37, 137, 230);
   padding: 10px;
   font-size: 11px;
 }
@@ -70,4 +70,12 @@ div {
     font-size: 12px;
     list-style: square;
   }
+}
+#container {
+	 width: 80%;
+	 margin: 0 auto;
+	 background-color: #FFF;
+	 padding: 20px 40px;
+	 border: solid 1px black;
+	 margin-top: 20px;
 }
