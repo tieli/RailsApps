@@ -210,6 +210,7 @@ when 'railsblogs'
   app_files = ['app/assets/stylesheets/application.scss', 
                'app/assets/stylesheets/scaffolds.scss',
                'app/views/layouts/application.html.erb',
+               'app/controllers/application_controller.rb',
                'app/controllers/users_controller.rb',
                'app/controllers/articles_controller.rb',
                'app/controllers/comments_controller.rb',
