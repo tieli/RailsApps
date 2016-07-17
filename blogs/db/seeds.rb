@@ -66,12 +66,22 @@ fetch_block do |block|
 	else
 		hidden = false
 	end
+
+  tag_array = ['Linux', 'DevOps', 'Windows', 'Language', 'Vmware']
+  tag_size  = tag_array.length
+
+  size = rand(1..tag_size)   
+  tags = tag_array.sample(size)
+
   record = { 
-    :title        =>title,
-    :content      =>content,
-    :published_at =>rand_time(10.years.ago),
-    :hidden       =>hidden
+    :title        => title,
+    :content      => content,
+    :published_at => rand_time(10.years.ago),
+    :hidden       => hidden,
+    :tag_list     => tags.join(',')
   }
+
 	Article.create! record
+
 end
 
