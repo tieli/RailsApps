@@ -1,9 +1,50 @@
 
-@recipes = ["core", "git", "railsapps", "learn_rails", "rails_bootstrap", "rails_foundation", "rails_omniauth", "rails_devise", "rails_devise_roles", "rails_devise_pundit", "rails_signup_download", "rails_mailinglist_activejob", "rails_stripe_checkout", "rails_stripe_coupons", "rails_stripe_membership_saas", "setup", "locale", "readme", "gems", "tests", "email", "devise", "omniauth", "roles", "frontend", "pages", "init", "analytics", "deployment", "extras"]
+@recipes = ["core", "git", "railsapps", "learn_rails", 
+            "rails_bootstrap", "rails_foundation", "rails_omniauth", 
+            "rails_devise", "rails_devise_roles", "rails_devise_pundit", 
+            "rails_signup_download", "rails_mailinglist_activejob", 
+            "rails_stripe_checkout", "rails_stripe_coupons", 
+            "rails_stripe_membership_saas", "setup", "locale", "readme", 
+            "gems", "tests", "email", "devise", "omniauth", "roles", 
+            "frontend", "pages", "init", "analytics", "deployment", 
+            "extras"]
+
 @prefs = {}
 @gems = []
 
-@diagnostics_recipes = [["example"], ["setup"], ["railsapps"], ["gems", "setup"], ["gems", "readme", "setup"], ["extras", "gems", "readme", "setup"], ["example", "git"], ["git", "setup"], ["git", "railsapps"], ["gems", "git", "setup"], ["gems", "git", "readme", "setup"], ["extras", "gems", "git", "readme", "setup"], ["email", "extras", "frontend", "gems", "git", "init", "railsapps", "readme", "setup", "testing"], ["core", "email", "extras", "frontend", "gems", "git", "init", "railsapps", "readme", "setup", "testing"], ["core", "email", "extras", "frontend", "gems", "git", "init", "railsapps", "readme", "setup", "testing"], ["core", "email", "extras", "frontend", "gems", "git", "init", "railsapps", "readme", "setup", "testing"], ["email", "example", "extras", "frontend", "gems", "git", "init", "railsapps", "readme", "setup", "testing"], ["email", "example", "extras", "frontend", "gems", "git", "init", "railsapps", "readme", "setup", "testing"], ["email", "example", "extras", "frontend", "gems", "git", "init", "railsapps", "readme", "setup", "testing"], ["apps4", "core", "email", "extras", "frontend", "gems", "git", "init", "railsapps", "readme", "setup", "testing"], ["apps4", "core", "email", "extras", "frontend", "gems", "git", "init", "railsapps", "readme", "setup", "tests"], ["apps4", "core", "deployment", "email", "extras", "frontend", "gems", "git", "init", "railsapps", "readme", "setup", "testing"], ["apps4", "core", "deployment", "email", "extras", "frontend", "gems", "git", "init", "railsapps", "readme", "setup", "tests"], ["apps4", "core", "deployment", "devise", "email", "extras", "frontend", "gems", "git", "init", "omniauth", "pundit", "railsapps", "readme", "setup", "tests"]]
+@diagnostics_recipes = [["example"], ["setup"], ["railsapps"], 
+            ["gems", "setup"], ["gems", "readme", "setup"], 
+            ["extras", "gems", "readme", "setup"], 
+            ["example", "git"], ["git", "setup"], ["git", "railsapps"], 
+            ["gems", "git", "setup"], ["gems", "git", "readme", "setup"], 
+            ["extras", "gems", "git", "readme", "setup"], 
+            ["email", "extras", "frontend", "gems", "git", "init", 
+             "railsapps", "readme", "setup", "testing"], 
+            ["core", "email", "extras", "frontend", "gems", "git", 
+              "init", "railsapps", "readme", "setup", "testing"], 
+            ["core", "email", "extras", "frontend", "gems", "git", 
+             "init", "railsapps", "readme", "setup", "testing"], 
+            ["core", "email", "extras", "frontend", "gems", "git", 
+             "init", "railsapps", "readme", "setup", "testing"], 
+            ["email", "example", "extras", "frontend", "gems", 
+              "git", "init", "railsapps", "readme", "setup", "testing"], 
+            ["email", "example", "extras", "frontend", "gems", 
+             "git", "init", "railsapps", "readme", "setup", "testing"], 
+            ["email", "example", "extras", "frontend", "gems", 
+              "git", "init", "railsapps", "readme", "setup", "testing"], 
+            ["apps4", "core", "email", "extras", "frontend", "gems", 
+             "git", "init", "railsapps", "readme", "setup", "testing"], 
+            ["apps4", "core", "email", "extras", "frontend", "gems", 
+             "git", "init", "railsapps", "readme", "setup", "tests"], 
+            ["apps4", "core", "deployment", "email", "extras", 
+             "frontend", "gems", "git", "init", "railsapps", "readme", 
+             "setup", "testing"], 
+            ["apps4", "core", "deployment", "email", "extras", 
+              "frontend", "gems", "git", "init", "railsapps", "readme", 
+              "setup", "tests"], 
+            ["apps4", "core", "deployment", "devise", "email", "extras", 
+             "frontend", "gems", "git", "init", "omniauth", "pundit", 
+             "railsapps", "readme", "setup", "tests"]]
 
 @diagnostics_prefs = []
 diagnostics = {}
@@ -101,9 +142,7 @@ def copy_from_repo(app_name, file_name, opts = {})
 
 end
 
-choise = ""
-
-choise = multiple_choice "Build a Rails Apps?",
+prefs[:apps4] = multiple_choice "Build a Rails Apps?",
     [["Build a Rails Blog App", "railsblogs"],
     ["Build a Rails Shop App", "railsshop"],
     ["Custom application (experimental)", "none"]]
@@ -121,79 +160,80 @@ append_file ".gitignore", "config/database.yml"
 run "cp config/database.yml config/example_database.yml"
 git add: ".", commit: "-m 'initial commit'"
 
-def get_gen_str(model_desc)
-  string = model_desc[0]
-  model_desc[1].each { |k,v| string << " " << k << ":" << v }
-  string
+def get_gen_str(type, res_desc)
+  name = res_desc[0]
+  str = " " + type + " "
+  case type
+  when 'scaffold'
+    str = str + name.pluralize(1)
+  when 'model'
+    str = str + name.pluralize(1)
+  when 'resource'
+    str = str + name.pluralize(2)
+  end
+  res_desc[1].each { |k,v| str << " " << k << ":" << v }
+  str
 end
 
-article_model = ["Article", {
-  "title"        => "string",
-  "content"      => "text",
-  "published_at" => "datetime",
-  "hidden"       => "boolean"
-}
-]
+article_model = ["Article", { "title" => "string", "content" => "text",
+                "published_at" => "datetime", "hidden" => "boolean" }]
 
-comment_model = ["Comment", {
-  "commenter" => "string",
-  "content"   => "text",
-  "article"   => "references"
-}
-]
+comment_model = ["Comment", { "commenter" => "string", 
+                "content" => "text", "article" => "references" } ]
 
-tag_model = ["tag", {
-  "name" => "string"
-}
-]
+tag_model     = ["tag", { "name" => "string" } ]
 
-tagging_model = ["tagging", {
-  "tag" => "belongs_to",
-  "article" => "belongs_to"
-}
-]
+tagging_model = ["tagging", { "tag" => "belongs_to", 
+                "article" => "belongs_to" } ]
 
-generate "scaffold", get_gen_str(article_model)
-generate "model", get_gen_str(comment_model)
-generate "model", get_gen_str(tag_model)
-generate "model", get_gen_str(tagging_model)
+user_model    = ["user", { "email" => "string", "password" => "string",
+                "password_digest" => "string" } ]
 
-generate "controller", "comments"
+case prefs[:apps4]
+when 'railsblogs'
+  app_name = 'railsblogs'
+  generate get_gen_str("scaffold", article_model)
+  generate get_gen_str("model", comment_model)
+  generate get_gen_str("model", tag_model)
+  generate get_gen_str("model", tagging_model)
+  generate get_gen_str("resource", user_model)
+  generate "controller", "comments" 
+  generate "controller", "sessions new" 
 
-route "root to: 'articles\#index'"
+  route "root to: 'articles\#index'"
 
-rake "db:migrate"
+  rake "db:migrate"
+
+  repo = "https://raw.githubusercontent.com/tieli/RailsApps/master/"
+
+  app_files = ['app/assets/stylesheets/application.scss', 
+               'app/assets/stylesheets/scaffolds.scss',
+               'app/views/layouts/application.html.erb',
+               'app/controllers/users_controller.rb',
+               'app/controllers/articles_controller.rb',
+               'app/controllers/comments_controller.rb',
+               'app/views/comments/_comment.html.erb',
+               'app/views/comments/edit.html.erb',
+               'app/views/comments/_form.html.erb',
+               'app/views/articles/index.html.erb',
+               'app/views/articles/show.html.erb',
+               'app/views/articles/_form.html.erb',
+               'app/views/users/new.html.erb',
+               'app/models/user.rb',
+               'app/models/article.rb',
+               'config/routes.rb',
+               'db/seeds.rb']
+
+  app_files.each do |from_file|
+    copy_from_repo app_name, from_file, :repo => repo
+  end
+when 'railsshop'
+end
 
 
-# 
-# Take care of front page
-#
 remove_file "public/index.html"
-
 generate "rspec:install"
-
 capify!
-
-repo = "https://raw.githubusercontent.com/tieli/RailsApps/master/"
-
-app_files = ['app/assets/stylesheets/application.scss', 
-             'app/assets/stylesheets/scaffolds.scss',
-             'app/views/layouts/application.html.erb',
-             'app/controllers/articles_controller.rb',
-             'app/controllers/comments_controller.rb',
-             'app/views/comments/_comment.html.erb',
-             'app/views/comments/edit.html.erb',
-             'app/views/comments/_form.html.erb',
-             'app/views/articles/index.html.erb',
-             'app/views/articles/show.html.erb',
-             'app/views/articles/_form.html.erb',
-             'app/models/article.rb',
-             'config/routes.rb',
-             'db/seeds.rb']
-
-app_files.each do |from_file|
-  copy_from_repo 'blogs', from_file, :repo => repo
-end
 
 rake "db:seed"
 
