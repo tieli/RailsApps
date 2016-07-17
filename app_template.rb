@@ -152,6 +152,7 @@ create_file "README.md", "TODO"
 
 gem "rspec-rails", group: [:test, :development]
 gem 'haml', version: '>= 4.0.7'
+gem 'bcrypt', '~> 3.1.7'
 
 run "bundle install"
 git :init
