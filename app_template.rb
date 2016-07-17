@@ -230,7 +230,6 @@ when 'railsblogs'
 when 'railsshop'
 end
 
-
 remove_file "public/index.html"
 generate "rspec:install"
 capify!
