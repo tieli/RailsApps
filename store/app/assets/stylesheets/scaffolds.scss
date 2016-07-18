@@ -71,6 +71,11 @@ div {
     list-style: square;
   }
 }
+
+tr td {
+    border: solid 1px black;
+}
+
 #container {
 	 width: 80%;
 	 margin: 0 auto;
