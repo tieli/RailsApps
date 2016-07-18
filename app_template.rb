@@ -262,7 +262,8 @@ when 'store'
                'app/controllers/products_controller.rb',
                'app/models/category.rb',
                'app/models/categorization.rb',
-               'app/views/sessions/summary.html.erb',
+               'app/views/products/index.html.erb',
+               'app/views/products/summary.html.erb',
                'app/models/product.rb',
                'app/models/publisher.rb']
 
