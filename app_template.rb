@@ -145,6 +145,7 @@ end
 prefs[:apps4] = multiple_choice "Build a Rails Apps?",
     [["Build a Rails Blog App", "railsblogs"],
     ["Build a Rails Shop App", "railsshop"],
+    ["Build a Rails Store App", "railsstore"],
     ["Custom application (experimental)", "none"]]
 
 remove_file "README.rdoc"
@@ -187,9 +188,13 @@ tag_model     = ["tag", { "name" => "string" } ]
 tagging_model = ["tagging", { "tag" => "belongs_to", 
                 "article" => "belongs_to" } ]
 
+product_model = ["Product", { "name" => "string", "price" => "decimal" }]
+
+repo = "https://raw.githubusercontent.com/tieli/RailsApps/master/"
+
 case prefs[:apps4]
 when 'railsblogs'
-  app_name = 'railsblogs'
+  app_name = prefs[:apps4]
   generate get_gen_str("scaffold", article_model)
   generate get_gen_str("model", comment_model)
   generate get_gen_str("model", tag_model)
@@ -199,10 +204,7 @@ when 'railsblogs'
   generate "controller", "sessions new" 
 
   route "root to: 'articles\#index'"
-
   rake "db:migrate"
-
-  repo = "https://raw.githubusercontent.com/tieli/RailsApps/master/"
 
   app_files = ['app/assets/stylesheets/application.scss', 
                'app/assets/stylesheets/scaffolds.scss',
@@ -229,7 +231,27 @@ when 'railsblogs'
   app_files.each do |from_file|
     copy_from_repo app_name, from_file, :repo => repo
   end
+
 when 'railsshop'
+when 'railsstore'
+  app_name = prefs[:apps4]
+  generate get_gen_str("scaffold", product_model)
+
+  route "root to: 'products\#index'"
+  rake "db:migrate"
+
+  app_files = []
+  app_files.each do |from_file|
+    copy_from_repo app_name, from_file, :repo => repo
+  end
+end
+
+app_common_files = ['app/assets/stylesheets/application.scss', 
+             'app/views/layouts/application.html.erb',
+             'app/assets/stylesheets/scaffolds.scss']
+
+app_common_files.each do |from_file|
+  copy_from_repo prefs[:apps4], from_file, :repo => repo
 end
 
 remove_file "public/index.html"
