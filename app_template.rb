@@ -197,6 +197,10 @@ product_model = ["Product", { "name"         => "string",
                               "publisher_id" => "integer",
                               "discontinued" => "boolean" }]
 publisher_model = ["Publisher", { "name" => "string" } ]
+
+categorization_model = ["Categorization", {
+           "product" => "belongs_to", "category" => "belongs_to" }]
+
 category_model = ["Category", { "name" => "string" } ]
 
 repo = "https://raw.githubusercontent.com/tieli/RailsApps/master/"
@@ -247,12 +251,17 @@ when 'store'
   app_name = prefs[:apps4]
   generate get_gen_str("scaffold", product_model)
   generate get_gen_str("model", publisher_model)
+  generate get_gen_str("model", categorization_model)
   generate get_gen_str("model", category_model)
 
   route "root to: 'products\#index'"
   rake "db:migrate"
 
-  app_files = ['db/seeds.rb' ]
+  app_files = ['db/seeds.rb',
+               'app/models/category.rb',
+               'app/models/product.rb',
+               'app/models/publisher.rb']
+
               # 'app/views/products/index.html.erb']
   app_files.each do |from_file|
     copy_from_repo app_name, from_file, :repo => repo
