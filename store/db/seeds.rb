@@ -22,8 +22,6 @@ Product.create! name: "Agricola",
   categories: [strategy, card],
   released_on: rand(1..90).days.ago,
   rating: 5
-a
-  rating: 4
 
 Product.create! name: "Stone Age",
   price: 28.99,

@@ -199,7 +199,7 @@ product_model = ["Product", { "name"         => "string",
 publisher_model = ["Publisher", { "name" => "string" } ]
 
 categorization_model = ["Categorization", {
-           "product" => "belongs_to", "category" => "belongs_to" }]
+           "product_id" => "integer", "category_id" => "integer" }]
 
 category_model = ["Category", { "name" => "string" } ]
 
