@@ -258,8 +258,10 @@ when 'store'
   rake "db:migrate"
 
   app_files = ['db/seeds.rb',
+               'config/routes.rb',
                'app/models/category.rb',
                'app/models/categorization.rb',
+               'app/views/sessions/summary.html.erb',
                'app/models/product.rb',
                'app/models/publisher.rb']
 
