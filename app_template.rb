@@ -259,6 +259,7 @@ when 'store'
 
   app_files = ['db/seeds.rb',
                'app/models/category.rb',
+               'app/models/categorization.rb',
                'app/models/product.rb',
                'app/models/publisher.rb']
 
