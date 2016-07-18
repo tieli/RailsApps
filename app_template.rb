@@ -188,9 +188,13 @@ tag_model     = ["tag", { "name" => "string" } ]
 tagging_model = ["tagging", { "tag" => "belongs_to", 
                 "article" => "belongs_to" } ]
 
-product_model = ["Product", { "name" => "string", 
-                              "price" => "decimal",
-                              "released_on" => "date" }]
+product_model = ["Product", { "name"         => "string",
+                              "price"        => "decimal",
+                              "price"        => "decimal",
+                              "released_on"  => "date",
+                              "category_id"  => "integer",
+                              "discontinued" => "boolean" }]
+category_model = ["Category", { "name" => "string" } ]
 
 repo = "https://raw.githubusercontent.com/tieli/RailsApps/master/"
 
@@ -239,6 +243,7 @@ when 'railsstore'
 
   app_name = prefs[:apps4]
   generate get_gen_str("scaffold", product_model)
+  generate get_gen_str("model", category_model)
 
   route "root to: 'products\#index'"
   rake "db:migrate"
