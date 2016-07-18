@@ -143,9 +143,9 @@ def copy_from_repo(app_name, file_name, opts = {})
 end
 
 prefs[:apps4] = multiple_choice "Build a Rails Apps?",
-    [["Build a Rails Blog App", "railsblogs"],
-    ["Build a Rails Shop App", "railsshop"],
-    ["Build a Rails Store App", "railsstore"],
+    [["Build a Rails Blog App", "blogs"],
+    ["Build a Rails Shop App", "shop"],
+    ["Build a Rails Store App", "store"],
     ["Custom application (experimental)", "none"]]
 
 remove_file "README.rdoc"
@@ -154,6 +154,7 @@ create_file "README.md", "TODO"
 gem "rspec-rails", group: [:test, :development]
 gem 'haml', version: '>= 4.0.7'
 gem 'bcrypt', '~> 3.1.7'
+gem 'simple_form', '~> 3.2', '>= 3.2.1'
 
 run "bundle install"
 git :init
@@ -190,10 +191,10 @@ tagging_model = ["tagging", { "tag" => "belongs_to",
 
 product_model = ["Product", { "name"         => "string",
                               "price"        => "decimal",
-                              "price"        => "decimal",
                               "released_on"  => "date",
                               "rating"       => "integer",
                               "category_id"  => "integer",
+                              "publisher_id" => "integer",
                               "discontinued" => "boolean" }]
 publisher_model = ["Publisher", { "name" => "string" } ]
 category_model = ["Category", { "name" => "string" } ]
@@ -201,7 +202,7 @@ category_model = ["Category", { "name" => "string" } ]
 repo = "https://raw.githubusercontent.com/tieli/RailsApps/master/"
 
 case prefs[:apps4]
-when 'railsblogs'
+when 'blogs'
   app_name = prefs[:apps4]
   generate get_gen_str("scaffold", article_model)
   generate get_gen_str("model", comment_model)
@@ -240,8 +241,8 @@ when 'railsblogs'
     copy_from_repo app_name, from_file, :repo => repo
   end
 
-when 'railsshop'
-when 'railsstore'
+when 'shop'
+when 'store'
 
   app_name = prefs[:apps4]
   generate get_gen_str("scaffold", product_model)
@@ -256,6 +257,8 @@ when 'railsstore'
   app_files.each do |from_file|
     copy_from_repo app_name, from_file, :repo => repo
   end
+
+  generate "simple_form:install"
 
 end
 
