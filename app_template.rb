@@ -187,9 +187,6 @@ tag_model     = ["tag", { "name" => "string" } ]
 tagging_model = ["tagging", { "tag" => "belongs_to", 
                 "article" => "belongs_to" } ]
 
-user_model    = ["user", { "email" => "string", "password" => "string",
-                "password_digest" => "string" } ]
-
 case prefs[:apps4]
 when 'railsblogs'
   app_name = 'railsblogs'
@@ -197,7 +194,7 @@ when 'railsblogs'
   generate get_gen_str("model", comment_model)
   generate get_gen_str("model", tag_model)
   generate get_gen_str("model", tagging_model)
-  generate get_gen_str("resource", user_model)
+  generate "resource", "user email password_digest" 
   generate "controller", "comments" 
   generate "controller", "sessions new" 
 
