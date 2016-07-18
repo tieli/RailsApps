@@ -188,7 +188,9 @@ tag_model     = ["tag", { "name" => "string" } ]
 tagging_model = ["tagging", { "tag" => "belongs_to", 
                 "article" => "belongs_to" } ]
 
-product_model = ["Product", { "name" => "string", "price" => "decimal" }]
+product_model = ["Product", { "name" => "string", 
+                              "price" => "decimal",
+                              "released_on" => "date" }]
 
 repo = "https://raw.githubusercontent.com/tieli/RailsApps/master/"
 
@@ -234,16 +236,18 @@ when 'railsblogs'
 
 when 'railsshop'
 when 'railsstore'
+
   app_name = prefs[:apps4]
   generate get_gen_str("scaffold", product_model)
 
   route "root to: 'products\#index'"
   rake "db:migrate"
 
-  app_files = []
+  app_files = ['db/seeds.rb']
   app_files.each do |from_file|
     copy_from_repo app_name, from_file, :repo => repo
   end
+
 end
 
 app_common_files = ['app/assets/stylesheets/application.scss', 
