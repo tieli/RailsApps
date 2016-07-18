@@ -220,8 +220,9 @@ when 'railsblogs'
                'app/views/articles/_form.html.erb',
                'app/views/sessions/new.html.erb',
                'app/views/users/new.html.erb',
-               'app/models/user.rb',
                'app/models/article.rb',
+               'app/models/user.rb',
+               'app/models/tag.rb',
                'config/routes.rb',
                'db/seeds.rb']
 
