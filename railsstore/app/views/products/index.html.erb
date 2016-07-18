@@ -1,0 +1,21 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Products</h1>
+
+<br />
+<br />
+
+<% @products.each do |product| %>
+	<p><%= product.name %></p>
+	<p><%= product.price %></p>
+	<p><%= product.released_on %></p>
+	<p>
+		<%= link_to 'Show', product %> |
+		<%= link_to 'Edit', edit_product_path(product) %> |
+		<%= link_to 'Destroy', product, method: :delete, data: { confirm: 'Are you sure?' } %>
+	</p>
+<% end %>
+
+<br>
+
+<%= link_to 'New Product', new_product_path %>

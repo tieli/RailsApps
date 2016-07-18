@@ -243,7 +243,8 @@ when 'railsstore'
   route "root to: 'products\#index'"
   rake "db:migrate"
 
-  app_files = ['db/seeds.rb']
+  app_files = ['db/seeds.rb',
+               'app/views/products/index.html.erb']
   app_files.each do |from_file|
     copy_from_repo app_name, from_file, :repo => repo
   end
