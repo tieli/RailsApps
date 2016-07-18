@@ -259,6 +259,7 @@ when 'store'
 
   app_files = ['db/seeds.rb',
                'config/routes.rb',
+               'app/controllers/products_controller.rb',
                'app/models/category.rb',
                'app/models/categorization.rb',
                'app/views/sessions/summary.html.erb',
