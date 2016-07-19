@@ -151,9 +151,10 @@ prefs[:apps4] = multiple_choice "Build a Rails Apps?",
 remove_file "README.rdoc"
 create_file "README.md", "TODO"
 
+uncomment_lines 'Gemfile', /bcrypt/
+
 gem "rspec-rails", group: [:test, :development]
 gem 'haml', version: '>= 4.0.7'
-gem 'bcrypt', '~> 3.1.7'
 gem 'simple_form', '~> 3.2', '>= 3.2.1'
 
 run "bundle install"
@@ -262,8 +263,11 @@ when 'store'
                'app/controllers/products_controller.rb',
                'app/models/category.rb',
                'app/models/categorization.rb',
+               'app/assets/stylesheets/form.scss',
                'app/views/products/index.html.erb',
                'app/views/products/summary.html.erb',
+               'app/views/products/_footer.html.erb',
+               'app/views/products/_form.html.erb',
                'app/models/product.rb',
                'app/models/publisher.rb']
 

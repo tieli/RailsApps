@@ -7,6 +7,7 @@
     <tr>
       <th>Name</th>
       <th>Price</th>
+      <th>Publisher</th>
       <th>Released on</th>
     </tr>
   </thead>
@@ -16,6 +17,7 @@
       <tr>
         <td><%= link_to product.name, product %></td>
         <td><%= product.price %></td>
+        <td><%= product.publisher.name %></td>
         <td><%= product.released_on %></td>
       </tr>
     <% end %>
