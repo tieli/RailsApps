@@ -18,82 +18,94 @@ Product.create! name: "Settlers of Catan",
   publisher: mayfair,
   categories: [strategy, card, dice],
   released_on: rand(1..90).days.ago,
-  rating: 5
+  discontinued: rand() < 0.2 ? true : false,
+  rating: rand(1..5)
 
 Product.create! name: "Agricola",
   price: 42.24,
   publisher: zman,
   categories: [strategy, card],
   released_on: rand(1..90).days.ago,
-  rating: 5
+  discontinued: rand() < 0.2 ? true : false,
+  rating: rand(1..5)
 
 Product.create! name: "Stone Age",
   price: 28.99,
   publisher: rio,
   categories: [strategy, dice],
   released_on: rand(1..90).days.ago,
-  rating: 5
+  discontinued: rand() < 0.2 ? true : false,
+  rating: rand(1..5)
 
 Product.create! name: "Puerto Rico",
   price: 27.00,
   publisher: rio,
   categories: [strategy],
   released_on: rand(1..90).days.ago,
-  rating: 5
+  discontinued: rand() < 0.2 ? true : false,
+  rating: rand(1..5)
 
 Product.create! name: "Bohnanza",
   price: 27.00,
   publisher: rio,
   categories: [card],
   released_on: rand(1..90).days.ago,
-  rating: 5
+  discontinued: rand() < 0.2 ? true : false,
+  rating: rand(1..5)
 
 Product.create! name: "Ticket to Ride",
   price: 37.50,
   publisher: days_of_wonder,
   categories: [strategy, card],
   released_on: rand(1..90).days.ago,
-  rating: 4
+  discontinued: rand() < 0.2 ? true : false,
+  rating: rand(1..5)
 
 Product.create! name: "Patchwork Board Game",
   price: 27.99,
   publisher: mayfair,
   categories: [strategy],
   released_on: rand(1..90).days.ago,
-  rating: 3
+  discontinued: rand() < 0.2 ? true : false,
+  rating: rand(1..5)
 
 Product.create! name: "7 Wonders Duel Board Game",
   price: 27.99,
   publisher: asmodee,
   categories: [strategy],
   released_on: rand(1..90).days.ago,
-  rating: 3
+  discontinued: rand() < 0.2 ? true : false,
+  rating: rand(1..5)
 
 Product.create! name: "Codenames",
   price: 19.95,
   publisher: czech,
   categories: [strategy],
   released_on: rand(1..90).days.ago,
-  rating: 4
+  discontinued: rand() < 0.2 ? true : false,
+  rating: rand(1..5)
 
 Product.create! name: "Dungeon Lords Game",
   price: 113.33,
   publisher: czech,
   categories: [strategy, party],
   released_on: rand(1..90).days.ago,
-  rating: 2
+  discontinued: rand() < 0.2 ? true : false,
+  rating: rand(1..5)
 
 Product.create! name: "Roll for The Galaxy Board Game",
   price: 59.99,
   publisher: rio,
   categories: [board],
   released_on: rand(1..90).days.ago,
-  rating: 5
+  discontinued: rand() < 0.2 ? true : false,
+  rating: rand(1..5)
 
 Product.create! name: "Dominion",
   price: 27.97,
   publisher: rio,
   categories: [card, board],
   released_on: rand(1..90).days.ago,
-  rating: 5
+  discontinued: rand() < 0.2 ? true : false,
+  rating: rand(1..5)
 
