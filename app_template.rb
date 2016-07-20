@@ -149,13 +149,21 @@ prefs[:apps4] = multiple_choice "Build a Rails Apps?",
     ["Custom application (experimental)", "none"]]
 
 remove_file "README.rdoc"
-create_file "README.md", "TODO"
 
 uncomment_lines 'Gemfile', /bcrypt/
 
-gem "rspec-rails", group: [:test, :development]
-gem 'haml', version: '>= 4.0.7'
+gem_group :development do
+  gem "bullet"
+  gem "meta_request"
+end
+
 gem 'simple_form', '~> 3.2', '>= 3.2.1'
+gem 'haml', version: '>= 4.0.7'
+
+gem 'better_errors', '~> 2.1', '>= 2.1.1'
+gem 'binding_of_caller', '~> 0.7.2'
+
+gem "rspec-rails", group: [:test, :development]
 
 run "bundle install"
 git :init
