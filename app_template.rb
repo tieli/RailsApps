@@ -158,7 +158,6 @@ gem_group :development do
   gem "meta_request"
 end
 
-gem 'simple_form', '~> 3.2', '>= 3.2.1'
 gem 'haml', version: '>= 4.0.7'
 
 gem 'better_errors', '~> 2.1', '>= 2.1.1'
@@ -250,6 +249,8 @@ when 'store'
 
   app_name = prefs[:apps4]
 
+  gem 'simple_form', '~> 3.2', '>= 3.2.1'
+
   product_model = ["Product", { "name"         => "string",
                                 "price"        => "decimal",
                                 "released_on"  => "date",
@@ -304,7 +305,8 @@ when "simple_store"
                                 "category_id"  => "integer",
                                 "discontinued" => "boolean" }]
 
-  category_model = ["Category", { "name" => "string" } ]
+  category_model = ["Category", { "name" => "string",
+                                  "product" => "references" } ]
 
   generate get_gen_str("scaffold", product_model)
   generate get_gen_str("model", category_model)
