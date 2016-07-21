@@ -302,7 +302,7 @@ when "simple_store"
 
   product_model = ["Product", { "name"         => "string",
                                 "price"        => "decimal",
-                                "released_on"  => "date",
+                                "released_on"  => "datetime",
                                 "category"     => "references",
                                 "discontinued" => "boolean" }]
 
@@ -312,6 +312,7 @@ when "simple_store"
   generate get_gen_str("model", category_model)
 
   app_files = ['db/seeds.rb',
+               'app/views/products/index.html.erb',
                'app/models/category.rb']
 
   app_files.each do |from_file|
