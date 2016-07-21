@@ -144,8 +144,9 @@ end
 
 prefs[:apps4] = multiple_choice "Build a Rails Apps?",
     [["Build a Rails Blog App", "blogs"],
-    ["Build a Rails Shop App", "shop"],
+    ["Build a Simple Rails Blog App", "simple_blogs"],
     ["Build a Rails Store App", "store"],
+    ["Build a Simple Rails Store App", "simple_store"],
     ["Custom application (experimental)", "none"]]
 
 remove_file "README.rdoc"
@@ -187,36 +188,26 @@ def get_gen_str(type, res_desc)
   str
 end
 
-article_model = ["Article", { "title" => "string", "content" => "text",
-                "published_at" => "datetime", "hidden" => "boolean" }]
-
-comment_model = ["Comment", { "commenter" => "string", 
-                "content" => "text", "article" => "references" } ]
-
-tag_model     = ["tag", { "name" => "string" } ]
-
-tagging_model = ["tagging", { "tag" => "belongs_to", 
-                "article" => "belongs_to" } ]
-
-product_model = ["Product", { "name"         => "string",
-                              "price"        => "decimal",
-                              "released_on"  => "date",
-                              "rating"       => "integer",
-                              "category_id"  => "integer",
-                              "publisher_id" => "integer",
-                              "discontinued" => "boolean" }]
-publisher_model = ["Publisher", { "name" => "string" } ]
-
-categorization_model = ["Categorization", {
-           "product_id" => "integer", "category_id" => "integer" }]
-
-category_model = ["Category", { "name" => "string" } ]
-
 repo = "https://raw.githubusercontent.com/tieli/RailsApps/master/"
 
 case prefs[:apps4]
 when 'blogs'
   app_name = prefs[:apps4]
+
+  article_model = ["Article", { "title"   => "string",
+                                "content" => "text",
+                          "published_at"  => "datetime",
+                          "hidden"        => "boolean" }]
+
+  comment_model = ["Comment", { "commenter" => "string",
+                  "content"                 => "text",
+                  "article"                 => "references" } ]
+
+  tag_model     = ["tag", { "name" => "string" } ]
+
+  tagging_model = ["tagging", { "tag" => "belongs_to",
+                  "article"           => "belongs_to" } ]
+
   generate get_gen_str("scaffold", article_model)
   generate get_gen_str("model", comment_model)
   generate get_gen_str("model", tag_model)
@@ -254,10 +245,25 @@ when 'blogs'
     copy_from_repo app_name, from_file, :repo => repo
   end
 
-when 'shop'
+when 'simple_blogs'
 when 'store'
 
   app_name = prefs[:apps4]
+
+  product_model = ["Product", { "name"         => "string",
+                                "price"        => "decimal",
+                                "released_on"  => "date",
+                                "rating"       => "integer",
+                                "category_id"  => "integer",
+                                "publisher_id" => "integer",
+                                "discontinued" => "boolean" }]
+  publisher_model = ["Publisher", { "name" => "string" } ]
+
+  categorization_model = ["Categorization", {
+           "product_id" => "integer", "category_id" => "integer" }]
+
+  category_model = ["Category", { "name" => "string" } ]
+
   generate get_gen_str("scaffold", product_model)
   generate get_gen_str("model", publisher_model)
   generate get_gen_str("model", categorization_model)
@@ -288,6 +294,23 @@ when 'store'
   end
 
   generate "simple_form:install"
+
+when "simple_store"
+
+  app_name = prefs[:apps4]
+
+  product_model = ["Product", { "name"         => "string",
+                                "price"        => "decimal",
+                                "category_id"  => "integer",
+                                "discontinued" => "boolean" }]
+
+  category_model = ["Category", { "name" => "string" } ]
+
+  generate get_gen_str("scaffold", product_model)
+  generate get_gen_str("model", category_model)
+
+  route "root to: 'products\#index'"
+  rake "db:migrate"
 
 end
 
