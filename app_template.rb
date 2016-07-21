@@ -293,7 +293,8 @@ end
 
 app_common_files = ['app/assets/stylesheets/application.scss', 
              'app/views/layouts/application.html.erb',
-             'app/assets/stylesheets/scaffolds.scss']
+             'app/assets/stylesheets/scaffolds.scss',
+             'app/assets/stylesheets/forms.scss']
 
 app_common_files.each do |from_file|
   copy_from_repo prefs[:apps4], from_file, :repo => repo
