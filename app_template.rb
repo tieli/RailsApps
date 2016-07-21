@@ -301,7 +301,7 @@ when "simple_store"
   app_name = prefs[:apps4]
 
   product_model = ["Product", { "name"         => "string",
-                                "price_in_cents" => "decimal",
+                                "price"        => "decimal",
                                 "released_on"  => "date",
                                 "category"     => "references",
                                 "discontinued" => "boolean" }]
