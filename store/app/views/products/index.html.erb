@@ -2,13 +2,13 @@
 
 <h1>Listing Products</h1>
 
-<table>
+<table class="pretty">
   <thead>
     <tr>
-      <th>Name</th>
-      <th>Price</th>
-      <th>Publisher</th>
-      <th>Released on</th>
+			<th><%= sortable "name" %></th>
+			<th><%= sortable "price" %></th>
+			<th><%= sortable "released_on", "Released"  %></th>
+			<th> Publisher </th>
     </tr>
   </thead>
 
@@ -17,8 +17,8 @@
       <tr>
         <td><%= link_to product.name, product %></td>
         <td><%= product.price %></td>
-        <td><%= product.publisher.name %></td>
         <td><%= product.released_on %></td>
+        <td><%= product.publisher.name %></td>
       </tr>
     <% end %>
   </tbody>

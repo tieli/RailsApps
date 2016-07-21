@@ -269,6 +269,7 @@ when 'store'
   app_files = ['db/seeds.rb',
                'config/routes.rb',
                'app/controllers/products_controller.rb',
+               'app/helpers/application_helper.rb',
                'app/models/category.rb',
                'app/models/categorization.rb',
                'app/assets/stylesheets/form.scss',
@@ -276,6 +277,8 @@ when 'store'
                'app/views/products/summary.html.erb',
                'app/views/products/_footer.html.erb',
                'app/views/products/_form.html.erb',
+               'app/assets/images/up_arrow.gif',
+               'app/assets/images/down_arrow.gif',
                'app/models/product.rb',
                'app/models/publisher.rb']
 
