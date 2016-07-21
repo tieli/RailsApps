@@ -303,13 +303,20 @@ when "simple_store"
   product_model = ["Product", { "name"         => "string",
                                 "price"        => "decimal",
                                 "category_id"  => "integer",
+                                "category"     => "references",
                                 "discontinued" => "boolean" }]
 
-  category_model = ["Category", { "name" => "string",
-                                  "product" => "references" } ]
+  category_model = ["Category", { "name" => "string" } ]
 
   generate get_gen_str("scaffold", product_model)
   generate get_gen_str("model", category_model)
+
+  app_files = ['db/seeds.rb',
+               'app/models/category.rb']
+
+  app_files.each do |from_file|
+    copy_from_repo app_name, from_file, :repo => repo
+  end
 
   route "root to: 'products\#index'"
   rake "db:migrate"
