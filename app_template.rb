@@ -314,8 +314,8 @@ when "simple_store"
 
 end
 
-app_common_files = ['app/assets/stylesheets/application.scss', 
-             'app/views/layouts/application.html.erb',
+app_common_files = ['app/views/layouts/application.html.erb',
+             'app/assets/stylesheets/application.scss', 
              'app/assets/stylesheets/scaffolds.scss',
              'app/assets/stylesheets/forms.scss']
 
