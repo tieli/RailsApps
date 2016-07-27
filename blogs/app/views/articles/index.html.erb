@@ -3,6 +3,7 @@
 <h1>Listing Articles</h1>
 
 <% @articles.each do |article| %>
+	<br>
 	<p>
 		<%= link_to article.title, article %>
 </p>
@@ -18,7 +19,7 @@
 <p>
 	Tags: <%= raw article.tags.map(&:name).map {|t| link_to t, tag_path(t)}.join(', ') %>
 </p>
-<p>
+	<p>
 		<%= link_to 'Show', article %> |
 		<%= link_to 'Edit', edit_article_path(article) %> |
 		<%= link_to 'Destroy', article, method: :delete, data: { confirm: 'Are you sure?' } %>
@@ -26,5 +27,5 @@
 <% end %>
 
 <br>
+<%= will_paginate @articles %>
 
-<%= link_to 'New Article', new_article_path %>

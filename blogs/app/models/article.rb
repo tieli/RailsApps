@@ -1,4 +1,8 @@
 class Article < ActiveRecord::Base
+
+  # for pagination
+  self.per_page = 10
+  
   has_many :comments
   has_many :taggings
   has_many :tags, through: :taggings

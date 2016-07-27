@@ -145,9 +145,14 @@ end
 prefs[:apps4] = multiple_choice "Build a Rails Apps?",
     [["Build a Rails Blog App", "blogs"],
     ["Build a Simple Rails Blog App", "simple_blogs"],
+    ["Build a Blog App using Twitter Bootstrap", "blogs_bootstrap"],
     ["Build a Rails Store App", "store"],
     ["Build a Simple Rails Store App", "simple_store"],
-    ["Custom application (experimental)", "none"]]
+    ["Build a Blog App using Zerb Foundation", "store_foundation"],
+    ["Custom application (experimental)", "none"],
+    ["Quit", "quit"]]
+
+exit if prefs[:apps4] == "quit"
 
 remove_file "README.rdoc"
 
@@ -156,12 +161,12 @@ uncomment_lines 'Gemfile', /bcrypt/
 gem_group :development do
   gem "bullet"
   gem "meta_request"
+  gem "better_errors", "~> 2.1", ">= 2.1.1"
+  gem "binding_of_caller", "~> 0.7.2"
+  gem "pry", "~> 0.10.4"
 end
 
-gem 'haml', version: '>= 4.0.7'
-
-gem 'better_errors', '~> 2.1', '>= 2.1.1'
-gem 'binding_of_caller', '~> 0.7.2'
+gem "haml", version: ">= 4.0.7"
 
 gem "rspec-rails", group: [:test, :development]
 
@@ -191,6 +196,7 @@ repo = "https://raw.githubusercontent.com/tieli/RailsApps/master/"
 
 case prefs[:apps4]
 when 'blogs'
+
   app_name = prefs[:apps4]
 
   article_model = ["Article", { "title"   => "string",
@@ -198,14 +204,14 @@ when 'blogs'
                           "published_at"  => "datetime",
                           "hidden"        => "boolean" }]
 
-  comment_model = ["Comment", { "commenter" => "string",
-                  "content"                 => "text",
-                  "article"                 => "references" } ]
+  comment_model = ["Comment", {"commenter" => "string",
+                                 "content" => "text",
+                                 "article" => "references" } ]
 
   tag_model     = ["tag", { "name" => "string" } ]
 
   tagging_model = ["tagging", { "tag" => "belongs_to",
-                  "article"           => "belongs_to" } ]
+                            "article" => "belongs_to" } ]
 
   generate get_gen_str("scaffold", article_model)
   generate get_gen_str("model", comment_model)
@@ -216,7 +222,6 @@ when 'blogs'
   generate "controller", "sessions new" 
 
   route "root to: 'articles\#index'"
-  rake "db:migrate"
 
   app_files = ['app/assets/stylesheets/application.scss', 
                'app/assets/stylesheets/scaffolds.scss',
@@ -245,6 +250,7 @@ when 'blogs'
   end
 
 when 'simple_blogs'
+when 'blogs_bootstrap'
 when 'store'
 
   app_name = prefs[:apps4]
@@ -271,7 +277,6 @@ when 'store'
   generate get_gen_str("model", category_model)
 
   route "root to: 'products\#index'"
-  rake "db:migrate"
 
   app_files = ['db/seeds.rb',
                'config/routes.rb',
@@ -320,7 +325,21 @@ when "simple_store"
   end
 
   route "root to: 'products\#index'"
-  rake "db:migrate"
+
+when 'store_foundation'
+
+  app_name = prefs[:apps4]
+
+  product_model = ["Product", { "name"         => "string",
+                                "price"        => "decimal",
+                                "released_on"  => "date" }]
+
+  generate get_gen_str("scaffold", product_model) + " --skip-stylesheets"
+
+  route "root to: 'products\#index'"
+
+  gem 'zurb-foundation'
+  generate "foundation:install --force"
 
 end
 
@@ -332,6 +351,8 @@ app_common_files = ['app/views/layouts/application.html.erb',
 app_common_files.each do |from_file|
   copy_from_repo prefs[:apps4], from_file, :repo => repo
 end
+
+rake "db:migrate"
 
 remove_file "public/index.html"
 generate "rspec:install"
