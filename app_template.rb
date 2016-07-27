@@ -167,6 +167,7 @@ gem_group :development do
 end
 
 gem "haml", version: ">= 4.0.7"
+gem 'will_paginate', '~> 3.1.0'
 
 gem "rspec-rails", group: [:test, :development]
 
@@ -343,10 +344,11 @@ when 'store_foundation'
 
 end
 
+remove_file "app/assets/stylesheets/application.css"
+
 app_common_files = ['app/views/layouts/application.html.erb',
-             'app/assets/stylesheets/application.scss', 
-             'app/assets/stylesheets/scaffolds.scss',
-             'app/assets/stylesheets/forms.scss']
+                   'app/assets/stylesheets/application.scss', 
+                   'app/assets/stylesheets/scaffolds.scss' ]
 
 app_common_files.each do |from_file|
   copy_from_repo prefs[:apps4], from_file, :repo => repo

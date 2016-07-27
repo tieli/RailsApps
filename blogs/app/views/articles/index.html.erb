@@ -27,5 +27,11 @@
 <% end %>
 
 <br>
-<%= will_paginate @articles %>
+
+<div class="apple_pagination">
+	<div>
+	<%= will_paginate @articles, :container => false %>
+  </div>
+</div>
+
 
