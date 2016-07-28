@@ -309,13 +309,17 @@ when "simple_store"
   product_model = ["Product", { "name"         => "string",
                                 "price"        => "decimal",
                                 "released_on"  => "datetime",
-                                "category"     => "references",
                                 "discontinued" => "boolean" }]
 
   category_model = ["Category", { "name" => "string" } ]
 
+  product_category_join_table = ["categories_products", 
+                             { "product_id" => "integer" },
+                             { "category_id" => "integer" } ]
+
   generate get_gen_str("scaffold", product_model)
   generate get_gen_str("model", category_model)
+  generate get_gen_str("model", product_category_join_table)
 
   app_files = ['db/seeds.rb',
                'app/views/products/index.html.erb',
@@ -323,6 +327,16 @@ when "simple_store"
 
   app_files.each do |from_file|
     copy_from_repo app_name, from_file, :repo => repo
+  end
+
+  inject_into_file 'app/models/category.rb', before: "end" do <<-'RUBY'
+  has_and_belongs_to_many :products
+  RUBY
+  end
+
+  inject_into_file 'app/models/product.rb', before: "end" do <<-'RUBY'
+  has_and_belongs_to_many :categories
+  RUBY
   end
 
   route "root to: 'products\#index'"
