@@ -327,6 +327,7 @@ when "simple_store"
                'app/views/products/index.html.erb',
                'app/controllers/products_controller.rb',
                'app/views/products/_form.html.erb',
+               'app/views/products/show.html.erb',
                'app/models/category.rb']
 
   app_files.each do |from_file|
