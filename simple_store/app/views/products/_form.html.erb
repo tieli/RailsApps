@@ -21,16 +21,21 @@
   </div>
   <div class="field">
     <%= f.label :released_on %><br>
-    <%= f.date_select :released_on %>
-  </div>
-  <div class="field">
-    <%= f.label :category %><br>
-		<%= f.collection_select :category_id, Category.all, :id, :name, :prompt => true %>
+    <%= f.datetime_select :released_on %>
   </div>
   <div class="field">
     <%= f.label :discontinued %><br>
     <%= f.check_box :discontinued %>
   </div>
+	<div class="field">
+    <%= f.label :categories %><br>
+		<% for category in Category.all %>
+			<div>
+				<%= check_box_tag "product[category_ids][]", category.id, @product.categories.include?(category)   %>
+				<%= category.name %>
+			</div>
+		<% end %>
+	</div>
   <div class="actions">
     <%= f.submit %>
   </div>

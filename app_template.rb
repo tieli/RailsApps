@@ -188,6 +188,8 @@ def get_gen_str(type, res_desc)
     str = str + name.pluralize(1)
   when 'resource'
     str = str + name.pluralize(2)
+  when 'migration'
+    str = str + name
   end
   res_desc[1].each { |k,v| str << " " << k << ":" << v }
   str
@@ -313,16 +315,18 @@ when "simple_store"
 
   category_model = ["Category", { "name" => "string" } ]
 
-  product_category_join_table = ["categories_products", 
-                             { "product_id" => "integer" },
-                             { "category_id" => "integer" } ]
+  product_category_migration = ["create_categories_products", 
+                             { "product" => "references",
+                              "category" => "references" } ]
 
   generate get_gen_str("scaffold", product_model)
   generate get_gen_str("model", category_model)
-  generate get_gen_str("model", product_category_join_table)
+  generate get_gen_str("migration", product_category_migration)
 
   app_files = ['db/seeds.rb',
                'app/views/products/index.html.erb',
+               'app/controllers/products_controller.rb',
+               'app/views/products/_form.html.erb',
                'app/models/category.rb']
 
   app_files.each do |from_file|
