@@ -305,7 +305,7 @@ when 'movie_review'
   route "root to: 'movies\#index'"
 
   config_dev = 'config/environments/development.rb'
-  inject_into_file config_dev, after: "Rails.application.configure do" do <<-'RUBY'
+  inject_into_file config_dev, after: "Rails.application.configure do\n" do <<-'RUBY'
   config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
   RUBY
   end
@@ -317,7 +317,7 @@ when 'movie_review'
   end
 
   movie_model_file = 'app/models/movie.rb'
-  inject_into_file movie_model_file, after: '< ActiveRecord::Base\n' do <<-'RUBY'
+  inject_into_file movie_model_file, after: "class Movie < ActiveRecord::Base\n" do <<-'RUBY'
   belongs_to :user
   has_attached_file :image, styles: { medium: "400x600#" }
   validates_attachment_content_type :image, content_type: /\Aimage\/.*\Z/
@@ -325,7 +325,7 @@ when 'movie_review'
   end
 
   user_model_file = 'app/models/user.rb'
-  inject_into_file user_model_file, after: '< ActiveRecord::Base\n' do <<-'RUBY'
+  inject_into_file user_model_file, after: "class User < ActiveRecord::Base\n" do <<-'RUBY'
   has_many :movies
   RUBY
   end
@@ -341,7 +341,7 @@ when 'movie_review'
 #               'app/views/comments/_form.html.erb',
 #               'app/views/articles/new.html.erb',
 #               'app/views/articles/index.html.erb',
-#               'app/views/articles/show.html.erb',
+               'app/views/movies/show.html.erb',
                'app/views/movies/_form.html.erb',
 #               'app/views/sessions/new.html.erb',
 #               'app/views/users/new.html.erb',
