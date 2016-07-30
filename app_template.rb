@@ -159,17 +159,22 @@ remove_file "README.rdoc"
 uncomment_lines 'Gemfile', /bcrypt/
 
 gem_group :development do
+  gem "pry", "~> 0.10.4"
   gem "bullet"
   gem "meta_request"
   gem "better_errors", "~> 2.1", ">= 2.1.1"
   gem "binding_of_caller", "~> 0.7.2"
-  gem "pry", "~> 0.10.4"
 end
 
 gem "haml", version: ">= 4.0.7"
 gem 'will_paginate', '~> 3.1.0'
 
-gem "rspec-rails", group: [:test, :development]
+gem_group :development, :test do
+  gem 'minitest', '~> 5.8', '>= 5.8.4'
+  gem 'capybara', '~> 2.7', '>= 2.7.1'
+  gem 'factory_girl_rails', '~> 4.7'
+  gem "rspec-rails"
+end
 
 run "bundle install"
 git :init
@@ -256,6 +261,63 @@ when 'blogs'
 
 when 'simple_blogs'
 when 'blogs_bootstrap'
+
+  app_name = prefs[:apps4]
+
+  article_model = ["Article", { "title"   => "string",
+                                "content" => "text",
+                          "published_at"  => "datetime",
+                          "hidden"        => "boolean" }]
+
+  comment_model = ["Comment", {"commenter" => "string",
+                                 "content" => "text",
+                                 "article" => "references" } ]
+
+  tag_model     = ["tag", { "name" => "string" } ]
+
+  tagging_model = ["tagging", { "tag" => "belongs_to",
+                            "article" => "belongs_to" } ]
+
+  generate get_gen_str("scaffold", article_model)
+  generate get_gen_str("model", comment_model)
+  generate get_gen_str("model", tag_model)
+  generate get_gen_str("model", tagging_model)
+  generate "resource", "user email password_digest" 
+  generate "controller", "comments" 
+  generate "controller", "sessions new" 
+
+  route "root to: 'articles\#index'"
+
+  gem 'bootstrap-sass', '~> 3.3', '>= 3.3.6'
+
+#  app_files = ['app/assets/stylesheets/application.scss', 
+#               'app/assets/stylesheets/scaffolds.scss',
+#               'app/views/layouts/application.html.erb',
+#               'app/controllers/application_controller.rb',
+#               'app/controllers/users_controller.rb',
+#               'app/controllers/articles_controller.rb',
+#               'app/controllers/comments_controller.rb',
+#               'app/controllers/sessions_controller.rb',
+#               'app/helpers/application_helper.rb',
+#               'app/views/comments/_comment.html.erb',
+#               'app/views/comments/edit.html.erb',
+#               'app/views/comments/_form.html.erb',
+#               'app/views/articles/new.html.erb',
+#               'app/views/articles/index.html.erb',
+#               'app/views/articles/show.html.erb',
+#               'app/views/articles/_form.html.erb',
+#               'app/views/sessions/new.html.erb',
+#               'app/views/users/new.html.erb',
+#               'app/models/article.rb',
+#               'app/models/user.rb',
+#               'app/models/tag.rb',
+#               'config/routes.rb',
+#               'db/seeds.rb']
+#
+#  app_files.each do |from_file|
+#    copy_from_repo app_name, from_file, :repo => repo
+#  end
+
 when 'store'
 
   app_name = prefs[:apps4]
