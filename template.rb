@@ -294,6 +294,13 @@ when 'movie_review'
   generate "devise:views"
   generate "devise User"
 
+  rails g migration add_user_id_to_movies user_id:integer
+
+  movie_user_migration = ["add_user_id_to_movies", 
+                          "user_id" => "integer" } ]
+
+  generate get_gen_str("migration", movie_user_migration)
+
   route "root to: 'movies\#index'"
 
   inject_into_file 'config/environments/development.rb', after: "Rails.application.configure do" do <<-'RUBY'
@@ -301,33 +308,33 @@ when 'movie_review'
   RUBY
   end
 
-#  app_files = ['app/assets/stylesheets/application.scss', 
-#               'app/assets/stylesheets/scaffolds.scss',
-#               'app/views/layouts/application.html.erb',
-#               'app/controllers/application_controller.rb',
-#               'app/controllers/users_controller.rb',
-#               'app/controllers/articles_controller.rb',
-#               'app/controllers/comments_controller.rb',
-#               'app/controllers/sessions_controller.rb',
-#               'app/helpers/application_helper.rb',
-#               'app/views/comments/_comment.html.erb',
-#               'app/views/comments/edit.html.erb',
-#               'app/views/comments/_form.html.erb',
-#               'app/views/articles/new.html.erb',
-#               'app/views/articles/index.html.erb',
-#               'app/views/articles/show.html.erb',
-#               'app/views/articles/_form.html.erb',
-#               'app/views/sessions/new.html.erb',
-#               'app/views/users/new.html.erb',
-#               'app/models/article.rb',
-#               'app/models/user.rb',
-#               'app/models/tag.rb',
-#               'config/routes.rb',
-#               'db/seeds.rb']
-#
-#  app_files.each do |from_file|
-#    copy_from_repo app_name, from_file, :repo => repo
-#  end
+  app_files = ['app/assets/stylesheets/application.scss', 
+               'app/assets/stylesheets/scaffolds.scss',
+               'app/views/layouts/application.html.erb',
+               'app/controllers/application_controller.rb',
+               'app/controllers/users_controller.rb',
+               'app/controllers/articles_controller.rb',
+               'app/controllers/comments_controller.rb',
+               'app/controllers/sessions_controller.rb',
+               'app/helpers/application_helper.rb',
+               'app/views/comments/_comment.html.erb',
+               'app/views/comments/edit.html.erb',
+               'app/views/comments/_form.html.erb',
+               'app/views/articles/new.html.erb',
+               'app/views/articles/index.html.erb',
+               'app/views/articles/show.html.erb',
+               'app/views/articles/_form.html.erb',
+               'app/views/sessions/new.html.erb',
+               'app/views/users/new.html.erb',
+               'app/models/article.rb',
+               'app/models/user.rb',
+               'app/models/tag.rb',
+               'config/routes.rb',
+               'db/seeds.rb']
+
+  app_files.each do |from_file|
+    copy_from_repo app_name, from_file, :repo => repo
+  end
 
 when 'store'
 
