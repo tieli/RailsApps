@@ -289,47 +289,66 @@ when 'movie_review'
 
   gem 'devise', '~> 4.2'
   gem 'bootstrap-sass', '~> 3.3', '>= 3.3.6'
+  gem 'paperclip', '~> 4.3', '>= 4.3.6'
 
   generate "devise:install"
   generate "devise:views"
   generate "devise User"
-
-  rails g migration add_user_id_to_movies user_id:integer
+  generate "paperclip movie image"
 
   movie_user_migration = ["add_user_id_to_movies", 
-                          "user_id" => "integer" } ]
+                          { "user_id" => "integer" } ]
 
   generate get_gen_str("migration", movie_user_migration)
 
+
   route "root to: 'movies\#index'"
 
-  inject_into_file 'config/environments/development.rb', after: "Rails.application.configure do" do <<-'RUBY'
+  config_dev = 'config/environments/development.rb'
+  inject_into_file config_dev, after: "Rails.application.configure do" do <<-'RUBY'
   config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
   RUBY
   end
 
-  app_files = ['app/assets/stylesheets/application.scss', 
-               'app/assets/stylesheets/scaffolds.scss',
-               'app/views/layouts/application.html.erb',
-               'app/controllers/application_controller.rb',
-               'app/controllers/users_controller.rb',
-               'app/controllers/articles_controller.rb',
-               'app/controllers/comments_controller.rb',
-               'app/controllers/sessions_controller.rb',
-               'app/helpers/application_helper.rb',
-               'app/views/comments/_comment.html.erb',
-               'app/views/comments/edit.html.erb',
-               'app/views/comments/_form.html.erb',
-               'app/views/articles/new.html.erb',
-               'app/views/articles/index.html.erb',
-               'app/views/articles/show.html.erb',
-               'app/views/articles/_form.html.erb',
-               'app/views/sessions/new.html.erb',
-               'app/views/users/new.html.erb',
-               'app/models/article.rb',
-               'app/models/user.rb',
-               'app/models/tag.rb',
-               'config/routes.rb',
+  movie_ctrl_file = 'app/controllers/movies_controller.rb'
+  inject_into_file movie_ctrl_file, after: "< ApplicationController\n" do <<-'RUBY'
+  before_action :authenticate_user!, except: [:index, :show]
+  RUBY
+  end
+
+  movie_model_file = 'app/models/movie.rb'
+  inject_into_file movie_model_file, after: '< ActiveRecord::Base\n' do <<-'RUBY'
+  belongs_to :user
+  has_attached_file :image, styles: { medium: "400x600#" }
+  validates_attachment_content_type :image, content_type: /\Aimage\/.*\Z/
+  RUBY
+  end
+
+  user_model_file = 'app/models/user.rb'
+  inject_into_file user_model_file, after: '< ActiveRecord::Base\n' do <<-'RUBY'
+  has_many :movies
+  RUBY
+  end
+
+  app_files = [#'app/controllers/application_controller.rb',
+#               'app/controllers/users_controller.rb',
+#               'app/controllers/articles_controller.rb',
+#               'app/controllers/comments_controller.rb',
+#               'app/controllers/sessions_controller.rb',
+#               'app/helpers/application_helper.rb',
+#               'app/views/comments/_comment.html.erb',
+#               'app/views/comments/edit.html.erb',
+#               'app/views/comments/_form.html.erb',
+#               'app/views/articles/new.html.erb',
+#               'app/views/articles/index.html.erb',
+#               'app/views/articles/show.html.erb',
+               'app/views/movies/_form.html.erb',
+#               'app/views/sessions/new.html.erb',
+#               'app/views/users/new.html.erb',
+#               'app/models/article.rb',
+#               'app/models/user.rb',
+#               'app/models/tag.rb',
+#               'config/routes.rb',
                'db/seeds.rb']
 
   app_files.each do |from_file|

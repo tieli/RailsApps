@@ -301,6 +301,11 @@ when 'movie_review'
   RUBY
   end
 
+  inject_into_file 'app/controllers/movies_controller.rb', after: "MoviesController < ApplicationController" do <<='RUBY'
+  before_action :authenticate_user!, except: [:index, :show]
+  RUBY
+  end
+
 #  app_files = ['app/assets/stylesheets/application.scss', 
 #               'app/assets/stylesheets/scaffolds.scss',
 #               'app/views/layouts/application.html.erb',
