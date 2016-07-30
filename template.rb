@@ -310,12 +310,6 @@ when 'movie_review'
   RUBY
   end
 
-  movie_ctrl_file = 'app/controllers/movies_controller.rb'
-  inject_into_file movie_ctrl_file, after: "< ApplicationController\n" do <<-'RUBY'
-  before_action :authenticate_user!, except: [:index, :show]
-  RUBY
-  end
-
   movie_model_file = 'app/models/movie.rb'
   inject_into_file movie_model_file, after: "class Movie < ActiveRecord::Base\n" do <<-'RUBY'
   belongs_to :user
@@ -332,7 +326,7 @@ when 'movie_review'
 
   app_files = [#'app/controllers/application_controller.rb',
 #               'app/controllers/users_controller.rb',
-#               'app/controllers/articles_controller.rb',
+               'app/controllers/movies_controller.rb',
 #               'app/controllers/comments_controller.rb',
 #               'app/controllers/sessions_controller.rb',
 #               'app/helpers/application_helper.rb',
