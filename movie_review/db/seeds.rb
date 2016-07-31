@@ -5,6 +5,7 @@ user_tiejli = User.create!  email: "tiejli@yahoo.com",
     :password => 'password', 
     :password_confirmation => 'password'
 
+# http://www.imdb.com/list/ls055592025/
 movie_records = [["The Lord of Rings", "Peter Jackson"],
                  ["Inception", "Christopher Nolan"],
                  ["The Jackal", "Christopher Nolan"],
@@ -12,7 +13,10 @@ movie_records = [["The Lord of Rings", "Peter Jackson"],
                  ["The Shawshank Redemption", "Frank Darabont"],
                  ["Schindler's List", "Steven Spielberg"],
                  ["Psycho", "Alfred Hitchcock"],
-                 ["Forrest Gump", "Robert Zemeckis"]]
+                 ["Forrest Gump", "Robert Zemeckis"],
+                 ["Star Wars: Episode IV - A New Hope", "George Lucas"],
+                 ["2001: A Space Odyssey", "Stanley Kubrick"],
+                 ["The Silence of the Lambs", "Jonathan Demme"]]
 
 movie_records.each_with_index { |record, index| 
   Movie.create! title: record.first,
@@ -24,5 +28,4 @@ movie_records.each_with_index { |record, index|
     user: user_tiejli,
     image: File.open("#{Rails.root}/app/assets/images/#{index}.jpg")
 }
-
 

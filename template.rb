@@ -324,7 +324,9 @@ when 'movie_review'
   RUBY
   end
 
-  append_to_file 'app/assets/stylesheets/application.scss' do <<-'RUBY'
+  application_file = "app/assets/stylesheets/application"
+  copy_file "#{application_file}.css", "#{application_file}.scss"
+  append_to_file "#{application_file}.scss" do <<-'RUBY'
   @import "bootstrap-sprockets";
   @import "bootstrap";
   RUBY
@@ -354,7 +356,7 @@ when 'movie_review'
 #               'app/models/article.rb',
 #               'app/models/user.rb',
 #               'app/models/tag.rb',
-#               'config/routes.rb',
+               'lib/tasks/populator.rake',
                'db/seeds.rb']
 
   0.upto(7) { |index| 
@@ -477,7 +479,6 @@ end
 remove_file "app/assets/stylesheets/application.css"
 
 app_common_files = ['app/views/layouts/application.html.erb',
-                   'app/assets/stylesheets/application.scss', 
                    'app/assets/stylesheets/scaffolds.scss' ]
 
 app_common_files.each do |from_file|
