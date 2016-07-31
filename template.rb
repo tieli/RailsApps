@@ -334,7 +334,7 @@ when 'movie_review'
 #               'app/views/comments/edit.html.erb',
 #               'app/views/comments/_form.html.erb',
 #               'app/views/articles/new.html.erb',
-#               'app/views/articles/index.html.erb',
+               'app/views/movies/index.html.erb',
                'app/views/movies/show.html.erb',
                'app/views/movies/_form.html.erb',
 #               'app/views/sessions/new.html.erb',
