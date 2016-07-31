@@ -324,6 +324,18 @@ when 'movie_review'
   RUBY
   end
 
+  append_to_file 'app/assets/stylesheets/application.scss' do <<-'RUBY'
+  @import "bootstrap-sprockets";
+  @import "bootstrap";
+  RUBY
+  end
+
+  append_to_file 'app/assets/javascripts/application.js' do <<-'RUBY'
+  //= require jquery
+  //= require bootstrap-sprockets
+  RUBY
+  end
+
   app_files = [#'app/controllers/application_controller.rb',
 #               'app/controllers/users_controller.rb',
                'app/controllers/movies_controller.rb',
@@ -344,6 +356,10 @@ when 'movie_review'
 #               'app/models/tag.rb',
 #               'config/routes.rb',
                'db/seeds.rb']
+
+  0.upto(7) { |index| 
+    app_files.push("app/assets/images/#{index}.jpg")
+  }
 
   app_files.each do |from_file|
     copy_from_repo app_name, from_file, :repo => repo
