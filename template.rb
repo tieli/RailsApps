@@ -371,7 +371,7 @@ when 'movie_review'
                'lib/tasks/populate.rake',
                'db/seeds.rb']
 
-  0.upto(7) { |index| 
+  0.upto(14) { |index| 
     app_files.push("app/assets/images/#{index}.jpg")
   }
 

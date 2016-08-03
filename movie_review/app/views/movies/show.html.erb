@@ -22,7 +22,7 @@
 
 <p>
   <strong>Director:</strong>
-  <%= @movie.director %>
+  <%= @movie.director.name unless @movie.director.nil? %>
 </p>
 
 <p>
