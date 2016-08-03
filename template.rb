@@ -318,6 +318,7 @@ when 'movie_review'
   movie_model_file = 'app/models/movie.rb'
   inject_into_file movie_model_file, after: "class Movie < ActiveRecord::Base\n" do <<-'RUBY'
   belongs_to :user
+  belongs_to :director
   has_attached_file :image, styles: { medium: "400x600#" }
   validates_attachment_content_type :image, content_type: /\Aimage\/.*\Z/
   RUBY
@@ -325,6 +326,12 @@ when 'movie_review'
 
   user_model_file = 'app/models/user.rb'
   inject_into_file user_model_file, after: "class User < ActiveRecord::Base\n" do <<-'RUBY'
+  has_many :movies
+  RUBY
+  end
+
+  director_model_file = 'app/models/director.rb'
+  inject_into_file director_model_file, after: "class Director < ActiveRecord::Base\n" do <<-'RUBY'
   has_many :movies
   RUBY
   end
