@@ -173,6 +173,7 @@ gem_group :development, :test do
   gem 'minitest', '~> 5.8', '>= 5.8.4'
   gem 'capybara', '~> 2.7', '>= 2.7.1'
   gem 'factory_girl_rails', '~> 4.7'
+  gem 'faker', '~> 1.6', '>= 1.6.5'
   gem "rspec-rails"
 end
 
@@ -264,11 +265,13 @@ when 'movie_review'
 
   app_name = prefs[:apps4]
 
-  movie_model = ["Movie", { "title"   => "string",
-                              "description" => "text",
-                              "movie_length" => "string",
-                              "director" => "string",
-                              "rating" => "string" }]
+  movie_model = ["Movie", { "title"        => "string",
+                            "description"  => "text",
+                            "movie_length" => "string",
+                            "director_id"  => "integer",
+                            "rating"       => "string" }]
+
+  director_model = ["Director", { "name"   => "string" }]
 
 #  comment_model = ["Comment", {"commenter" => "string",
 #                                 "content" => "text",
@@ -279,7 +282,10 @@ when 'movie_review'
 #  tagging_model = ["tagging", { "tag" => "belongs_to",
 #                            "article" => "belongs_to" } ]
 #
+  
   generate get_gen_str("scaffold", movie_model)
+  generate get_gen_str("model", director_model)
+
 #  generate get_gen_str("model", comment_model)
 #  generate get_gen_str("model", tag_model)
 #  generate get_gen_str("model", tagging_model)
@@ -300,7 +306,6 @@ when 'movie_review'
                           { "user_id" => "integer" } ]
 
   generate get_gen_str("migration", movie_user_migration)
-
 
   route "root to: 'movies\#index'"
 
@@ -356,7 +361,7 @@ when 'movie_review'
 #               'app/models/article.rb',
 #               'app/models/user.rb',
 #               'app/models/tag.rb',
-               'lib/tasks/populator.rake',
+               'lib/tasks/populate.rake',
                'db/seeds.rb']
 
   0.upto(7) { |index| 
@@ -492,4 +497,19 @@ generate "rspec:install"
 capify!
 
 rake "db:seed"
+
+inject_into_file 'bin/rails', before: "require \'rails/commands\'" do <<-'RUBY'
+# Set default host and port to rails server
+if ARGV.first == 's' || ARGV.first == 'server'
+  require 'rails/commands/server'
+  module Rails
+    class Server
+      def default_options
+        super.merge(Host:  '0.0.0.0', Port: 3000)
+      end
+    end
+  end
+end
+RUBY
+end
 

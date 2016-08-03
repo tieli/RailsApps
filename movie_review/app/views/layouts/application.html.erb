@@ -1,31 +1,49 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Movie Review -- <%= content_for?(:title) ? yield(:title) :  "Place for Movies " %> </title>
+  <title>MovieReview</title>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
 </head>
 <body>
-	<div id="container">
-		<div id="user_header">
-				<%= link_to "New Article", new_movie_path %>
-			<% if current_user %>
-					Logged in as <%= current_user.email %>.
-				<%= link_to "Log Out", destroy_user_session_path %>
-			<% else %>
-					<%= link_to "Sign Up", new_user_registration_path %> or
-				<%= link_to "Log In", new_user_session_path %>
-			<% end %>
-		</div>
 
+<nav class="navbar navbar-default" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <%= link_to "Movie Reviews", root_path, class: "navbar-brand" %>
+    </div>
 
-		<% flash.each do |name, msg| %>
-		<%= content_tag :div, msg, :id => "flash_#{name}" %>
-    <% end %>
-
-<%= yield %>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <% if user_signed_in? %>
+          <li><%= link_to "New Movie", new_movie_path, class: "active" %></li>
+          <li><%= link_to "Account", edit_user_registration_path %></li>
+        <% else %>
+          <li><%= link_to "Sign Up", new_user_registration_path, class: "active" %></li>
+          <li><%= link_to "Sign In", new_user_session_path, class: "active" %></li>
+        <% end %>
+      </ul>
+      <%= form_tag movies_path, method: :get, class: "navbar-form navbar-right", role: "search" do %>
+        <p>
+          <%= text_field_tag :search, params[:search], class: "form-control" %>
+          <%= submit_tag "Search", name: nil, class: "btn btn-default" %>
+        </p>
+      <% end %>
+    </div><!-- /.navbar-collapse -->
 	</div>
-
+	<div class="container">
+		<% flash.each do |name, msg| %>
+			<%= content_tag(:div, msg, class: "alert alert-info") %>
+		<% end %>
+		<%= yield %>
+	</div>
 </body>
 </html>
