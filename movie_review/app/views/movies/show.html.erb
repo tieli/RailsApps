@@ -22,13 +22,17 @@
 
 <p>
   <strong>Director:</strong>
-  <%= @movie.director.name unless @movie.director.nil? %>
+  <%= @movie.director %>
 </p>
 
 <p>
   <strong>Rating:</strong>
   <%= @movie.rating %>
 </p>
+
+<%= render @movie.reviews %>
+
+<%= render "reviews/form" %>
 
 <%= link_to 'Edit', edit_movie_path(@movie) %> |
 <%= link_to 'Back', movies_path %>

@@ -271,12 +271,18 @@ when 'movie_review'
                             "director_id"  => "integer",
                             "rating"       => "string" }]
 
-  director_model = ["Director", { "name"   => "string" }]
+  director_model = ["Director", { "name" => "string" }]
 
-#  comment_model = ["Comment", {"commenter" => "string",
-#                                 "content" => "text",
-#                                 "article" => "references" } ]
-#
+  actor_model    = ["Actor", { "name"    => "string" }]
+
+  acting_model   = ["Acting", { "actor"  => "belongs_to",
+                            "movie"      => "belongs_to" } ]
+
+
+  review_model = ["Review", { "content" => "text",
+                              "rating" => "string"
+                              "movie_id" => "integer" } ]
+
 #  tag_model     = ["tag", { "name" => "string" } ]
 #
 #  tagging_model = ["tagging", { "tag" => "belongs_to",
@@ -285,6 +291,9 @@ when 'movie_review'
   
   generate get_gen_str("scaffold", movie_model)
   generate get_gen_str("model", director_model)
+
+  generate get_gen_str("model", actor_model)
+  generate get_gen_str("model", acting_model)
 
 #  generate get_gen_str("model", comment_model)
 #  generate get_gen_str("model", tag_model)
@@ -319,8 +328,24 @@ when 'movie_review'
   inject_into_file movie_model_file, after: "class Movie < ActiveRecord::Base\n" do <<-'RUBY'
   belongs_to :user
   belongs_to :director
+  has_many :actings
+  has_many :actors, through: :actings
+  has_many :reviews
   has_attached_file :image, styles: { medium: "400x600#" }
   validates_attachment_content_type :image, content_type: /\Aimage\/.*\Z/
+  RUBY
+  end
+
+  review_model_file = 'app/models/review.rb'
+  inject_into_file review_model_file, after: "class Review < ActiveRecord::Base\n" do <<-'RUBY'
+  belongs_to :movie
+  RUBY
+  end
+
+  actor_model_file = 'app/models/actor.rb'
+  inject_into_file actor_model_file, after: "class Actor < ActiveRecord::Base\n" do <<-'RUBY'
+  has_many :actings
+  has_many :movies, through: :actings
   RUBY
   end
 
