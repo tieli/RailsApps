@@ -388,10 +388,10 @@ when 'movie_review'
                'app/views/movies/index.html.erb',
                'app/views/movies/show.html.erb',
                'app/views/movies/_form.html.erb',
-#               'app/views/sessions/new.html.erb',
-#               'app/views/users/new.html.erb',
+               'app/views/devise/sessions/new.html.erb',
+               'app/views/devise/registrations/edit.html.erb',
+               'app/views/devise/registrations/new.html.erb',
 #               'app/models/article.rb',
-#               'app/models/user.rb',
 #               'app/models/tag.rb',
                'lib/tasks/populate.rake',
                'db/seeds.rb']
