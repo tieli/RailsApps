@@ -405,6 +405,7 @@ when 'movie_review'
                'app/views/devise/registrations/new.html.erb',
                'app/controllers/reviews_controller.rb',
                'app/assets/javascripts/movies.coffee',
+               'movie_review/app/assets/stylesheets/movies.scss',
 #               'app/models/article.rb',
 #               'app/models/tag.rb',
                'lib/tasks/populate.rake',
