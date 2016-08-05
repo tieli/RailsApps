@@ -420,6 +420,7 @@ when 'movie_review'
 
   comment_lines 'config/routes.rb', /resources :movies/
   route "resources :movies do\n resources :reviews\nend"
+  route "resources :directors"
 
 when 'store'
 
