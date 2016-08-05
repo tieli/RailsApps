@@ -23,7 +23,7 @@ namespace :db do
       director    = item.css(".secondary")[0].text.split(" ", 2).second
       Movie.create! title: title,
         description: description,
-        director: director,
+        director: Director.find_or_create_by(name: director),
         movie_length: length,
         user: user_tiejli,
         image: open(image_link)

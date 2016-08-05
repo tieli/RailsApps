@@ -300,7 +300,7 @@ when 'movie_review'
 #  generate get_gen_str("model", tagging_model)
 #  generate "resource", "user email password_digest" 
 #  generate "controller", "comments" 
-#  generate "controller", "sessions new" 
+  generate "controller", "directors" 
 
   gem 'devise', '~> 4.2'
   gem 'bootstrap-sass', '~> 3.3', '>= 3.3.6'
@@ -361,6 +361,15 @@ when 'movie_review'
   RUBY
   end
 
+  director_controller_file = 'app/controllers/directors_controller.rb'
+  inject_into_file director_controller_file, after: "class DirectorsController < ApplicationController\n" do <<-'RUBY'
+  def index
+    @directors = Director.order(:name).where("name like ?", "%#{params[:term]}%")
+    render json: @directors.map(&:name)
+  end
+  RUBY
+  end
+
   application_file = "app/assets/stylesheets/application"
   copy_file "#{application_file}.css", "#{application_file}.scss"
   append_to_file "#{application_file}.scss" do <<-'RUBY'
@@ -394,6 +403,7 @@ when 'movie_review'
                'app/views/devise/registrations/edit.html.erb',
                'app/views/devise/registrations/new.html.erb',
                'app/controllers/reviews_controller.rb',
+               'app/assets/javascripts/movies.coffee',
 #               'app/models/article.rb',
 #               'app/models/tag.rb',
                'lib/tasks/populate.rake',
@@ -407,6 +417,7 @@ when 'movie_review'
     copy_from_repo app_name, from_file, :repo => repo
   end
 
+  comment_lines 'config/routes.rb', /resources :movies/
   route "resources :movies do\n resources :reviews\nend"
 
 when 'store'

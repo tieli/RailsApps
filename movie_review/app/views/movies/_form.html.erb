@@ -29,7 +29,7 @@
   </div>
   <div class="field">
     <%= f.label :director %><br>
-    <%= f.text_field :director %>
+		<%= f.text_field :director, data: {autocomplete_source: directors_path} %>
   </div>
   <div class="field">
     <%= f.label :rating %><br>
