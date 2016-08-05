@@ -305,6 +305,7 @@ when 'movie_review'
   gem 'devise', '~> 4.2'
   gem 'bootstrap-sass', '~> 3.3', '>= 3.3.6'
   gem 'paperclip', '~> 4.3', '>= 4.3.6'
+  gem 'jquery-ui-rails', '~> 5.0', '>= 5.0.5'
 
   generate "devise:install"
   generate "devise:views"
@@ -379,7 +380,7 @@ when 'movie_review'
   end
 
   append_to_file 'app/assets/javascripts/application.js' do <<-'RUBY'
-  //= require jquery
+  //= require jquery-ui
   //= require bootstrap-sprockets
   RUBY
   end
