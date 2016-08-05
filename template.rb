@@ -279,8 +279,8 @@ when 'movie_review'
                             "movie"      => "belongs_to" } ]
 
 
-  review_model = ["Review", { "content" => "text",
-                              "rating" => "string"
+  review_model = ["Review", { "comment" => "text",
+                              "rating" => "string",
                               "movie_id" => "integer" } ]
 
 #  tag_model     = ["tag", { "name" => "string" } ]
@@ -294,8 +294,8 @@ when 'movie_review'
 
   generate get_gen_str("model", actor_model)
   generate get_gen_str("model", acting_model)
+  generate get_gen_str("model", review_model)
 
-#  generate get_gen_str("model", comment_model)
 #  generate get_gen_str("model", tag_model)
 #  generate get_gen_str("model", tagging_model)
 #  generate "resource", "user email password_digest" 
@@ -388,9 +388,12 @@ when 'movie_review'
                'app/views/movies/index.html.erb',
                'app/views/movies/show.html.erb',
                'app/views/movies/_form.html.erb',
+               'app/views/reviews/_form.html.erb',
+               'app/views/reviews/_review.html.erb',
                'app/views/devise/sessions/new.html.erb',
                'app/views/devise/registrations/edit.html.erb',
                'app/views/devise/registrations/new.html.erb',
+               'app/controllers/reviews_controller.rb',
 #               'app/models/article.rb',
 #               'app/models/tag.rb',
                'lib/tasks/populate.rake',
@@ -403,6 +406,8 @@ when 'movie_review'
   app_files.each do |from_file|
     copy_from_repo app_name, from_file, :repo => repo
   end
+
+  route "resources :movies do\n resources :reviews\nend"
 
 when 'store'
 

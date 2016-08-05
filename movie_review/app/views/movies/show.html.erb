@@ -30,9 +30,28 @@
   <%= @movie.rating %>
 </p>
 
-<%= render @movie.reviews %>
+<% @movie.reviews.each do |review| %>
 
-<%= render "reviews/form" %>
+<div class="review">
+	<p> <%= review.comment %> </p>
+	<p> <%= review.rating %> </p>
+</div>
+
+<% end %>
+
+<%= form_for([@movie, @movie.reviews.new]) do |f| %>
+	<p>
+	<%= f.label :comment %> <br />
+	<%= f.text_field :comment %>
+	</p>
+	<p>
+	<%= f.label :rating  %> <br />
+	<%= f.text_field :rating  %>
+	</p>
+	<p>
+	<%= f.submit %>
+	</p>
+<% end %>
 
 <%= link_to 'Edit', edit_movie_path(@movie) %> |
 <%= link_to 'Back', movies_path %>
