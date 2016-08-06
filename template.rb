@@ -254,13 +254,22 @@ when 'blogs'
                'app/models/user.rb',
                'app/models/tag.rb',
                'config/routes.rb',
-               'db/seeds.rb']
+               'db/seeds.rb',
+               'app/views/layouts/application.html.erb',
+               'app/assets/stylesheets/scaffolds.scss' ]
 
   app_files.each do |from_file|
     copy_from_repo app_name, from_file, :repo => repo
   end
 
 when 'simple_blogs'
+  app_files = ['app/assets/stylesheets/application.scss', 
+               'app/assets/stylesheets/scaffolds.scss' ]
+
+  app_files.each do |from_file|
+    copy_from_repo app_name, from_file, :repo => repo
+  end
+
 when 'movie_review'
 
   app_name = prefs[:apps4]
@@ -268,6 +277,7 @@ when 'movie_review'
   movie_model = ["Movie", { "title"        => "string",
                             "description"  => "text",
                             "movie_length" => "string",
+                            "year"         => "integer",
                             "director_id"  => "integer",
                             "rating"       => "string" }]
 
@@ -334,6 +344,11 @@ when 'movie_review'
   has_many :reviews
   has_attached_file :image, styles: { medium: "400x600#" }
   validates_attachment_content_type :image, content_type: /\Aimage\/.*\Z/
+
+  def actor_list_in_string
+    actors.pluck(:name).join(",")
+  end
+
   RUBY
   end
 
@@ -409,7 +424,9 @@ when 'movie_review'
 #               'app/models/article.rb',
 #               'app/models/tag.rb',
                'lib/tasks/populate.rake',
-               'db/seeds.rb']
+               'db/seeds.rb',
+               'app/views/layouts/application.html.erb',
+               'app/assets/stylesheets/scaffolds.scss' ]
 
   0.upto(14) { |index| 
     app_files.push("app/assets/images/#{index}.jpg")
@@ -422,6 +439,8 @@ when 'movie_review'
   comment_lines 'config/routes.rb', /resources :movies/
   route "resources :movies do\n resources :reviews\nend"
   route "resources :directors"
+
+  rake "db:populate"
 
 when 'store'
 
@@ -464,7 +483,9 @@ when 'store'
                'app/assets/images/up_arrow.gif',
                'app/assets/images/down_arrow.gif',
                'app/models/product.rb',
-               'app/models/publisher.rb']
+               'app/models/publisher.rb',
+               'app/views/layouts/application.html.erb',
+               'app/assets/stylesheets/scaffolds.scss' ]
 
               # 'app/views/products/index.html.erb']
   app_files.each do |from_file|
@@ -472,6 +493,7 @@ when 'store'
   end
 
   generate "simple_form:install"
+  rake "db:seed"
 
 when "simple_store"
 
@@ -497,7 +519,9 @@ when "simple_store"
                'app/controllers/products_controller.rb',
                'app/views/products/_form.html.erb',
                'app/views/products/show.html.erb',
-               'app/models/category.rb']
+               'app/models/category.rb',
+               'app/views/layouts/application.html.erb',
+               'app/assets/stylesheets/scaffolds.scss' ]
 
   app_files.each do |from_file|
     copy_from_repo app_name, from_file, :repo => repo
@@ -514,6 +538,7 @@ when "simple_store"
   end
 
   route "root to: 'products\#index'"
+  rake "db:seed"
 
 when 'store_foundation'
 
@@ -529,16 +554,8 @@ when 'store_foundation'
 
   gem 'zurb-foundation'
   generate "foundation:install --force"
+  rake "db:seed"
 
-end
-
-remove_file "app/assets/stylesheets/application.css"
-
-app_common_files = ['app/views/layouts/application.html.erb',
-                   'app/assets/stylesheets/scaffolds.scss' ]
-
-app_common_files.each do |from_file|
-  copy_from_repo prefs[:apps4], from_file, :repo => repo
 end
 
 rake "db:migrate"
@@ -547,7 +564,6 @@ remove_file "public/index.html"
 generate "rspec:install"
 capify!
 
-rake "db:seed"
 
 inject_into_file 'bin/rails', before: "require \'rails/commands\'" do <<-'RUBY'
 # Set default host and port to rails server

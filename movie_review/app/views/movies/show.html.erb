@@ -1,57 +1,75 @@
-<p id="notice"><%= notice %></p>
+<div class="panel panel-default">
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-md-6">
+				<%= image_tag @movie.image.url(:medium) %>
+				<div class="table-responsive">
+					<div class="table">
+						<table class="table">
+							<tbody>
+							<tr>
+								<td><strong>Title</strong></td>
+								<td><%= @movie.title %></td>
+							</tr>
+							<tr>
+								<td><strong>Description:</strong></td>
+								<td><%= @movie.description %></td>
+							</tr>
+							<tr>
+								<td><strong>Movie length:</strong></td>
+								<td><%= @movie.movie_length %></td>
+							</tr>
+							<tr>
+								<td><strong>Movie Year:</strong></td>
+								<td><%= @movie.year %></td>
+							</tr>
+							<tr>
+								<td><strong>Director:</strong></td>
+								<td><%= @movie.director.name unless @movie.director.nil? %></td>
+							</tr>
+							<tr>
+								<td><strong>Actors</strong></td>
+								<td><%= @movie.actor_list_in_string %></td>
+							</tr>
+							<tr>
+								<td><strong>Rating:</strong></td>
+								<td><%= @movie.rating %></td>
+							</tr>
+							</tbody>
+						</table>
+						<%= link_to "Write a Review", new_movie_review_path(@movie) %>
+					</div>
+					</div>
+				</div>
+				<div class="col-md-6">
+					 <h1 class="review_title"><%= @movie.title %></h1>
+					 <p><%= @movie.description %></p>
 
-<p>
-  <strong>Image:</strong>
-  <%= image_tag @movie.image.url(:medium) %>
-</p>
+					<% @movie.reviews.each do |review| %>
 
-<p>
-  <strong>Title:</strong>
-  <%= @movie.title %>
-</p>
+						<div class="reviews">
+						<p> <%= review.comment %> </p>
+						<p> <%= review.rating %> </p>
+					</div>
+				<% end %>
+					<%= form_for([@movie, @movie.reviews.new]) do |f| %>
+						<p>
+					<%= f.label :comment %> <br />
+					<%= f.text_field :comment %>
+					</p>
+					<p>
+					<%= f.label :rating  %> <br />
+					<%= f.text_field :rating  %>
+					</p>
+					<p>
+					<%= f.submit %>
+					</p>
+					<% end %>
+				</div>
+			</div>
+		</div>
+	</div>
 
-<p>
-  <strong>Description:</strong>
-  <%= @movie.description %>
-</p>
-
-<p>
-  <strong>Movie length:</strong>
-  <%= @movie.movie_length %>
-</p>
-
-<p>
-  <strong>Director:</strong>
-  <%= @movie.director %>
-</p>
-
-<p>
-  <strong>Rating:</strong>
-  <%= @movie.rating %>
-</p>
-
-<% @movie.reviews.each do |review| %>
-
-<div class="review">
-	<p> <%= review.comment %> </p>
-	<p> <%= review.rating %> </p>
-</div>
-
-<% end %>
-
-<%= form_for([@movie, @movie.reviews.new]) do |f| %>
-	<p>
-	<%= f.label :comment %> <br />
-	<%= f.text_field :comment %>
-	</p>
-	<p>
-	<%= f.label :rating  %> <br />
-	<%= f.text_field :rating  %>
-	</p>
-	<p>
-	<%= f.submit %>
-	</p>
-<% end %>
 
 <%= link_to 'Edit', edit_movie_path(@movie) %> |
 <%= link_to 'Back', movies_path %>
