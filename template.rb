@@ -263,12 +263,25 @@ when 'blogs'
   end
 
 when 'simple_blogs'
+  app_name = prefs[:apps4]
+
+  article_model = ["Article", { "title"   => "string",
+                                "content" => "text",
+                          "published_at"  => "datetime",
+                          "hidden"        => "boolean" }]
+
+  generate get_gen_str("scaffold", article_model)
+
   app_files = ['app/assets/stylesheets/application.scss', 
+               'app/views/layouts/application.html.erb',
                'app/assets/stylesheets/scaffolds.scss' ]
 
   app_files.each do |from_file|
     copy_from_repo app_name, from_file, :repo => repo
   end
+
+  route "root to: 'articles\#index'"
+  rake "db:migrate"
 
 when 'movie_review'
 
