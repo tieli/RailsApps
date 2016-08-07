@@ -240,8 +240,8 @@ when 'blogs'
   generate get_gen_str("migration", user_auth_token_migration)
 
   password_reset_migration = ["add_password_reset_token_to_users", 
-                          { "password_reset_token" => "string" },
-                          { "password_reset_sent_at" => "datetime" } ]
+                          { "password_reset_token" => "string" ,
+                           "password_reset_sent_at" => "datetime" } ]
   generate get_gen_str("migration", password_reset_migration)
 
   user_mailer = ["user_mailer",
@@ -249,7 +249,7 @@ when 'blogs'
   generate get_gen_str("mailer", user_mailer)
 
   route "root to: 'articles\#index'"
-  route "resources :password_resets"
+  route "resources 'password_resets'"
 
   app_files = ['app/assets/stylesheets/application.scss', 
                'app/assets/stylesheets/scaffolds.scss',
@@ -274,6 +274,7 @@ when 'blogs'
                'app/views/password_resets/edit.html.erb',
                'app/views/password_resets/new.html.erb',
                'app/views/layouts/mailer.text.erb',
+               'app/mailers/user_mailer.rb',
                'app/models/article.rb',
                'app/models/user.rb',
                'app/models/tag.rb',
