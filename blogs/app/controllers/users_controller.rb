@@ -7,7 +7,8 @@ class UsersController < ApplicationController
   def create
     @user = User.create(user_params)
     if @user.save
-      session[:user_id] = @user.id
+      #session[:user_id] = @user.id
+      current_user = @user
       redirect_to root_path, notice: "User created successfully!"
     else
       render 'new'

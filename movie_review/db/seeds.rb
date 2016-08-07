@@ -28,6 +28,6 @@ movie_records.each_with_index { |record, index|
     director: yimou_zhang,
     movie_length: "100",
     user: user_tiejli,
-    image: File.open("#{Rails.root}/app/assets/images/#{index}.jpg")
+    image: File.open("#{Rails.root}/app/assets/images/1.jpg")
 }
 

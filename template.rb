@@ -196,6 +196,8 @@ def get_gen_str(type, res_desc)
     str = str + name.pluralize(2)
   when 'migration'
     str = str + name
+  when 'mailer'
+    str = str + name
   end
   res_desc[1].each { |k,v| str << " " << k << ":" << v }
   str
@@ -226,21 +228,39 @@ when 'blogs'
   generate get_gen_str("model", comment_model)
   generate get_gen_str("model", tag_model)
   generate get_gen_str("model", tagging_model)
-  generate "resource", "user email password_digest" 
+
   generate "controller", "comments" 
+
+  generate "resource", "user email password_digest" 
   generate "controller", "sessions new" 
+  generate "controller", "password_resets new" 
+
+  user_auth_token_migration = ["add_auth_token_to_users", 
+                          { "auth_token" => "string" } ]
+  generate get_gen_str("migration", user_auth_token_migration)
+
+  password_reset_migration = ["add_password_reset_token_to_users", 
+                          { "password_reset_token" => "string" },
+                          { "password_reset_sent_at" => "datetime" } ]
+  generate get_gen_str("migration", password_reset_migration)
+
+  user_mailer = ["user_mailer",
+                { "password_reset" => "string" }]
+  generate get_gen_str("mailer", user_mailer)
 
   route "root to: 'articles\#index'"
+  route "resources :password_resets"
 
   app_files = ['app/assets/stylesheets/application.scss', 
                'app/assets/stylesheets/scaffolds.scss',
-               'app/views/layouts/application.html.erb',
                'app/controllers/application_controller.rb',
                'app/controllers/users_controller.rb',
                'app/controllers/articles_controller.rb',
                'app/controllers/comments_controller.rb',
                'app/controllers/sessions_controller.rb',
+               'app/controllers/password_resets_controller.rb',
                'app/helpers/application_helper.rb',
+               'app/views/layouts/application.html.erb',
                'app/views/comments/_comment.html.erb',
                'app/views/comments/edit.html.erb',
                'app/views/comments/_form.html.erb',
@@ -250,6 +270,10 @@ when 'blogs'
                'app/views/articles/_form.html.erb',
                'app/views/sessions/new.html.erb',
                'app/views/users/new.html.erb',
+               'app/views/user_mailer/password_reset.text.erb',
+               'app/views/password_resets/edit.html.erb',
+               'app/views/password_resets/new.html.erb',
+               'app/views/layouts/mailer.text.erb',
                'app/models/article.rb',
                'app/models/user.rb',
                'app/models/tag.rb',
@@ -306,12 +330,6 @@ when 'movie_review'
                               "rating" => "string",
                               "movie_id" => "integer" } ]
 
-#  tag_model     = ["tag", { "name" => "string" } ]
-#
-#  tagging_model = ["tagging", { "tag" => "belongs_to",
-#                            "article" => "belongs_to" } ]
-#
-  
   generate get_gen_str("scaffold", movie_model)
   generate get_gen_str("model", director_model)
 
@@ -319,10 +337,6 @@ when 'movie_review'
   generate get_gen_str("model", acting_model)
   generate get_gen_str("model", review_model)
 
-#  generate get_gen_str("model", tag_model)
-#  generate get_gen_str("model", tagging_model)
-#  generate "resource", "user email password_digest" 
-#  generate "controller", "comments" 
   generate "controller", "directors" 
 
   gem 'devise', '~> 4.2'
@@ -413,16 +427,7 @@ when 'movie_review'
   RUBY
   end
 
-  app_files = [#'app/controllers/application_controller.rb',
-#               'app/controllers/users_controller.rb',
-               'app/controllers/movies_controller.rb',
-#               'app/controllers/comments_controller.rb',
-#               'app/controllers/sessions_controller.rb',
-#               'app/helpers/application_helper.rb',
-#               'app/views/comments/_comment.html.erb',
-#               'app/views/comments/edit.html.erb',
-#               'app/views/comments/_form.html.erb',
-#               'app/views/articles/new.html.erb',
+  app_files = ['app/controllers/movies_controller.rb',
                'app/views/movies/index.html.erb',
                'app/views/movies/show.html.erb',
                'app/views/movies/_form.html.erb',
@@ -434,16 +439,11 @@ when 'movie_review'
                'app/controllers/reviews_controller.rb',
                'app/assets/javascripts/movies.coffee',
                'movie_review/app/assets/stylesheets/movies.scss',
-#               'app/models/article.rb',
-#               'app/models/tag.rb',
                'lib/tasks/populate.rake',
                'db/seeds.rb',
                'app/views/layouts/application.html.erb',
-               'app/assets/stylesheets/scaffolds.scss' ]
-
-  0.upto(14) { |index| 
-    app_files.push("app/assets/images/#{index}.jpg")
-  }
+               'app/assets/stylesheets/scaffolds.scss',
+               'app/assets/images/1.jpg']
 
   app_files.each do |from_file|
     copy_from_repo app_name, from_file, :repo => repo
@@ -500,7 +500,6 @@ when 'store'
                'app/views/layouts/application.html.erb',
                'app/assets/stylesheets/scaffolds.scss' ]
 
-              # 'app/views/products/index.html.erb']
   app_files.each do |from_file|
     copy_from_repo app_name, from_file, :repo => repo
   end
@@ -576,7 +575,6 @@ rake "db:migrate"
 remove_file "public/index.html"
 generate "rspec:install"
 capify!
-
 
 inject_into_file 'bin/rails', before: "require \'rails/commands\'" do <<-'RUBY'
 # Set default host and port to rails server
