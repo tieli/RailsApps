@@ -249,7 +249,6 @@ when 'blogs'
   generate get_gen_str("mailer", user_mailer)
 
   route "root to: 'articles\#index'"
-  route "resources 'password_resets'"
 
   app_files = ['app/assets/stylesheets/application.scss', 
                'app/assets/stylesheets/scaffolds.scss',
@@ -285,6 +284,12 @@ when 'blogs'
 
   app_files.each do |from_file|
     copy_from_repo app_name, from_file, :repo => repo
+  end
+
+  config_dev = 'config/environments/development.rb'
+  inject_into_file config_dev, after: "Rails.application.configure do\n" do <<-'RUBY'
+  config.action_mailer.default_url_options = { :host => "http://127.0.0.1:23000" }
+  RUBY
   end
 
 when 'simple_blogs'
