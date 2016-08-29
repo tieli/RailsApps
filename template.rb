@@ -142,7 +142,27 @@ def copy_from_repo(app_name, file_name, opts = {})
 
 end
 
+def get_gen_str(type, res_desc)
+  name = res_desc[0]
+  str = " " + type + " "
+  case type
+  when 'scaffold'
+    str = str + name.pluralize(1)
+  when 'model'
+    str = str + name.pluralize(1)
+  when 'resource'
+    str = str + name.pluralize(2)
+  when 'migration'
+    str = str + name
+  when 'mailer'
+    str = str + name
+  end
+  res_desc[1].each { |k,v| str << " " << k << ":" << v }
+  str
+end
+
 prefs[:apps4] = multiple_choice "Build a Rails Apps?",
+    [["Build a Basic Rails App", "basic"],
     [["Build a Rails Blog App", "blogs"],
     ["Build a Simple Rails Blog App", "simple_blogs"],
     ["Build a Movies Review App", "movie_review"],
@@ -184,28 +204,11 @@ append_file ".gitignore", "config/database.yml"
 run "cp config/database.yml config/example_database.yml"
 git add: ".", commit: "-m 'initial commit'"
 
-def get_gen_str(type, res_desc)
-  name = res_desc[0]
-  str = " " + type + " "
-  case type
-  when 'scaffold'
-    str = str + name.pluralize(1)
-  when 'model'
-    str = str + name.pluralize(1)
-  when 'resource'
-    str = str + name.pluralize(2)
-  when 'migration'
-    str = str + name
-  when 'mailer'
-    str = str + name
-  end
-  res_desc[1].each { |k,v| str << " " << k << ":" << v }
-  str
-end
-
 repo = "https://raw.githubusercontent.com/tieli/RailsApps/master/"
 
 case prefs[:apps4]
+when 'basic'
+
 when 'blogs'
 
   app_name = prefs[:apps4]
