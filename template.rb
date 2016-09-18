@@ -1,50 +1,20 @@
 
-@recipes = ["core", "git", "railsapps", "learn_rails", 
-            "rails_bootstrap", "rails_foundation", "rails_omniauth", 
-            "rails_devise", "rails_devise_roles", "rails_devise_pundit", 
-            "rails_signup_download", "rails_mailinglist_activejob", 
-            "rails_stripe_checkout", "rails_stripe_coupons", 
-            "rails_stripe_membership_saas", "setup", "locale", "readme", 
-            "gems", "tests", "email", "devise", "omniauth", "roles", 
-            "frontend", "pages", "init", "analytics", "deployment", 
-            "extras"]
+repo = "https://raw.githubusercontent.com/tieli/RailsApps/master/"
+
+app_scss       = 'app/assets/stylesheets/application.scss'
+app_erb        = 'app/views/layouts/application.html.erb'
+scaffolds_scss = 'app/assets/stylesheets/scaffolds.scss'
+app_js         = 'app/assets/javascripts/application.js'
+
+config_dev = 'config/environments/development.rb'
+
+av = 'app/views/'
+am = 'app/models/'
+ac = 'app/controllers/'
+aa = 'app/assets/'
 
 @prefs = {}
 @gems = []
-
-@diagnostics_recipes = [["example"], ["setup"], ["railsapps"], 
-            ["gems", "setup"], ["gems", "readme", "setup"], 
-            ["extras", "gems", "readme", "setup"], 
-            ["example", "git"], ["git", "setup"], ["git", "railsapps"], 
-            ["gems", "git", "setup"], ["gems", "git", "readme", "setup"], 
-            ["extras", "gems", "git", "readme", "setup"], 
-            ["email", "extras", "frontend", "gems", "git", "init", 
-             "railsapps", "readme", "setup", "testing"], 
-            ["core", "email", "extras", "frontend", "gems", "git", 
-              "init", "railsapps", "readme", "setup", "testing"], 
-            ["core", "email", "extras", "frontend", "gems", "git", 
-             "init", "railsapps", "readme", "setup", "testing"], 
-            ["core", "email", "extras", "frontend", "gems", "git", 
-             "init", "railsapps", "readme", "setup", "testing"], 
-            ["email", "example", "extras", "frontend", "gems", 
-              "git", "init", "railsapps", "readme", "setup", "testing"], 
-            ["email", "example", "extras", "frontend", "gems", 
-             "git", "init", "railsapps", "readme", "setup", "testing"], 
-            ["email", "example", "extras", "frontend", "gems", 
-              "git", "init", "railsapps", "readme", "setup", "testing"], 
-            ["apps4", "core", "email", "extras", "frontend", "gems", 
-             "git", "init", "railsapps", "readme", "setup", "testing"], 
-            ["apps4", "core", "email", "extras", "frontend", "gems", 
-             "git", "init", "railsapps", "readme", "setup", "tests"], 
-            ["apps4", "core", "deployment", "email", "extras", 
-             "frontend", "gems", "git", "init", "railsapps", "readme", 
-             "setup", "testing"], 
-            ["apps4", "core", "deployment", "email", "extras", 
-              "frontend", "gems", "git", "init", "railsapps", "readme", 
-              "setup", "tests"], 
-            ["apps4", "core", "deployment", "devise", "email", "extras", 
-             "frontend", "gems", "git", "init", "omniauth", "pundit", 
-             "railsapps", "readme", "setup", "tests"]]
 
 @diagnostics_prefs = []
 diagnostics = {}
@@ -52,23 +22,54 @@ diagnostics = {}
 # --------------------------- 
 # templates/helpers.erb 
 # ---------------------------
-def recipes; @recipes end
-def recipe?(name); @recipes.include?(name) end
-def prefs; @prefs end
-def prefer(key, value); @prefs[key].eql? value end
-def gems; @gems end
-def diagnostics_recipes; @diagnostics_recipes end
-def diagnostics_prefs; @diagnostics_prefs end
+def recipes 
+  @recipes 
+end
+
+def recipe?(name) 
+  @recipes.include?(name) 
+end
+
+def prefs 
+  @prefs 
+end
+
+def prefer(key, value) 
+  @prefs[key].eql? value 
+end
+
+def gems 
+  @gems 
+end
+
+def diagnostics_recipes 
+  @diagnostics_recipes 
+end
+
+def diagnostics_prefs 
+  @diagnostics_prefs 
+end
 
 # Colored Output
 def colorize(text, color_code)
   "\033[1m\033[#{color_code}m#{text}\033[0m"
 end
 
-def red(text); colorize(text, 31); end
-def cyan(text); colorize(text, 36); end
-def green(text); colorize(text, 32); end
-def yellow(text); colorize(text, 33); end
+def red(text) 
+  colorize(text, 31) 
+end
+
+def cyan(text)
+  colorize(text, 36) 
+end
+
+def green(text) 
+  colorize(text, 32) 
+end
+
+def yellow(text) 
+  colorize(text, 33) 
+end
 
 def say_custom(tag, text) 
     say cyan(tag.to_s.rjust(10)) + "  #{text}" 
@@ -103,6 +104,24 @@ def multiple_choice(question, choices)
   end while(!values.keys.include?(answer))
 
   values[answer]
+end
+
+def html_to_haml(source)
+  begin
+    html = open(source) {|input| input.binmode.read }
+    Haml::HTML.new(html, :erb => true, :xhtml => true).render
+  rescue RubyParser::SyntaxError
+    say_wizard "Ignoring RubyParser::SyntaxError"
+    # special case to accommodate https://github.com/RailsApps/rails-composer/issues/55
+    html = open(source) {|input| input.binmode.read }
+    say_wizard "applying patch" if html.include? 'card_month'
+    say_wizard "applying patch" if html.include? 'card_year'
+    html = html.gsub(/, {add_month_numbers: true}, {name: nil, id: "card_month"}/, '')
+    html = html.gsub(/, {start_year: Date\.today\.year, end_year: Date\.today\.year\+10}, {name: nil, id: "card_year"}/, '')
+    result = Haml::HTML.new(html, :erb => true, :xhtml => true).render
+    result = result.gsub(/select_month nil/, "select_month nil, {add_month_numbers: true}, {name: nil, id: \"card_month\"}")
+    result = result.gsub(/select_year nil/, "select_year nil, {start_year: Date.today.year, end_year: Date.today.year+10}, {name: nil, id: \"card_year\"}")
+  end
 end
 
 def copy_from_repo(app_name, file_name, opts = {})
@@ -163,18 +182,17 @@ end
 
 prefs[:apps4] = multiple_choice "Build a Rails Apps?",
     [["Build a Basic Rails App", "basic"],
-    [["Build a Rails Blog App", "blogs"],
+    ["Build a Rails App with bootstrap", "basic_bootstrap"],
+    ["Build a Rails Blog App", "blogs"],
     ["Build a Simple Rails Blog App", "simple_blogs"],
-    ["Build a Movies Review App", "movie_review"],
     ["Build a Rails Store App", "store"],
     ["Build a Simple Rails Store App", "simple_store"],
     ["Build a Store App using Zerb Foundation", "store_foundation"],
+    ["Build a Movies Review App", "movie_review"],
     ["Custom application (experimental)", "none"],
     ["Quit", "quit"]]
 
 exit if prefs[:apps4] == "quit"
-
-remove_file "README.rdoc"
 
 uncomment_lines 'Gemfile', /bcrypt/
 
@@ -188,6 +206,8 @@ end
 
 gem "haml", version: ">= 4.0.7"
 gem 'will_paginate', '~> 3.1.0'
+gem 'acts_as_votable', '~> 0.10.0'
+gem 'paperclip', '~> 5.1'
 
 gem_group :development, :test do
   gem 'minitest', '~> 5.8', '>= 5.8.4'
@@ -198,38 +218,70 @@ gem_group :development, :test do
 end
 
 run "bundle install"
-git :init
 
-append_file ".gitignore", "config/database.yml"
-run "cp config/database.yml config/example_database.yml"
-git add: ".", commit: "-m 'initial commit'"
-
-repo = "https://raw.githubusercontent.com/tieli/RailsApps/master/"
+app_files = []
 
 case prefs[:apps4]
 when 'basic'
+
+when 'basic_bootstrap'
+  app_name = prefs[:apps4]
+
+  gem 'bootstrap-sass', '~> 3.3', '>= 3.3.7'
+  gem 'devise', '~> 4.2'
+  gem 'simple_form', '~> 3.2', '>= 3.2.1'
+
+  run "bundle install"
+
+  generate "simple_form:install"
+  generate "devise:install"
+  generate "devise:views"
+  generate "devise User"
+
+  application_file = "app/assets/stylesheets/application"
+  copy_file "#{application_file}.css", "#{application_file}.scss"
+  append_to_file "#{application_file}.scss" do <<-'RUBY'
+  @import "bootstrap-sprockets";
+  @import "bootstrap";
+  RUBY
+  end
+
+  append_to_file app_js do <<-'RUBY'
+  //= require jquery-ui
+  //= require bootstrap-sprockets
+  RUBY
+  end
+
+  inject_into_file config_dev, after: "Rails.application.configure do\n" do <<-'RUBY'
+  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+  RUBY
+  end
+
+  app_files = [ app_erb,
+                "app/views/devise/registrations/edit.html.erb",
+                "app/views/devise/registrations/new.html.erb",
+                "app/views/devise/sessions/new.html.erb" ]
 
 when 'blogs'
 
   app_name = prefs[:apps4]
 
-  article_model = ["Article", { "title"   => "string",
-                                "content" => "text",
-                          "published_at"  => "datetime",
-                          "hidden"        => "boolean" }]
+  article_model = ["Article", {"title" => "string",
+                               "content" => "text",
+                               "hidden" => "boolean",
+                               "published_at" => "datetime" }]
+  generate get_gen_str("scaffold", article_model)
 
   comment_model = ["Comment", {"commenter" => "string",
-                                 "content" => "text",
-                                 "article" => "references" } ]
-
-  tag_model     = ["tag", { "name" => "string" } ]
-
-  tagging_model = ["tagging", { "tag" => "belongs_to",
-                            "article" => "belongs_to" } ]
-
-  generate get_gen_str("scaffold", article_model)
+                               "content" => "text",
+                               "article" => "references" } ]
   generate get_gen_str("model", comment_model)
+
+  tag_model     = ["tag", {"name" => "string" } ]
   generate get_gen_str("model", tag_model)
+
+  tagging_model = ["tagging", {"tag" => "belongs_to",
+                            "article" => "belongs_to" } ]
   generate get_gen_str("model", tagging_model)
 
   generate "controller", "comments" 
@@ -243,53 +295,45 @@ when 'blogs'
   generate get_gen_str("migration", user_auth_token_migration)
 
   password_reset_migration = ["add_password_reset_token_to_users", 
-                          { "password_reset_token" => "string" ,
+                          {"password_reset_token" => "string" ,
                            "password_reset_sent_at" => "datetime" } ]
   generate get_gen_str("migration", password_reset_migration)
 
   user_mailer = ["user_mailer",
-                { "password_reset" => "string" }]
+                {"password_reset" => "string" }]
+
   generate get_gen_str("mailer", user_mailer)
 
   route "root to: 'articles\#index'"
 
-  app_files = ['app/assets/stylesheets/application.scss', 
-               'app/assets/stylesheets/scaffolds.scss',
-               'app/controllers/application_controller.rb',
-               'app/controllers/users_controller.rb',
-               'app/controllers/articles_controller.rb',
-               'app/controllers/comments_controller.rb',
-               'app/controllers/sessions_controller.rb',
-               'app/controllers/password_resets_controller.rb',
-               'app/helpers/application_helper.rb',
-               'app/views/layouts/application.html.erb',
-               'app/views/comments/_comment.html.erb',
-               'app/views/comments/edit.html.erb',
-               'app/views/comments/_form.html.erb',
+  app_files = ['config/routes.rb',
+               'db/seeds.rb',
+               app_scss, scaffolds_scss, app_erb,
+               'app/models/article.rb',
+               'app/models/user.rb',
+               'app/models/tag.rb',
                'app/views/articles/new.html.erb',
                'app/views/articles/index.html.erb',
                'app/views/articles/show.html.erb',
                'app/views/articles/_form.html.erb',
+               'app/views/comments/_comment.html.erb',
+               'app/views/comments/edit.html.erb',
+               'app/views/comments/_form.html.erb',
                'app/views/sessions/new.html.erb',
                'app/views/users/new.html.erb',
                'app/views/user_mailer/password_reset.text.erb',
                'app/views/password_resets/edit.html.erb',
                'app/views/password_resets/new.html.erb',
                'app/views/layouts/mailer.text.erb',
+               'app/controllers/application_controller.rb',
+               'app/controllers/users_controller.rb',
+               'app/controllers/articles_controller.rb',
+               'app/controllers/comments_controller.rb',
+               'app/controllers/sessions_controller.rb',
+               'app/controllers/password_resets_controller.rb',
                'app/mailers/user_mailer.rb',
-               'app/models/article.rb',
-               'app/models/user.rb',
-               'app/models/tag.rb',
-               'config/routes.rb',
-               'db/seeds.rb',
-               'app/views/layouts/application.html.erb',
-               'app/assets/stylesheets/scaffolds.scss' ]
+               'app/helpers/application_helper.rb' ]
 
-  app_files.each do |from_file|
-    copy_from_repo app_name, from_file, :repo => repo
-  end
-
-  config_dev = 'config/environments/development.rb'
   inject_into_file config_dev, after: "Rails.application.configure do\n" do <<-'RUBY'
   config.action_mailer.default_url_options = { :host => "http://127.0.0.1:23000" }
   RUBY
@@ -298,20 +342,13 @@ when 'blogs'
 when 'simple_blogs'
   app_name = prefs[:apps4]
 
-  article_model = ["Article", { "title"   => "string",
-                                "content" => "text",
-                          "published_at"  => "datetime",
-                          "hidden"        => "boolean" }]
-
+  article_model = ["Article", {"title" => "string",
+                               "hidden" => "boolean",
+                               "content" => "text",
+                               "published_at" => "datetime"}]
   generate get_gen_str("scaffold", article_model)
 
-  app_files = ['app/assets/stylesheets/application.scss', 
-               'app/views/layouts/application.html.erb',
-               'app/assets/stylesheets/scaffolds.scss' ]
-
-  app_files.each do |from_file|
-    copy_from_repo app_name, from_file, :repo => repo
-  end
+  app_files = [ app_scss, scaffolds_scss, app_erb ]
 
   route "root to: 'articles\#index'"
   rake "db:migrate"
@@ -320,37 +357,33 @@ when 'movie_review'
 
   app_name = prefs[:apps4]
 
-  movie_model = ["Movie", { "title"        => "string",
-                            "description"  => "text",
-                            "movie_length" => "string",
-                            "year"         => "integer",
-                            "director_id"  => "integer",
-                            "rating"       => "string" }]
+  movie_model = ["Movie", { "title" => "string",
+                            "year" => "integer",
+                            "rating" => "string",
+                            "director_id" => "integer",
+                            "description" => "text",
+                            "movie_length" => "string" }]
+  generate get_gen_str("scaffold", movie_model)
 
-  director_model = ["Director", { "name" => "string" }]
+  director_model = ["Director", {"name" => "string" }]
+  generate get_gen_str("model", director_model)
 
-  actor_model    = ["Actor", { "name"    => "string" }]
+  actor_model    = ["Actor", {"name" => "string" }]
+  generate get_gen_str("model", actor_model)
 
-  acting_model   = ["Acting", { "actor"  => "belongs_to",
-                            "movie"      => "belongs_to" } ]
-
+  acting_model   = ["Acting", {"actor" => "belongs_to",
+                            "movie" => "belongs_to" } ]
+  generate get_gen_str("model", acting_model)
 
   review_model = ["Review", { "comment" => "text",
                               "rating" => "string",
                               "movie_id" => "integer" } ]
-
-  generate get_gen_str("scaffold", movie_model)
-  generate get_gen_str("model", director_model)
-
-  generate get_gen_str("model", actor_model)
-  generate get_gen_str("model", acting_model)
   generate get_gen_str("model", review_model)
 
   generate "controller", "directors" 
 
   gem 'devise', '~> 4.2'
   gem 'bootstrap-sass', '~> 3.3', '>= 3.3.6'
-  gem 'paperclip', '~> 4.3', '>= 4.3.6'
   gem 'jquery-ui-rails', '~> 5.0', '>= 5.0.5'
 
   generate "devise:install"
@@ -365,7 +398,6 @@ when 'movie_review'
 
   route "root to: 'movies\#index'"
 
-  config_dev = 'config/environments/development.rb'
   inject_into_file config_dev, after: "Rails.application.configure do\n" do <<-'RUBY'
   config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
   RUBY
@@ -430,13 +462,17 @@ when 'movie_review'
   RUBY
   end
 
-  append_to_file 'app/assets/javascripts/application.js' do <<-'RUBY'
+  append_to_file app_js do <<-'RUBY'
   //= require jquery-ui
   //= require bootstrap-sprockets
   RUBY
   end
 
-  app_files = ['app/controllers/movies_controller.rb',
+  app_files = ['db/seeds.rb', 
+               app_scss, app_erb, 
+               'app/assets/javascripts/movies.coffee',
+               'app/assets/stylesheets/movies.scss',
+               'app/assets/images/1.jpg',
                'app/views/movies/index.html.erb',
                'app/views/movies/show.html.erb',
                'app/views/movies/_form.html.erb',
@@ -446,17 +482,8 @@ when 'movie_review'
                'app/views/devise/registrations/edit.html.erb',
                'app/views/devise/registrations/new.html.erb',
                'app/controllers/reviews_controller.rb',
-               'app/assets/javascripts/movies.coffee',
-               'movie_review/app/assets/stylesheets/movies.scss',
-               'lib/tasks/populate.rake',
-               'db/seeds.rb',
-               'app/views/layouts/application.html.erb',
-               'app/assets/stylesheets/scaffolds.scss',
-               'app/assets/images/1.jpg']
-
-  app_files.each do |from_file|
-    copy_from_repo app_name, from_file, :repo => repo
-  end
+               'app/controllers/movies_controller.rb',
+               'lib/tasks/populate.rake' ]
 
   comment_lines 'config/routes.rb', /resources :movies/
   route "resources :movies do\n resources :reviews\nend"
@@ -470,83 +497,70 @@ when 'store'
 
   gem 'simple_form', '~> 3.2', '>= 3.2.1'
 
-  product_model = ["Product", { "name"         => "string",
-                                "price"        => "decimal",
-                                "released_on"  => "date",
-                                "rating"       => "integer",
-                                "category_id"  => "integer",
+  product_model = ["Product", { "name" => "string",
+                                "price" => "decimal",
+                                "rating" => "integer",
+                                "released_on" => "date",
+                                "category_id" => "integer",
                                 "publisher_id" => "integer",
                                 "discontinued" => "boolean" }]
+  generate get_gen_str("scaffold", product_model)
+
   publisher_model = ["Publisher", { "name" => "string" } ]
+  generate get_gen_str("model", publisher_model)
 
   categorization_model = ["Categorization", {
            "product_id" => "integer", "category_id" => "integer" }]
+  generate get_gen_str("model", categorization_model)
 
   category_model = ["Category", { "name" => "string" } ]
-
-  generate get_gen_str("scaffold", product_model)
-  generate get_gen_str("model", publisher_model)
-  generate get_gen_str("model", categorization_model)
   generate get_gen_str("model", category_model)
 
   route "root to: 'products\#index'"
 
   app_files = ['db/seeds.rb',
                'config/routes.rb',
-               'app/controllers/products_controller.rb',
-               'app/helpers/application_helper.rb',
-               'app/models/category.rb',
-               'app/models/categorization.rb',
-               'app/assets/stylesheets/form.scss',
-               'app/views/products/index.html.erb',
-               'app/views/products/summary.html.erb',
-               'app/views/products/_footer.html.erb',
-               'app/views/products/_form.html.erb',
+               app_scss, app_erb, scaffolds_scss,
                'app/assets/images/up_arrow.gif',
                'app/assets/images/down_arrow.gif',
                'app/models/product.rb',
                'app/models/publisher.rb',
-               'app/views/layouts/application.html.erb',
-               'app/assets/stylesheets/scaffolds.scss' ]
-
-  app_files.each do |from_file|
-    copy_from_repo app_name, from_file, :repo => repo
-  end
+               'app/models/category.rb',
+               'app/models/categorization.rb',
+               'app/views/products/index.html.erb',
+               'app/views/products/summary.html.erb',
+               'app/views/products/_footer.html.erb',
+               'app/views/products/_form.html.erb',
+               'app/controllers/products_controller.rb',
+               'app/helpers/application_helper.rb' ]
 
   generate "simple_form:install"
-  rake "db:seed"
 
 when "simple_store"
 
   app_name = prefs[:apps4]
 
-  product_model = ["Product", { "name"         => "string",
-                                "price"        => "decimal",
-                                "released_on"  => "datetime",
+  product_model = ["Product", { "name" => "string",
+                                "price" => "decimal",
+                                "released_on" => "datetime",
                                 "discontinued" => "boolean" }]
+  generate get_gen_str("scaffold", product_model)
 
   category_model = ["Category", { "name" => "string" } ]
+  generate get_gen_str("model", category_model)
 
   product_category_migration = ["create_categories_products", 
                              { "product" => "references",
                               "category" => "references" } ]
-
-  generate get_gen_str("scaffold", product_model)
-  generate get_gen_str("model", category_model)
   generate get_gen_str("migration", product_category_migration)
 
   app_files = ['db/seeds.rb',
+               scaffolds_scss, app_erb,
+               'app/models/category.rb',
                'app/views/products/index.html.erb',
-               'app/controllers/products_controller.rb',
                'app/views/products/_form.html.erb',
                'app/views/products/show.html.erb',
-               'app/models/category.rb',
-               'app/views/layouts/application.html.erb',
-               'app/assets/stylesheets/scaffolds.scss' ]
-
-  app_files.each do |from_file|
-    copy_from_repo app_name, from_file, :repo => repo
-  end
+               'app/controllers/products_controller.rb' ]
 
   inject_into_file 'app/models/category.rb', before: "end" do <<-'RUBY'
   has_and_belongs_to_many :products
@@ -559,15 +573,14 @@ when "simple_store"
   end
 
   route "root to: 'products\#index'"
-  rake "db:seed"
 
 when 'store_foundation'
 
   app_name = prefs[:apps4]
 
-  product_model = ["Product", { "name"         => "string",
-                                "price"        => "decimal",
-                                "released_on"  => "date" }]
+  product_model = ["Product", { "name" => "string",
+                                "price" => "decimal",
+                                "released_on" => "date" }]
 
   generate get_gen_str("scaffold", product_model) + " --skip-stylesheets"
 
@@ -575,13 +588,11 @@ when 'store_foundation'
 
   gem 'zurb-foundation'
   generate "foundation:install --force"
-  rake "db:seed"
 
 end
 
 rake "db:migrate"
 
-remove_file "public/index.html"
 generate "rspec:install"
 capify!
 
@@ -599,4 +610,19 @@ if ARGV.first == 's' || ARGV.first == 'server'
 end
 RUBY
 end
+
+app_files.each do |from_file|
+  copy_from_repo app_name, from_file, :repo => repo
+end
+
+remove_file "README.rdoc"
+remove_file "public/index.html"
+
+append_file ".gitignore", "config/database.yml"
+copy_file "config/database.yml", "config/example_database.yml"
+
+git :init
+git add: ".", commit: "-m 'initial commit'"
+
+rake "db:seed"
 
