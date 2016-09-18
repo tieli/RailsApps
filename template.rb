@@ -1,8 +1,10 @@
 
 repo = "https://raw.githubusercontent.com/tieli/RailsApps/master/"
 
-app_scss       = 'app/assets/stylesheets/application.scss'
+app_css       = 'app/assets/stylesheets/application.css'
+app_css_scss  = 'app/assets/stylesheets/application.css.scss'
 app_erb        = 'app/views/layouts/application.html.erb'
+app_haml       = 'app/views/layouts/application.html.haml'
 scaffolds_scss = 'app/assets/stylesheets/scaffolds.scss'
 app_js         = 'app/assets/javascripts/application.js'
 
@@ -208,6 +210,7 @@ gem "haml", version: ">= 4.0.7"
 gem 'will_paginate', '~> 3.1.0'
 gem 'acts_as_votable', '~> 0.10.0'
 gem 'paperclip', '~> 5.1'
+gem 'jquery-ui-rails', '~> 5.0', '>= 5.0.5'
 
 gem_group :development, :test do
   gem 'minitest', '~> 5.8', '>= 5.8.4'
@@ -220,11 +223,13 @@ end
 run "bundle install"
 
 app_files = []
+app_name = ""
 
 case prefs[:apps4]
 when 'basic'
 
 when 'basic_bootstrap'
+
   app_name = prefs[:apps4]
 
   gem 'bootstrap-sass', '~> 3.3', '>= 3.3.7'
@@ -238,14 +243,6 @@ when 'basic_bootstrap'
   generate "devise:views"
   generate "devise User"
 
-  application_file = "app/assets/stylesheets/application"
-  copy_file "#{application_file}.css", "#{application_file}.scss"
-  append_to_file "#{application_file}.scss" do <<-'RUBY'
-  @import "bootstrap-sprockets";
-  @import "bootstrap";
-  RUBY
-  end
-
   append_to_file app_js do <<-'RUBY'
   //= require jquery-ui
   //= require bootstrap-sprockets
@@ -257,10 +254,15 @@ when 'basic_bootstrap'
   RUBY
   end
 
-  app_files = [ app_erb,
+  app_files = [ app_haml, app_css_scss,
                 "app/views/devise/registrations/edit.html.erb",
                 "app/views/devise/registrations/new.html.erb",
                 "app/views/devise/sessions/new.html.erb" ]
+
+  generate "controller", "welcome index" 
+  route "root to: 'welcome\#index'"
+
+  remove_file app_css
 
 when 'blogs'
 
@@ -619,7 +621,7 @@ remove_file "README.rdoc"
 remove_file "public/index.html"
 
 append_file ".gitignore", "config/database.yml"
-copy_file "config/database.yml", "config/example_database.yml"
+#copy_file "config/database.yml", "config/example_database.yml"
 
 git :init
 git add: ".", commit: "-m 'initial commit'"
