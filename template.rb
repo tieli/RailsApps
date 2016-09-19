@@ -1,14 +1,15 @@
 
 repo = "https://raw.githubusercontent.com/tieli/RailsApps/master/"
 
-app_css       = 'app/assets/stylesheets/application.css'
-app_css_scss  = 'app/assets/stylesheets/application.css.scss'
-app_erb        = 'app/views/layouts/application.html.erb'
-app_haml       = 'app/views/layouts/application.html.haml'
-scaffolds_scss = 'app/assets/stylesheets/scaffolds.scss'
-app_js         = 'app/assets/javascripts/application.js'
+app_css            = 'app/assets/stylesheets/application.css'
+app_css_scss       = 'app/assets/stylesheets/application.css.scss'
+app_erb            = 'app/views/layouts/application.html.erb'
+app_haml           = 'app/views/layouts/application.html.haml'
+scaffolds_scss     = 'app/assets/stylesheets/scaffolds.scss'
+scaffolds_css_scss = 'app/assets/stylesheets/scaffolds.css.scss'
+app_js             = 'app/assets/javascripts/application.js'
 
-config_dev = 'config/environments/development.rb'
+config_dev         = 'config/environments/development.rb'
 
 av = 'app/views/'
 am = 'app/models/'
@@ -220,6 +221,8 @@ gem_group :development, :test do
   gem "rspec-rails"
 end
 
+gem 'hirb', '~> 0.7.3'
+
 run "bundle install"
 
 app_files = []
@@ -238,7 +241,7 @@ when 'basic_bootstrap'
 
   run "bundle install"
 
-  generate "simple_form:install"
+  generate "simple_form:install --bootstrap"
   generate "devise:install"
   generate "devise:views"
   generate "devise User"
@@ -263,6 +266,21 @@ when 'basic_bootstrap'
   route "root to: 'welcome\#index'"
 
   remove_file app_css
+
+when 'simple_blogs'
+
+  app_name = prefs[:apps4]
+
+  article_model = ["Article", {"title" => "string",
+                               "hidden" => "boolean",
+                               "content" => "text",
+                               "published_at" => "datetime"}]
+  generate get_gen_str("scaffold", article_model)
+
+  app_files = [ app_scss, scaffolds_scss, app_erb ]
+
+  route "root to: 'articles\#index'"
+  rake "db:migrate"
 
 when 'blogs'
 
@@ -310,7 +328,7 @@ when 'blogs'
 
   app_files = ['config/routes.rb',
                'db/seeds.rb',
-               app_scss, scaffolds_scss, app_erb,
+               app_css_scss, scaffolds_scss, app_erb,
                'app/models/article.rb',
                'app/models/user.rb',
                'app/models/tag.rb',
@@ -341,19 +359,103 @@ when 'blogs'
   RUBY
   end
 
-when 'simple_blogs'
+when "simple_store"
+
   app_name = prefs[:apps4]
 
-  article_model = ["Article", {"title" => "string",
-                               "hidden" => "boolean",
-                               "content" => "text",
-                               "published_at" => "datetime"}]
-  generate get_gen_str("scaffold", article_model)
+  product_model = ["Product", { "name" => "string",
+                                "price" => "decimal",
+                                "released_on" => "datetime",
+                                "discontinued" => "boolean" }]
+  generate get_gen_str("scaffold", product_model)
 
-  app_files = [ app_scss, scaffolds_scss, app_erb ]
+  category_model = ["Category", { "name" => "string" } ]
+  generate get_gen_str("model", category_model)
 
-  route "root to: 'articles\#index'"
-  rake "db:migrate"
+  product_category_migration = ["create_categories_products", 
+                             { "product" => "references",
+                              "category" => "references" } ]
+  generate get_gen_str("migration", product_category_migration)
+
+  app_files = ['db/seeds.rb',
+               scaffolds_css_scss, app_erb,
+               'app/models/category.rb',
+               'app/views/products/index.html.erb',
+               'app/views/products/_form.html.erb',
+               'app/views/products/show.html.erb',
+               'app/controllers/products_controller.rb' ]
+
+  inject_into_file 'app/models/category.rb', before: "end" do <<-'RUBY'
+  has_and_belongs_to_many :products
+  RUBY
+  end
+
+  inject_into_file 'app/models/product.rb', before: "end" do <<-'RUBY'
+  has_and_belongs_to_many :categories
+  RUBY
+  end
+
+  route "root to: 'products\#index'"
+
+when 'store'
+
+  app_name = prefs[:apps4]
+
+  gem 'simple_form', '~> 3.2', '>= 3.2.1'
+
+  product_model = ["Product", { "name" => "string",
+                                "price" => "decimal",
+                                "rating" => "integer",
+                                "released_on" => "date",
+                                "category_id" => "integer",
+                                "publisher_id" => "integer",
+                                "discontinued" => "boolean" }]
+  generate get_gen_str("scaffold", product_model)
+
+  publisher_model = ["Publisher", { "name" => "string" } ]
+  generate get_gen_str("model", publisher_model)
+
+  categorization_model = ["Categorization", {
+           "product_id" => "integer", "category_id" => "integer" }]
+  generate get_gen_str("model", categorization_model)
+
+  category_model = ["Category", { "name" => "string" } ]
+  generate get_gen_str("model", category_model)
+
+  route "root to: 'products\#index'"
+
+  app_files = ['db/seeds.rb',
+               'config/routes.rb',
+               app_scss, app_erb, scaffolds_scss,
+               'app/assets/images/up_arrow.gif',
+               'app/assets/images/down_arrow.gif',
+               'app/models/product.rb',
+               'app/models/publisher.rb',
+               'app/models/category.rb',
+               'app/models/categorization.rb',
+               'app/views/products/index.html.erb',
+               'app/views/products/summary.html.erb',
+               'app/views/products/_footer.html.erb',
+               'app/views/products/_form.html.erb',
+               'app/controllers/products_controller.rb',
+               'app/helpers/application_helper.rb' ]
+
+  generate "simple_form:install --bootstrap"
+
+when 'store_foundation'
+
+  app_name = prefs[:apps4]
+
+  product_model = ["Product", { "name" => "string",
+                                "price" => "decimal",
+                                "released_on" => "date" }]
+
+  generate get_gen_str("scaffold", product_model) + " --skip-stylesheets"
+
+  route "root to: 'products\#index'"
+
+  gem 'zurb-foundation'
+  generate "foundation:install --force"
 
 when 'movie_review'
 
@@ -492,104 +594,6 @@ when 'movie_review'
   route "resources :directors"
 
   rake "db:populate"
-
-when 'store'
-
-  app_name = prefs[:apps4]
-
-  gem 'simple_form', '~> 3.2', '>= 3.2.1'
-
-  product_model = ["Product", { "name" => "string",
-                                "price" => "decimal",
-                                "rating" => "integer",
-                                "released_on" => "date",
-                                "category_id" => "integer",
-                                "publisher_id" => "integer",
-                                "discontinued" => "boolean" }]
-  generate get_gen_str("scaffold", product_model)
-
-  publisher_model = ["Publisher", { "name" => "string" } ]
-  generate get_gen_str("model", publisher_model)
-
-  categorization_model = ["Categorization", {
-           "product_id" => "integer", "category_id" => "integer" }]
-  generate get_gen_str("model", categorization_model)
-
-  category_model = ["Category", { "name" => "string" } ]
-  generate get_gen_str("model", category_model)
-
-  route "root to: 'products\#index'"
-
-  app_files = ['db/seeds.rb',
-               'config/routes.rb',
-               app_scss, app_erb, scaffolds_scss,
-               'app/assets/images/up_arrow.gif',
-               'app/assets/images/down_arrow.gif',
-               'app/models/product.rb',
-               'app/models/publisher.rb',
-               'app/models/category.rb',
-               'app/models/categorization.rb',
-               'app/views/products/index.html.erb',
-               'app/views/products/summary.html.erb',
-               'app/views/products/_footer.html.erb',
-               'app/views/products/_form.html.erb',
-               'app/controllers/products_controller.rb',
-               'app/helpers/application_helper.rb' ]
-
-  generate "simple_form:install"
-
-when "simple_store"
-
-  app_name = prefs[:apps4]
-
-  product_model = ["Product", { "name" => "string",
-                                "price" => "decimal",
-                                "released_on" => "datetime",
-                                "discontinued" => "boolean" }]
-  generate get_gen_str("scaffold", product_model)
-
-  category_model = ["Category", { "name" => "string" } ]
-  generate get_gen_str("model", category_model)
-
-  product_category_migration = ["create_categories_products", 
-                             { "product" => "references",
-                              "category" => "references" } ]
-  generate get_gen_str("migration", product_category_migration)
-
-  app_files = ['db/seeds.rb',
-               scaffolds_scss, app_erb,
-               'app/models/category.rb',
-               'app/views/products/index.html.erb',
-               'app/views/products/_form.html.erb',
-               'app/views/products/show.html.erb',
-               'app/controllers/products_controller.rb' ]
-
-  inject_into_file 'app/models/category.rb', before: "end" do <<-'RUBY'
-  has_and_belongs_to_many :products
-  RUBY
-  end
-
-  inject_into_file 'app/models/product.rb', before: "end" do <<-'RUBY'
-  has_and_belongs_to_many :categories
-  RUBY
-  end
-
-  route "root to: 'products\#index'"
-
-when 'store_foundation'
-
-  app_name = prefs[:apps4]
-
-  product_model = ["Product", { "name" => "string",
-                                "price" => "decimal",
-                                "released_on" => "date" }]
-
-  generate get_gen_str("scaffold", product_model) + " --skip-stylesheets"
-
-  route "root to: 'products\#index'"
-
-  gem 'zurb-foundation'
-  generate "foundation:install --force"
 
 end
 
