@@ -155,7 +155,7 @@ Product.create! name: "Madden NFL Mobile",
 
 Product.create! name: "True Skate",
   price_in_cents: 143,
-  categories: [sports],
+  category: [sports],
   tags: [sports, casual, party, foreign],
   released_at: rand(1..90).days.ago,
   discontinued: rand() < 0.2 ? true : false
