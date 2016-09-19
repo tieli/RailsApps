@@ -369,12 +369,18 @@ when "simple_store"
                                 "discontinued" => "boolean" }]
   generate get_gen_str("scaffold", product_model)
 
+  tag_model     = ["tag", {"name" => "string" } ]
+  generate get_gen_str("model", tag_model)
+
+  tagging_model = ["tagging", {"tag" => "belongs_to",
+                            "product" => "belongs_to" } ]
+  generate get_gen_str("model", tagging_model)
+
   category_model = ["Category", { "name" => "string" } ]
   generate get_gen_str("model", category_model)
 
-  product_category_migration = ["create_categories_products", 
-                             { "product" => "references",
-                              "category" => "references" } ]
+  product_category_migration = ["add_category_id_to_products", 
+                             {"category_id" => "integer"} ]
   generate get_gen_str("migration", product_category_migration)
 
   app_files = ['db/seeds.rb',
@@ -384,13 +390,22 @@ when "simple_store"
                'app/views/products/show.html.erb',
                'app/controllers/products_controller.rb' ]
 
-  inject_into_file 'app/models/category.rb', before: "end" do <<-'RUBY'
-  has_and_belongs_to_many :products
+  product_model_file = 'app/models/product.rb'
+  inject_into_file product_model_file, after: "class Product < ActiveRecord::Base\n" do <<-'RUBY'
+  belongs_to :category
+  has_many :taggings
+  has_many :tags, through: :taggings
   RUBY
   end
 
-  inject_into_file 'app/models/product.rb', before: "end" do <<-'RUBY'
-  has_and_belongs_to_many :categories
+  inject_into_file 'app/models/category.rb', before: "end" do <<-'RUBY'
+  has_many :products
+  RUBY
+  end
+
+  inject_into_file 'app/models/tag.rb', before: "end" do <<-'RUBY'
+  has_many :taggings
+  has_many :products, through: :taggings
   RUBY
   end
 
