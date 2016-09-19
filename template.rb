@@ -364,8 +364,8 @@ when "simple_store"
   app_name = prefs[:apps4]
 
   product_model = ["Product", { "name" => "string",
-                                "price" => "decimal",
-                                "released_on" => "datetime",
+                                "price_in_cents" => "decimal",
+                                "released_at" => "datetime",
                                 "discontinued" => "boolean" }]
   generate get_gen_str("scaffold", product_model)
 
@@ -379,7 +379,6 @@ when "simple_store"
 
   app_files = ['db/seeds.rb',
                scaffolds_css_scss, app_erb,
-               'app/models/category.rb',
                'app/views/products/index.html.erb',
                'app/views/products/_form.html.erb',
                'app/views/products/show.html.erb',

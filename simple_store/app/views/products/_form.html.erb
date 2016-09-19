@@ -16,12 +16,12 @@
     <%= f.text_field :name %>
   </div>
   <div class="field">
-    <%= f.label :price %><br>
-    <%= f.text_field :price %>
+    <%= f.label "Price in cents" %><br>
+    <%= f.text_field :price_in_cents %>
   </div>
   <div class="field">
-    <%= f.label :released_on %><br>
-    <%= f.datetime_select :released_on %>
+    <%= f.label :released_at %><br>
+    <%= f.datetime_select :released_at %>
   </div>
   <div class="field">
     <%= f.label :discontinued %><br>
