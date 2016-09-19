@@ -1,5 +1,5 @@
 
-repo = "https://raw.githubusercontent.com/tieli/RailsApps/master/"
+repo = "https://raw.githubusercontent.com/tieli/rails-apps/master/"
 
 app_css            = 'app/assets/stylesheets/application.css'
 app_css_scss       = 'app/assets/stylesheets/application.css.scss'
