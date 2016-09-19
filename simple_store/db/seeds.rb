@@ -147,7 +147,7 @@ Product.create! name: "Clash In Space",
   discontinued: rand() < 0.2 ? true : false
 
 Product.create! name: "HandyCopter 3D Pro",
-  price_in_cents: 999,
+  price_in_cents: 998,
   categories: [casual],
   released_at: rand(1..90).days.ago,
   discontinued: rand() < 0.2 ? true : false
