@@ -11,11 +11,10 @@ party    = Tag.create! name: "Party"
 strategy = Tag.create! name: "Strategy"
 foreign  = Tag.create! name: "Foreign"
 domestic = Tag.create! name: "Domestic"
-  tags: [sports, casual, party, foreign],
 
 Product.create! name: "Settlers of Catan",
   price_in_cents: 3360,
-  category: cart,
+  category: card,
   tags: [sports, casual, party],
   released_at: rand(1..90).days.ago,
   discontinued: rand() < 0.2 ? true : false
@@ -155,7 +154,7 @@ Product.create! name: "Madden NFL Mobile",
 
 Product.create! name: "True Skate",
   price_in_cents: 143,
-  category: [sports],
+  category: card,
   tags: [sports, casual, party, foreign],
   released_at: rand(1..90).days.ago,
   discontinued: rand() < 0.2 ? true : false

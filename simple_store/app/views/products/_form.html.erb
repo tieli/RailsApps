@@ -28,13 +28,17 @@
     <%= f.check_box :discontinued %>
   </div>
 	<div class="field">
-    <%= f.label :categories %><br>
-		<% for category in Category.all %>
+    <%= f.label :tags %><br>
+		<% for tag in Tag.all %>
 			<div>
-				<%= check_box_tag "product[category_ids][]", category.id, @product.categories.include?(category)   %>
-				<%= category.name %>
+				<%= check_box_tag "product[tag_ids][]", tag.id, @product.tags.include?(tag)   %>
+				<%= tag.name %>
 			</div>
 		<% end %>
+	</div>
+	<div class="field">
+    <%= f.label :Category %><br>
+		<%= collection_select(:product, :category_id, Category.all, :id, :name, prompt: true) %>
 	</div>
   <div class="actions">
     <%= f.submit %>

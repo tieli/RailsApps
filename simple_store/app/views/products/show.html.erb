@@ -21,10 +21,15 @@
 </p>
 
 <p>
-  <strong>Categories:</strong>
+  <strong>Category:</strong>
+	<%= @product.category.name %>
+</p>
+
+<p>
+  <strong>Tags:</strong>
 	<ul>
-  <% @product.categories.each do |category| %>
-		<li><%= category.name %></li>
+	<%- @product.tags.each do |tag| %>
+		<li> <%= tag.name %> </li>
 	<% end %>
 	</ul>
 </p>

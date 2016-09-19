@@ -9,6 +9,7 @@
       <th>Price in Cents</th>
       <th>Released at</th>
       <th>Discontinued</th>
+      <th>Category</th>
     </tr>
   </thead>
 
@@ -19,6 +20,7 @@
         <td><%= product.price_in_cents %></td>
         <td><%= product.released_at %></td>
         <td><%= product.discontinued %></td>
+        <td><%= product.category.name %></td>
       </tr>
     <% end %>
   </tbody>
