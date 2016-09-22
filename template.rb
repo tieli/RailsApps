@@ -222,6 +222,7 @@ gem_group :development, :test do
 end
 
 gem 'hirb', '~> 0.7.3'
+gem 'rack-mini-profiler'
 
 run "bundle install"
 
