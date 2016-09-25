@@ -2,9 +2,11 @@
 repo = "https://raw.githubusercontent.com/tieli/rails-apps/master/"
 
 app_css            = 'app/assets/stylesheets/application.css'
+app_scss           = 'app/assets/stylesheets/application.scss'
 app_css_scss       = 'app/assets/stylesheets/application.css.scss'
 app_erb            = 'app/views/layouts/application.html.erb'
 app_haml           = 'app/views/layouts/application.html.haml'
+scaffolds_css      = 'app/assets/stylesheets/scaffolds.css'
 scaffolds_scss     = 'app/assets/stylesheets/scaffolds.scss'
 scaffolds_css_scss = 'app/assets/stylesheets/scaffolds.css.scss'
 app_js             = 'app/assets/javascripts/application.js'
@@ -278,9 +280,16 @@ when 'simple_blogs'
                                "published_at" => "datetime"}]
   generate get_gen_str("scaffold", article_model)
 
-  app_files = [ app_scss, scaffolds_scss, app_erb ]
+  app_files = [ app_css_scss, scaffolds_css_scss, app_erb ]
+
+  gem 'devise', '~> 4.2'
+
+  generate "devise:install"
+  generate "devise:views"
+  generate "devise User"
 
   route "root to: 'articles\#index'"
+
   rake "db:migrate"
 
 when 'blogs'
