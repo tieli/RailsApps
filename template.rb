@@ -374,6 +374,7 @@ when "simple_store"
   app_name = prefs[:apps4]
 
   product_model = ["Product", { "name" => "string",
+                                "description" => "text",
                                 "price_in_cents" => "decimal",
                                 "released_at" => "datetime",
                                 "discontinued" => "boolean" }]
@@ -398,6 +399,7 @@ when "simple_store"
                'app/views/products/index.html.erb',
                'app/views/products/_form.html.erb',
                'app/views/products/show.html.erb',
+               'app/views/products/labeled_form_builder.rb',
                'app/controllers/products_controller.rb' ]
 
   product_model_file = 'app/models/product.rb'
