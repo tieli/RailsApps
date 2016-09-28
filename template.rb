@@ -11,6 +11,10 @@ scaffolds_scss     = 'app/assets/stylesheets/scaffolds.scss'
 scaffolds_css_scss = 'app/assets/stylesheets/scaffolds.css.scss'
 app_js             = 'app/assets/javascripts/application.js'
 
+devise_reg_edit = "app/views/devise/registrations/edit.html.erb"
+devise_reg_new  = "app/views/devise/registrations/new.html.erb"
+devise_ses_new  = "app/views/devise/sessions/new.html.erb"
+
 config_dev         = 'config/environments/development.rb'
 
 av = 'app/views/'
@@ -260,10 +264,9 @@ when 'basic_bootstrap'
   RUBY
   end
 
-  app_files = [ app_haml, app_css_scss,
-                "app/views/devise/registrations/edit.html.erb",
-                "app/views/devise/registrations/new.html.erb",
-                "app/views/devise/sessions/new.html.erb" ]
+  app_files = [ app_haml, app_css_scss, devise_reg_edit,
+                devise_reg_new,
+                devise_ses_new ]
 
   generate "controller", "welcome index" 
   route "root to: 'welcome\#index'"
@@ -280,7 +283,9 @@ when 'simple_blogs'
                                "published_at" => "datetime"}]
   generate get_gen_str("scaffold", article_model)
 
-  app_files = [ app_css_scss, scaffolds_css_scss, app_erb ]
+  app_files = [ app_css_scss, scaffolds_css_scss, app_erb,
+                devise_reg_new, devise_reg_edit, 
+                devise_ses_new]
 
   gem 'devise', '~> 4.2'
 
