@@ -6,6 +6,9 @@ app_scss           = 'app/assets/stylesheets/application.scss'
 app_css_scss       = 'app/assets/stylesheets/application.css.scss'
 app_erb            = 'app/views/layouts/application.html.erb'
 app_haml           = 'app/views/layouts/application.html.haml'
+app_helpers_layout = 'app/helpers/layout_helper.rb'
+
+
 scaffolds_css      = 'app/assets/stylesheets/scaffolds.css'
 scaffolds_scss     = 'app/assets/stylesheets/scaffolds.scss'
 scaffolds_css_scss = 'app/assets/stylesheets/scaffolds.css.scss'
@@ -203,6 +206,11 @@ prefs[:apps4] = multiple_choice "Build a Rails Apps?",
 
 exit if prefs[:apps4] == "quit"
 
+prefs[:test] = multiple_choice "Testing Framework?",
+    [["Test::Unit", "test_unit"],
+    ["Rspec", "rspec"],
+    ["Minitest::Test", "minitest"]]
+
 uncomment_lines 'Gemfile', /bcrypt/
 
 gem_group :development do
@@ -213,24 +221,41 @@ gem_group :development do
   gem "binding_of_caller", "~> 0.7.2"
 end
 
+gem 'paperclip', '~> 5.1'
 gem "haml", version: ">= 4.0.7"
 gem 'will_paginate', '~> 3.1.0'
 gem 'acts_as_votable', '~> 0.10.0'
-gem 'paperclip', '~> 5.1'
 gem 'jquery-ui-rails', '~> 5.0', '>= 5.0.5'
 
+gem 'hirb', '~> 0.7.3'
+
 gem_group :development, :test do
-  gem 'minitest', '~> 5.8', '>= 5.8.4'
   gem 'capybara', '~> 2.7', '>= 2.7.1'
+  gem 'launchy-rails'
   gem 'factory_girl_rails', '~> 4.7'
-  gem 'faker', '~> 1.6', '>= 1.6.5'
-  gem "rspec-rails"
+  gem 'rack-mini-profiler'
 end
 
-gem 'hirb', '~> 0.7.3'
-gem 'rack-mini-profiler'
-
 run "bundle install"
+
+case prefs[:test]
+when 'rspec'
+  gem_group :development, :test do
+    gem "rspec-rails"
+  end
+  
+  run "bundle install"
+  generate "rspec:install"
+
+  #Add config.include Capybara::DSL in spec/rails_helper.rb
+
+when 'minitest'
+  gem_group :development, :test do
+    gem 'minitest', '~> 5.9'
+  end
+  run "bundle install"
+when 'test_unit'
+end
 
 app_files = []
 app_name = ""
@@ -238,13 +263,15 @@ app_name = ""
 case prefs[:apps4]
 when 'basic'
 
+  app_files = [ scaffolds_css_scss, app_helpers_layout, app_erb ]
+
 when 'basic_bootstrap'
 
   app_name = prefs[:apps4]
 
-  gem 'bootstrap-sass', '~> 3.3', '>= 3.3.7'
   gem 'devise', '~> 4.2'
   gem 'simple_form', '~> 3.2', '>= 3.2.1'
+  gem 'bootstrap-sass', '~> 3.3', '>= 3.3.7'
 
   run "bundle install"
 
