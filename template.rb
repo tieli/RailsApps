@@ -454,19 +454,18 @@ when "simple_store"
 
 when 'store'
 
-  gem 'simple_form', '~> 3.2', '>= 3.2.1'
-
   model = ["Product", { "name" => "string",
-                                "price" => "decimal",
-                                "rating" => "integer",
-                                "released_on" => "date",
-                                "category_id" => "integer",
-                                "publisher_id" => "integer",
-                                "discontinued" => "boolean" }]
+                        "price" => "decimal",
+                        "rating" => "integer",
+                        "released_on" => "date",
+                        "category_id" => "integer",
+                        "publisher_id" => "integer",
+                        "discontinued" => "boolean" }]
   generate get_gen_str("scaffold", model)
 
-  model = ["Order", { "price" => "decimal", "purchased_at" => "datetime",
-                                "shipping" => "boolean" }]
+  model = ["Order", { "price" => "decimal", 
+                      "purchased_at" => "datetime",
+                      "shipping" => "boolean" }]
   generate get_gen_str("scaffold", model)
 
   model = ["Publisher", { "name" => "string" } ]
@@ -499,6 +498,7 @@ when 'store'
                'app/controllers/products_controller.rb',
                'app/helpers/application_helper.rb' ]
 
+  gem 'simple_form', '~> 3.2', '>= 3.2.1'
   generate "simple_form:install --bootstrap"
 
 when 'store_foundation'
