@@ -6,6 +6,7 @@ app_scss           = 'app/assets/stylesheets/application.scss'
 app_css_scss       = 'app/assets/stylesheets/application.css.scss'
 app_erb            = 'app/views/layouts/application.html.erb'
 app_haml           = 'app/views/layouts/application.html.haml'
+
 app_helpers_layout = 'app/helpers/layout_helper.rb'
 
 
@@ -250,15 +251,19 @@ when 'rspec'
   #Add config.include Capybara::DSL in spec/rails_helper.rb
 
 when 'minitest'
+
   gem_group :development, :test do
     gem 'minitest', '~> 5.9'
   end
+
   run "bundle install"
+  generate "minitest:install"
+
 when 'test_unit'
 end
 
 app_files = []
-app_name = ""
+app_name = prefs[:apps4]
 
 case prefs[:apps4]
 when 'basic'
@@ -266,8 +271,6 @@ when 'basic'
   app_files = [ scaffolds_css_scss, app_helpers_layout, app_erb ]
 
 when 'basic_bootstrap'
-
-  app_name = prefs[:apps4]
 
   gem 'devise', '~> 4.2'
   gem 'simple_form', '~> 3.2', '>= 3.2.1'
@@ -302,8 +305,6 @@ when 'basic_bootstrap'
 
 when 'simple_blogs'
 
-  app_name = prefs[:apps4]
-
   article_model = ["Article", {"title" => "string",
                                "hidden" => "boolean",
                                "content" => "text",
@@ -325,8 +326,6 @@ when 'simple_blogs'
   rake "db:migrate"
 
 when 'blogs'
-
-  app_name = prefs[:apps4]
 
   article_model = ["Article", {"title" => "string",
                                "content" => "text",
@@ -403,8 +402,6 @@ when 'blogs'
 
 when "simple_store"
 
-  app_name = prefs[:apps4]
-
   product_model = ["Product", { "name" => "string",
                                 "description" => "text",
                                 "price_in_cents" => "decimal",
@@ -457,28 +454,30 @@ when "simple_store"
 
 when 'store'
 
-  app_name = prefs[:apps4]
-
   gem 'simple_form', '~> 3.2', '>= 3.2.1'
 
-  product_model = ["Product", { "name" => "string",
+  model = ["Product", { "name" => "string",
                                 "price" => "decimal",
                                 "rating" => "integer",
                                 "released_on" => "date",
                                 "category_id" => "integer",
                                 "publisher_id" => "integer",
                                 "discontinued" => "boolean" }]
-  generate get_gen_str("scaffold", product_model)
+  generate get_gen_str("scaffold", model)
 
-  publisher_model = ["Publisher", { "name" => "string" } ]
-  generate get_gen_str("model", publisher_model)
+  model = ["Order", { "price" => "decimal", "purchased_at" => "datetime",
+                                "shipping" => "boolean" }]
+  generate get_gen_str("scaffold", model)
 
-  categorization_model = ["Categorization", {
+  model = ["Publisher", { "name" => "string" } ]
+  generate get_gen_str("model", model)
+
+  model = ["Categorization", {
            "product_id" => "integer", "category_id" => "integer" }]
-  generate get_gen_str("model", categorization_model)
+  generate get_gen_str("model", model)
 
-  category_model = ["Category", { "name" => "string" } ]
-  generate get_gen_str("model", category_model)
+  model = ["Category", { "name" => "string" } ]
+  generate get_gen_str("model", model)
 
   route "root to: 'products\#index'"
 
@@ -491,18 +490,18 @@ when 'store'
                'app/models/publisher.rb',
                'app/models/category.rb',
                'app/models/categorization.rb',
+               'app/views/orders/index.html.erb',
                'app/views/products/index.html.erb',
                'app/views/products/summary.html.erb',
                'app/views/products/_footer.html.erb',
                'app/views/products/_form.html.erb',
+               'app/controllers/orders_controller.rb',
                'app/controllers/products_controller.rb',
                'app/helpers/application_helper.rb' ]
 
   generate "simple_form:install --bootstrap"
 
 when 'store_foundation'
-
-  app_name = prefs[:apps4]
 
   product_model = ["Product", { "name" => "string",
                                 "price" => "decimal",
@@ -516,8 +515,6 @@ when 'store_foundation'
   generate "foundation:install --force"
 
 when 'movie_review'
-
-  app_name = prefs[:apps4]
 
   movie_model = ["Movie", { "title" => "string",
                             "year" => "integer",
@@ -657,7 +654,6 @@ end
 
 rake "db:migrate"
 
-generate "rspec:install"
 capify!
 
 inject_into_file 'bin/rails', before: "require \'rails/commands\'" do <<-'RUBY'
