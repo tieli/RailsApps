@@ -494,6 +494,7 @@ when 'store'
                'app/views/products/summary.html.erb',
                'app/views/products/_footer.html.erb',
                'app/views/products/_form.html.erb',
+               'app/views/shared/_footer.html.erb',
                'app/controllers/orders_controller.rb',
                'app/controllers/products_controller.rb',
                'app/helpers/application_helper.rb' ]
