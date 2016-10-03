@@ -195,12 +195,12 @@ end
 
 prefs[:apps4] = multiple_choice "Build a Rails Apps?",
     [["Build a Basic Rails App", "basic"],
-    ["Build a Rails App with bootstrap", "basic_bootstrap"],
+    ["Build a Rails App with Bootstrap", "basic_bootstrap"],
+    ["Build a Rails App with Zerb Foundation", "basic_foundation"],
     ["Build a Rails Blog App", "blogs"],
     ["Build a Simple Blog App", "simple_blogs"],
     ["Build a Rails Store App", "store"],
     ["Build a Simple Store App", "simple_store"],
-    ["Build a Store App using Zerb Foundation", "store_foundation"],
     ["Build a Movies Review App", "movie_review"],
     ["Custom application (experimental)", "none"],
     ["Quit", "quit"]]
@@ -229,6 +229,9 @@ gem 'acts_as_votable', '~> 0.10.0'
 gem 'jquery-ui-rails', '~> 5.0', '>= 5.0.5'
 
 gem 'hirb', '~> 0.7.3'
+
+gem 'morris-rails', '~> 0.4.9'
+gem 'raphael-rails', '~> 2.1', '>= 2.1.2'
 
 gem_group :development, :test do
   gem 'capybara', '~> 2.7', '>= 2.7.1'
@@ -502,13 +505,13 @@ when 'store'
   gem 'simple_form', '~> 3.2', '>= 3.2.1'
   generate "simple_form:install --bootstrap"
 
-when 'store_foundation'
+when 'basic_foundation'
 
-  product_model = ["Product", { "name" => "string",
+  model = ["Product", { "name" => "string",
                                 "price" => "decimal",
                                 "released_on" => "date" }]
 
-  generate get_gen_str("scaffold", product_model) + " --skip-stylesheets"
+  generate get_gen_str("scaffold", model) + " --skip-stylesheets"
 
   route "root to: 'products\#index'"
 
