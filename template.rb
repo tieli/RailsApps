@@ -197,10 +197,10 @@ prefs[:apps4] = multiple_choice "Build a Rails Apps?",
     [["Build a Basic Rails App", "basic"],
     ["Build a Rails App with Bootstrap", "basic_bootstrap"],
     ["Build a Rails App with Zerb Foundation", "basic_foundation"],
-    ["Build a Rails Blog App", "blogs"],
     ["Build a Simple Blog App", "simple_blogs"],
-    ["Build a Rails Store App", "store"],
     ["Build a Simple Store App", "simple_store"],
+    ["Build a Rails Blog App", "blogs"],
+    ["Build a Rails Store App", "store"],
     ["Build a Movies Review App", "movie_review"],
     ["Custom application (experimental)", "none"],
     ["Quit", "quit"]]
@@ -229,9 +229,6 @@ gem 'acts_as_votable', '~> 0.10.0'
 gem 'jquery-ui-rails', '~> 5.0', '>= 5.0.5'
 
 gem 'hirb', '~> 0.7.3'
-
-gem 'morris-rails', '~> 0.4.9'
-gem 'raphael-rails', '~> 2.1', '>= 2.1.2'
 
 gem_group :development, :test do
   gem 'capybara', '~> 2.7', '>= 2.7.1'
@@ -273,18 +270,17 @@ when 'basic'
 
   app_files = [ scaffolds_css_scss, app_helpers_layout, app_erb ]
 
+  generate "controller", "welcome home"
+  route "root to: 'welcome\#home'"
+
 when 'basic_bootstrap'
 
-  gem 'devise', '~> 4.2'
   gem 'simple_form', '~> 3.2', '>= 3.2.1'
   gem 'bootstrap-sass', '~> 3.3', '>= 3.3.7'
 
   run "bundle install"
 
   generate "simple_form:install --bootstrap"
-  generate "devise:install"
-  generate "devise:views"
-  generate "devise User"
 
   append_to_file app_js do <<-'RUBY'
   //= require jquery-ui
@@ -292,19 +288,25 @@ when 'basic_bootstrap'
   RUBY
   end
 
-  inject_into_file config_dev, after: "Rails.application.configure do\n" do <<-'RUBY'
-  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
-  RUBY
-  end
-
-  app_files = [ app_haml, app_css_scss, devise_reg_edit,
-                devise_reg_new,
-                devise_ses_new ]
+  app_files = [ app_haml, app_css_scss ]
 
   generate "controller", "welcome index" 
   route "root to: 'welcome\#index'"
 
   remove_file app_css
+
+when 'basic_foundation'
+
+  model = ["Product", { "name" => "string",
+                                "price" => "decimal",
+                                "released_on" => "date" }]
+
+  generate get_gen_str("scaffold", model) + " --skip-stylesheets"
+
+  route "root to: 'products\#index'"
+
+  gem 'zurb-foundation'
+  generate "foundation:install --force"
 
 when 'simple_blogs'
 
@@ -319,14 +321,70 @@ when 'simple_blogs'
                 devise_ses_new]
 
   gem 'devise', '~> 4.2'
-
   generate "devise:install"
   generate "devise:views"
   generate "devise User"
 
+  inject_into_file config_dev, after: "Rails.application.configure do\n" do <<-'RUBY'
+  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+  RUBY
+  end
+
   route "root to: 'articles\#index'"
 
   rake "db:migrate"
+
+when "simple_store"
+
+  product_model = ["Product", { "name" => "string",
+                                "description" => "text",
+                                "price_in_cents" => "decimal",
+                                "released_at" => "datetime",
+                                "discontinued" => "boolean" }]
+  generate get_gen_str("scaffold", product_model)
+
+  tag_model     = ["tag", {"name" => "string" } ]
+  generate get_gen_str("model", tag_model)
+
+  tagging_model = ["tagging", {"tag" => "belongs_to",
+                            "product" => "belongs_to" } ]
+  generate get_gen_str("model", tagging_model)
+
+  category_model = ["Category", { "name" => "string" } ]
+  generate get_gen_str("model", category_model)
+
+  product_category_migration = ["add_category_id_to_products", 
+                             {"category_id" => "integer"} ]
+  generate get_gen_str("migration", product_category_migration)
+
+  app_files = ['db/seeds.rb',
+               scaffolds_css_scss, app_erb,
+               'app/views/products/index.html.erb',
+               'app/views/products/_form.html.erb',
+               'app/views/products/show.html.erb',
+               'app/views/products/labeled_form_builder.rb',
+               'app/controllers/products_controller.rb' ]
+
+  product_model_file = 'app/models/product.rb'
+  inject_into_file product_model_file, after: "class Product < ActiveRecord::Base\n" do <<-'RUBY'
+  belongs_to :category
+  has_many :taggings
+  has_many :tags, through: :taggings
+  RUBY
+  end
+
+  inject_into_file 'app/models/category.rb', before: "end" do <<-'RUBY'
+  has_many :products
+  RUBY
+  end
+
+  inject_into_file 'app/models/tag.rb', before: "end" do <<-'RUBY'
+  has_many :taggings
+  has_many :products, through: :taggings
+  RUBY
+  end
+
+  route "root to: 'products\#index'"
 
 when 'blogs'
 
@@ -403,58 +461,6 @@ when 'blogs'
   RUBY
   end
 
-when "simple_store"
-
-  product_model = ["Product", { "name" => "string",
-                                "description" => "text",
-                                "price_in_cents" => "decimal",
-                                "released_at" => "datetime",
-                                "discontinued" => "boolean" }]
-  generate get_gen_str("scaffold", product_model)
-
-  tag_model     = ["tag", {"name" => "string" } ]
-  generate get_gen_str("model", tag_model)
-
-  tagging_model = ["tagging", {"tag" => "belongs_to",
-                            "product" => "belongs_to" } ]
-  generate get_gen_str("model", tagging_model)
-
-  category_model = ["Category", { "name" => "string" } ]
-  generate get_gen_str("model", category_model)
-
-  product_category_migration = ["add_category_id_to_products", 
-                             {"category_id" => "integer"} ]
-  generate get_gen_str("migration", product_category_migration)
-
-  app_files = ['db/seeds.rb',
-               scaffolds_css_scss, app_erb,
-               'app/views/products/index.html.erb',
-               'app/views/products/_form.html.erb',
-               'app/views/products/show.html.erb',
-               'app/views/products/labeled_form_builder.rb',
-               'app/controllers/products_controller.rb' ]
-
-  product_model_file = 'app/models/product.rb'
-  inject_into_file product_model_file, after: "class Product < ActiveRecord::Base\n" do <<-'RUBY'
-  belongs_to :category
-  has_many :taggings
-  has_many :tags, through: :taggings
-  RUBY
-  end
-
-  inject_into_file 'app/models/category.rb', before: "end" do <<-'RUBY'
-  has_many :products
-  RUBY
-  end
-
-  inject_into_file 'app/models/tag.rb', before: "end" do <<-'RUBY'
-  has_many :taggings
-  has_many :products, through: :taggings
-  RUBY
-  end
-
-  route "root to: 'products\#index'"
-
 when 'store'
 
   model = ["Product", { "name" => "string",
@@ -504,19 +510,6 @@ when 'store'
 
   gem 'simple_form', '~> 3.2', '>= 3.2.1'
   generate "simple_form:install --bootstrap"
-
-when 'basic_foundation'
-
-  model = ["Product", { "name" => "string",
-                                "price" => "decimal",
-                                "released_on" => "date" }]
-
-  generate get_gen_str("scaffold", model) + " --skip-stylesheets"
-
-  route "root to: 'products\#index'"
-
-  gem 'zurb-foundation'
-  generate "foundation:install --force"
 
 when 'movie_review'
 
