@@ -7,6 +7,7 @@
     <tr>
       <th>Name</th>
       <th>Price in Cents</th>
+      <th>Stock</th>
       <th>Descrption</th>
       <th>Released at</th>
       <th>Discontinued</th>
@@ -19,6 +20,7 @@
       <tr>
         <td><%= link_to product.name, product %></td>
         <td><%= product.price_in_cents %></td>
+        <td><%= product.stock %></td>
         <td><%= truncate(product.description, length: 20) %></td>
         <td><%= product.released_at %></td>
         <td><%= product.discontinued %></td>
