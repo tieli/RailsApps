@@ -18,6 +18,7 @@ products = ["Settlers of Catan", "Agricola", "Stone Age", "Puerto Rico",
 products.each do |name|
   Product.create! name: name,
     price: rand(1.0...100.0),
+    stock: rand(1..10),
     publisher: Publisher.find(rand(1..Publisher.count())),
     categories: category_list.sample(rand(1..Category.count())),
     released_on: rand(1..90).days.ago,

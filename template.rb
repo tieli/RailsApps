@@ -215,11 +215,17 @@ prefs[:test] = multiple_choice "Testing Framework?",
 uncomment_lines 'Gemfile', /bcrypt/
 
 gem_group :development do
-  gem "pry", "~> 0.10.4"
   gem "bullet"
   gem "meta_request"
   gem "better_errors", "~> 2.1", ">= 2.1.1"
   gem "binding_of_caller", "~> 0.7.2"
+end
+
+gem_group :development, :test do
+  gem 'capybara', '~> 2.7', '>= 2.7.1'
+  gem 'launchy-rails'
+  gem 'factory_girl_rails', '~> 4.7'
+  gem 'rack-mini-profiler'
 end
 
 gem 'paperclip', '~> 5.1'
@@ -229,13 +235,12 @@ gem 'acts_as_votable', '~> 0.10.0'
 gem 'jquery-ui-rails', '~> 5.0', '>= 5.0.5'
 
 gem 'hirb', '~> 0.7.3'
+gem 'awesome_print', '~> 1.7'
+gem 'methodfinder', '~> 2.0'
+gem 'fancy_irb', '~> 0.6.0'
 
-gem_group :development, :test do
-  gem 'capybara', '~> 2.7', '>= 2.7.1'
-  gem 'launchy-rails'
-  gem 'factory_girl_rails', '~> 4.7'
-  gem 'rack-mini-profiler'
-end
+gem 'pry', '~> 0.10.4'
+gem 'pry-doc', '~> 0.9.0'
 
 run "bundle install"
 
@@ -253,7 +258,7 @@ when 'rspec'
 when 'minitest'
 
   gem_group :development, :test do
-    gem 'minitest', '~> 5.9'
+    gem 'minitest-rails', '~> 3.0'
   end
 
   run "bundle install"
@@ -337,6 +342,7 @@ when 'simple_blogs'
 when "simple_store"
 
   product_model = ["Product", { "name" => "string",
+                                "stock" => "integer",
                                 "description" => "text",
                                 "price_in_cents" => "decimal",
                                 "released_at" => "datetime",
@@ -465,6 +471,7 @@ when 'store'
 
   model = ["Product", { "name" => "string",
                         "price" => "decimal",
+                        "stock" => "integer",
                         "rating" => "integer",
                         "released_on" => "date",
                         "category_id" => "integer",
