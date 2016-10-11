@@ -13,7 +13,7 @@
 
 	<%= f.input :name %><br>
 	<%= f.input :price, hint: "price should be in USD" %><br>
-	<%= f.input :store %><br>
+	<%= f.input :stock %><br>
 	<%= f.input :released_on, label: "Release Date" %><br>
 	<%= f.input :rating, collection: 1..5 %><br>
 	<%= f.association :categories, collection: Category.all %><br>
