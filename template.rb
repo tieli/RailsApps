@@ -4,6 +4,8 @@ repo = "https://raw.githubusercontent.com/tieli/rails-apps/master/"
 app_css            = 'app/assets/stylesheets/application.css'
 app_scss           = 'app/assets/stylesheets/application.scss'
 app_css_scss       = 'app/assets/stylesheets/application.css.scss'
+forms_css_scss     = 'app/assets/stylesheets/forms.css.scss'
+
 app_erb            = 'app/views/layouts/application.html.erb'
 app_haml           = 'app/views/layouts/application.html.haml'
 
@@ -223,6 +225,7 @@ end
 
 gem_group :development, :test do
   gem 'capybara', '~> 2.7', '>= 2.7.1'
+  gem 'poltergeist', '~> 1.10'
   gem 'launchy-rails'
   gem 'factory_girl_rails', '~> 4.7'
   gem 'rack-mini-profiler'
@@ -241,6 +244,8 @@ gem 'fancy_irb', '~> 0.6.0'
 
 gem 'pry', '~> 0.10.4'
 gem 'pry-doc', '~> 0.9.0'
+
+gem 'faker', '~> 1.6', '>= 1.6.6'
 
 run "bundle install"
 
@@ -322,6 +327,7 @@ when 'simple_blogs'
   generate get_gen_str("scaffold", article_model)
 
   app_files = [ app_css_scss, scaffolds_css_scss, app_erb,
+                forms_css_scss,
                 devise_reg_new, devise_reg_edit, 
                 devise_ses_new]
 
@@ -329,6 +335,9 @@ when 'simple_blogs'
   generate "devise:install"
   generate "devise:views"
   generate "devise User"
+
+  gem 'simple_form', '~> 3.2', '>= 3.2.1'
+  generate "simple_form:install"
 
   inject_into_file config_dev, after: "Rails.application.configure do\n" do <<-'RUBY'
   config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
