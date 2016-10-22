@@ -246,6 +246,7 @@ gem 'pry', '~> 0.10.4'
 gem 'pry-doc', '~> 0.9.0'
 
 gem 'faker', '~> 1.6', '>= 1.6.6'
+gem 'html2haml', '~> 2.0'
 
 run "bundle install"
 
@@ -270,6 +271,12 @@ when 'minitest'
   generate "minitest:install"
 
 when 'test_unit'
+end
+
+common_files = [ 'lib/tasks/haml.rake' ]
+
+common_files.each do |from_file|
+  copy_from_repo "apps", from_file, :repo => repo
 end
 
 app_files = []
