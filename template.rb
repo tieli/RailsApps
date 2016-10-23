@@ -336,12 +336,27 @@ when 'simple_blogs'
   app_files = [ app_css_scss, scaffolds_css_scss, app_erb,
                 forms_css_scss,
                 devise_reg_new, devise_reg_edit, 
-                devise_ses_new]
+                devise_ses_new,
+                "lib/tasks/populate.rake"]
 
   gem 'devise', '~> 4.2'
   generate "devise:install"
   generate "devise:views"
   generate "devise User"
+
+  article_user_migration = ["add_user_id_to_articles", 
+                           {"user_id" => "integer"} ]
+  generate get_gen_str("migration", article_user_migration)
+
+  inject_into_file 'app/models/article.rb', before: "end" do <<-'RUBY'
+  belongs_to :user
+  RUBY
+  end
+
+  inject_into_file 'app/models/user.rb', before: "end" do <<-'RUBY'
+  has_many :articles
+  RUBY
+  end
 
   gem 'simple_form', '~> 3.2', '>= 3.2.1'
   generate "simple_form:install"
