@@ -273,7 +273,7 @@ when 'minitest'
 when 'test_unit'
 end
 
-common_files = [ 'lib/tasks/haml.rake' ]
+common_files = [ 'lib/tasks/haml.rake', 'lib/tasks/populate.rake' ]
 
 common_files.each do |from_file|
   copy_from_repo "apps", from_file, :repo => repo
@@ -336,8 +336,7 @@ when 'simple_blogs'
   app_files = [ app_css_scss, scaffolds_css_scss, app_erb,
                 forms_css_scss,
                 devise_reg_new, devise_reg_edit, 
-                devise_ses_new,
-                "lib/tasks/populate.rake"]
+                devise_ses_new ]
 
   gem 'devise', '~> 4.2'
   generate "devise:install"
