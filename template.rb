@@ -339,6 +339,9 @@ when 'simple_blogs'
                                "published_at" => "datetime"}]
   generate get_gen_str("scaffold", article_model)
 
+  generate "resource", "user email password_digest" 
+  generate "controller", "sessions new" 
+
   app_files = [ scaffolds_css_scss, app_erb,
                 forms_css_scss,
                 "app/views/users/new.html.erb",
