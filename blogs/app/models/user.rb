@@ -13,6 +13,11 @@ class User < ActiveRecord::Base
   has_secure_password
   before_create { generate_token(:auth_token) }
 
+  def self.authenticate(email, password)
+    user = find_by_email(email)
+    return user if user && user.authenticate(password)
+  end
+
   def send_password_reset
     generate_token(:password_reset_token)
     self.password_reset_sent_at = Time.zone.now
