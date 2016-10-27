@@ -34,16 +34,16 @@ namespace :db do
     task :article => :environment do
       require "faker"
       Article.delete_all()
-      User.delete_all()
-      User.create!(email: "tiejli@yahoo.com", password: "password")
-      User.create!(email: "tiejli@hotmail.com", password: "password")
+#      User.delete_all()
+#      User.create!(email: "tiejli@yahoo.com", password: "password")
+#      User.create!(email: "tiejli@hotmail.com", password: "password")
       100.times do
         record = {
           :title        => Faker::Lorem.sentence,
           :content      => Faker::Lorem.paragraph(2),
           :published_at => rand_time(10.years.ago),
           :hidden       => rand() > 0.2 ? true : false,
-          :user_id      => rand() > 0.5 ? 1 : 2
+#          :user_id      => rand() > 0.5 ? 1 : 2
         }
         Article.create! record
       end

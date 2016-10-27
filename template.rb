@@ -347,6 +347,7 @@ when 'simple_blogs'
                 "config/routes.rb",
                 "app/views/users/new.html.erb",
                 "app/views/sessions/new.html.erb",
+                "app/views/articles/index.html.erb",
                 "app/models/user.rb",
                 "app/models/article.rb",
                 "app/controllers/application_controller.rb",
@@ -355,24 +356,19 @@ when 'simple_blogs'
                 "app/controllers/users_controller.rb"
               ]
 
-#  gem 'devise', '~> 4.2'
-#  generate "devise:install"
-#  generate "devise:views"
-#  generate "devise User"
-#
-#  article_user_migration = ["add_user_id_to_articles", 
-#                           {"user_id" => "integer"} ]
-#  generate get_gen_str("migration", article_user_migration)
+  article_user_migration = ["add_user_id_to_articles", 
+                           {"user_id" => "integer"} ]
+  generate get_gen_str("migration", article_user_migration)
 
-#  inject_into_file 'app/models/article.rb', before: "end" do <<-'RUBY'
-#  belongs_to :user
-#  RUBY
-#  end
-#
-#  inject_into_file 'app/models/user.rb', before: "end" do <<-'RUBY'
-#  has_many :articles
-#  RUBY
-#  end
+  inject_into_file 'app/models/article.rb', before: "end" do <<-'RUBY'
+  belongs_to :user
+  RUBY
+  end
+
+  inject_into_file 'app/models/user.rb', before: "end" do <<-'RUBY'
+  has_many :articles
+  RUBY
+  end
 
   gem 'simple_form', '~> 3.2', '>= 3.2.1'
   generate "simple_form:install"
