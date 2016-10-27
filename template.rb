@@ -260,6 +260,10 @@ when 'rspec'
   generate "rspec:install"
 
   #Add config.include Capybara::DSL in spec/rails_helper.rb
+  inject_into_file 'spec/rails_helper.rb', after: "RSpec.configure do |config|\n" do <<-'RUBY'
+  config.include Capybara::DSL
+  RUBY
+  end
 
 when 'minitest'
 
@@ -273,7 +277,9 @@ when 'minitest'
 when 'test_unit'
 end
 
-common_files = [ 'lib/tasks/haml.rake', 'lib/tasks/populate.rake' ]
+common_files = [ 'lib/tasks/haml.rake', 
+                 'lib/tasks/populate.rake',
+                 'lib/tasks/list.rake']
 
 common_files.each do |from_file|
   copy_from_repo "apps", from_file, :repo => repo
@@ -333,29 +339,36 @@ when 'simple_blogs'
                                "published_at" => "datetime"}]
   generate get_gen_str("scaffold", article_model)
 
-  app_files = [ app_css_scss, scaffolds_css_scss, app_erb,
+  app_files = [ scaffolds_css_scss, app_erb,
                 forms_css_scss,
-                devise_reg_new, devise_reg_edit, 
-                devise_ses_new ]
+                "app/views/users/new.html.erb",
+                "app/views/sessions/new.html.erb",
+                "app/models/user.rb",
+                "app/models/article.rb",
+                "app/controllers/application_controller.rb",
+                "app/controllers/articles_controller.rb",
+                "app/controllers/sessions_controller.rb",
+                "app/controllers/users_controller.rb"
+              ]
 
-  gem 'devise', '~> 4.2'
-  generate "devise:install"
-  generate "devise:views"
-  generate "devise User"
+#  gem 'devise', '~> 4.2'
+#  generate "devise:install"
+#  generate "devise:views"
+#  generate "devise User"
+#
+#  article_user_migration = ["add_user_id_to_articles", 
+#                           {"user_id" => "integer"} ]
+#  generate get_gen_str("migration", article_user_migration)
 
-  article_user_migration = ["add_user_id_to_articles", 
-                           {"user_id" => "integer"} ]
-  generate get_gen_str("migration", article_user_migration)
-
-  inject_into_file 'app/models/article.rb', before: "end" do <<-'RUBY'
-  belongs_to :user
-  RUBY
-  end
-
-  inject_into_file 'app/models/user.rb', before: "end" do <<-'RUBY'
-  has_many :articles
-  RUBY
-  end
+#  inject_into_file 'app/models/article.rb', before: "end" do <<-'RUBY'
+#  belongs_to :user
+#  RUBY
+#  end
+#
+#  inject_into_file 'app/models/user.rb', before: "end" do <<-'RUBY'
+#  has_many :articles
+#  RUBY
+#  end
 
   gem 'simple_form', '~> 3.2', '>= 3.2.1'
   generate "simple_form:install"
