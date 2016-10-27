@@ -692,8 +692,7 @@ when 'movie_review'
                'app/views/devise/registrations/edit.html.erb',
                'app/views/devise/registrations/new.html.erb',
                'app/controllers/reviews_controller.rb',
-               'app/controllers/movies_controller.rb',
-               'lib/tasks/populate.rake' ]
+               'app/controllers/movies_controller.rb' ]
 
   comment_lines 'config/routes.rb', /resources :movies/
   route "resources :movies do\n resources :reviews\nend"
