@@ -344,6 +344,7 @@ when 'simple_blogs'
 
   app_files = [ scaffolds_css_scss, app_erb,
                 forms_css_scss,
+                "config/routes.rb",
                 "app/views/users/new.html.erb",
                 "app/views/sessions/new.html.erb",
                 "app/models/user.rb",
