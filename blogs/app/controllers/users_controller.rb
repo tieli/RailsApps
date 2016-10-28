@@ -8,7 +8,7 @@ class UsersController < ApplicationController
     @user = User.create(user_params)
     if @user.save
       #session[:user_id] = @user.id
-      current_user = @user
+      cookies[:auth_token] = @user.auth_token
       redirect_to root_path, notice: "User created successfully!"
     else
       render 'new'
