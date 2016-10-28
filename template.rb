@@ -463,7 +463,7 @@ when 'blogs'
 
   generate "controller", "comments" 
 
-  generate "resource", "user email password_digest" 
+  generate "resource", "user username email password_digest" 
   generate "controller", "sessions new" 
   generate "controller", "password_resets new" 
 
@@ -513,10 +513,16 @@ when 'blogs'
                'app/mailers/user_mailer.rb',
                'app/helpers/application_helper.rb',
                'spec/factories/users.rb',
+               'spec/models/user_spec.rb',
                'spec/requests/password_resets_spec.rb' ]
 
   inject_into_file config_dev, after: "Rails.application.configure do\n" do <<-'RUBY'
   config.action_mailer.default_url_options = { :host => "http://127.0.0.1:23000" }
+  RUBY
+  end
+
+  inject_into_file config_test, after: "Rails.application.configure do\n" do <<-'RUBY'
+  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
   RUBY
   end
 
