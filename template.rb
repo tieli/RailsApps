@@ -22,6 +22,7 @@ devise_reg_new  = "app/views/devise/registrations/new.html.erb"
 devise_ses_new  = "app/views/devise/sessions/new.html.erb"
 
 config_dev         = 'config/environments/development.rb'
+config_test        = 'config/environments/test.rb'
 
 av = 'app/views/'
 am = 'app/models/'
@@ -378,6 +379,11 @@ when 'simple_blogs'
   RUBY
   end
 
+  inject_into_file config_test, after: "Rails.application.configure do\n" do <<-'RUBY'
+  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+  RUBY
+  end
+
   route "root to: 'articles\#index'"
 
   rake "db:migrate"
@@ -475,6 +481,8 @@ when 'blogs'
 
   generate get_gen_str("mailer", user_mailer)
 
+  generate "integration_test", "password_reset" 
+
   route "root to: 'articles\#index'"
 
   app_files = ['config/routes.rb',
@@ -503,7 +511,9 @@ when 'blogs'
                'app/controllers/sessions_controller.rb',
                'app/controllers/password_resets_controller.rb',
                'app/mailers/user_mailer.rb',
-               'app/helpers/application_helper.rb' ]
+               'app/helpers/application_helper.rb',
+               'spec/factories/users.rb',
+               'spec/requests/password_resets_spec.rb' ]
 
   inject_into_file config_dev, after: "Rails.application.configure do\n" do <<-'RUBY'
   config.action_mailer.default_url_options = { :host => "http://127.0.0.1:23000" }
