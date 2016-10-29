@@ -262,6 +262,7 @@ when 'rspec'
 
   #Add config.include Capybara::DSL in spec/rails_helper.rb
   inject_into_file 'spec/rails_helper.rb', after: "RSpec.configure do |config|\n" do <<-'RUBY'
+  config.filter_run focus: true
   config.include FactoryGirl::Syntax::Methods
   config.include Capybara::DSL
   RUBY
@@ -475,6 +476,8 @@ when 'blogs'
   generate "controller", "sessions new" 
   generate "controller", "password_resets new" 
 
+  generate "model", "message:text starts_at:datetime ends_at:datetime" 
+
   user_auth_token_migration = ["add_auth_token_to_users", 
                           { "auth_token" => "string" } ]
   generate get_gen_str("migration", user_auth_token_migration)
@@ -497,6 +500,8 @@ when 'blogs'
                'db/seeds.rb',
                app_css_scss, scaffolds_scss, app_erb,
                'app/assets/stylesheets/articles.scss',
+               'app/assets/stylesheets/announcements.scss',
+               'app/models/announcement.rb',
                'app/models/article.rb',
                'app/models/comment.rb',
                'app/models/user.rb',
@@ -513,6 +518,7 @@ when 'blogs'
                'app/views/user_mailer/password_reset.text.erb',
                'app/views/password_resets/edit.html.erb',
                'app/views/password_resets/new.html.erb',
+               'app/views/layouts/application.html.erb',
                'app/views/layouts/mailer.text.erb',
                'app/controllers/application_controller.rb',
                'app/controllers/users_controller.rb',
@@ -524,7 +530,8 @@ when 'blogs'
                'app/helpers/application_helper.rb',
                'spec/factories/users.rb',
                'spec/models/user_spec.rb',
-               'spec/requests/password_resets_spec.rb' ]
+               'spec/requests/password_resets_spec.rb',
+               'spec/requests/announcements_spec.rb' ]
 
   [config_dev, config_test].each do |item|
     inject_into_file item, after: "Rails.application.configure do\n" do <<-'RUBY'

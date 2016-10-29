@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
 
   get 'tags/:tag', to: 'articles#index', as: :tag
+  get 'announcements/:id/hide', to: 'announcements#hide', as: :hide_announcement
+
   root to: 'articles#index'
   resources :articles  do
     resources :comments
