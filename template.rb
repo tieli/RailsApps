@@ -491,6 +491,7 @@ when 'blogs'
                app_css_scss, scaffolds_scss, app_erb,
                'app/assets/stylesheets/articles.scss',
                'app/models/article.rb',
+               'app/models/comment.rb',
                'app/models/user.rb',
                'app/models/tag.rb',
                'app/views/articles/new.html.erb',
