@@ -28,6 +28,9 @@
     <%= f.check_box :hidden %>
   </div>
   <div class="field">
+		<%= collection_select(:article, :category, Category.all, :id, :name) %>
+  </div>
+  <div class="field">
     <%= f.label :tag_list, "Tags (separated by commas)" %><br>
     <%= f.text_field :tag_list %>
   </div>

@@ -16,6 +16,9 @@
 <p>
 	<%= article.hidden %>
 </p>
+<p>
+	Category: <%= article.category.name %>
+</p>
 <p><%= link_to pluralize(article.cached_comments_count, "comment"), article %></p>
 <p>
 	Tags: <%= raw article.tags.map(&:name).map {|t| link_to t, tag_path(t)}.join(', ') %>

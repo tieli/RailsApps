@@ -52,6 +52,15 @@ def fetch_block
 	}
 end
 
+tag_array = ['Linux', 'DevOps', 'Windows', 'Language', 'Vmware']
+tag_size  = tag_array.length
+
+category_array = ['One', 'Two', 'Three', 'Four', 'Five']
+category_size  = category_array.length
+category_array.each do |category|
+  Category.create!(name: category)
+end
+
 fetch_block do |block|
 	lines = block.split("\n")
 	# first line should be empty line
@@ -67,17 +76,18 @@ fetch_block do |block|
 		hidden = false
 	end
 
-  tag_array = ['Linux', 'DevOps', 'Windows', 'Language', 'Vmware']
-  tag_size  = tag_array.length
-
   size = rand(1..tag_size)   
   tags = tag_array.sample(size)
+
+  which = rand(1..tag_size)   
+  category = Category.find(which)
 
   record = { 
     :title        => title,
     :content      => content,
     :published_at => rand_time(10.years.ago),
     :hidden       => hidden,
+    :category     => category,
     :tag_list     => tags.join(',')
   }
 

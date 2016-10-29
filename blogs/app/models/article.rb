@@ -1,4 +1,5 @@
 class Article < ActiveRecord::Base
+  belongs_to :category
 
   after_commit :flush_cache
 

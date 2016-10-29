@@ -455,6 +455,13 @@ when 'blogs'
                                "article" => "references" } ]
   generate get_gen_str("model", comment_model)
 
+  category_model = ["Category", { "name" => "string" } ]
+  generate get_gen_str("model", category_model)
+
+  article_category_migration = ["add_category_id_to_articles", 
+                             {"category_id" => "integer"} ]
+  generate get_gen_str("migration", article_category_migration)
+
   tag_model     = ["tag", {"name" => "string" } ]
   generate get_gen_str("model", tag_model)
 

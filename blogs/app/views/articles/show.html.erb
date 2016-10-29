@@ -24,6 +24,11 @@
   <%= @article.hidden %>
 </p>
 
+<p>
+  <strong>Category:</strong>
+  <%= @article.category.name %>
+</p>
+
 <h2><%= pluralize(@article.cached_comments_count, "Comment") %></h2>
 
 <div id="comments">
