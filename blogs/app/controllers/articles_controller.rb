@@ -7,7 +7,7 @@ class ArticlesController < ApplicationController
     if params[:tag]
       @articles = Article.tagged_with(params[:tag]).paginate(:page => params[:page])
     else
-      @articles = Article.paginate(:page => params[:page])
+      @articles = Article.all.includes(:category).paginate(:page => params[:page])
     end
   end
 
