@@ -1,5 +1,7 @@
 class Article < ActiveRecord::Base
 
+  after_commit :flush_cache
+
   # for pagination
   self.per_page = 10
   
@@ -25,4 +27,21 @@ class Article < ActiveRecord::Base
       Tag.where(name: n.strip).first_or_create!
     end
   end
+
+  def self.cached_find(id)
+    Rails.cache.fetch([name, id], expires_in: 5.minutes) { find(id) }
+  end
+
+  def flush_cache
+    Rails.cache.delete([self.class.name, id])
+  end
+
+  def cached_comments_count
+    Rails.cache.fetch([self, "comments_count"]) { comments.size }
+  end
+
+  def cached_comments
+    Rails.cache.fetch([self, "comments"]) { comments.to_a }
+  end
+
 end

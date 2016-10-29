@@ -262,6 +262,7 @@ when 'rspec'
 
   #Add config.include Capybara::DSL in spec/rails_helper.rb
   inject_into_file 'spec/rails_helper.rb', after: "RSpec.configure do |config|\n" do <<-'RUBY'
+  config.include FactoryGirl::Syntax::Methods
   config.include Capybara::DSL
   RUBY
   end
@@ -488,6 +489,7 @@ when 'blogs'
   app_files = ['config/routes.rb',
                'db/seeds.rb',
                app_css_scss, scaffolds_scss, app_erb,
+               'app/assets/stylesheets/articles.scss',
                'app/models/article.rb',
                'app/models/user.rb',
                'app/models/tag.rb',
@@ -516,14 +518,11 @@ when 'blogs'
                'spec/models/user_spec.rb',
                'spec/requests/password_resets_spec.rb' ]
 
-  inject_into_file config_dev, after: "Rails.application.configure do\n" do <<-'RUBY'
-  config.action_mailer.default_url_options = { :host => "http://127.0.0.1:23000" }
-  RUBY
-  end
-
-  inject_into_file config_test, after: "Rails.application.configure do\n" do <<-'RUBY'
-  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
-  RUBY
+  [config_dev, config_test].each do |item|
+    inject_into_file item, after: "Rails.application.configure do\n" do <<-'RUBY'
+    config.action_mailer.default_url_options = { :host => "http://127.0.0.1:23000" }
+    RUBY
+    end
   end
 
 when 'store'

@@ -13,7 +13,7 @@ RSpec.describe User, type: :model do
   end
 
   it "authenticates with using factory girl" do
-    user = FactoryGirl.create(:user)
+    user = create(:user)
     expect(User.authenticate(user.email, user.password)).to eq(user)
   end
 

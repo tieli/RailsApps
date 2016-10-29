@@ -24,14 +24,17 @@
   <%= @article.hidden %>
 </p>
 
+<h2><%= pluralize(@article.cached_comments_count, "Comment") %></h2>
 
+<div id="comments">
   <p>
-  <%= render @article.comments %>
+  <%= render @article.cached_comments %>
   </p>
+</div>
 
-  <p>
-  <%= render "comments/form" %>
-  </p>
+<p>
+<%= render "comments/form" %>
+</p>
 
 <%= link_to 'Edit', edit_article_path(@article) %> |
 <%= link_to 'Back', articles_path %>
