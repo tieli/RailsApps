@@ -5,9 +5,9 @@ class ArticlesController < ApplicationController
   # GET /articles.json
   def index
     if params[:tag]
-      @articles = Article.tagged_with(params[:tag]).paginate(:page => params[:page])
+      @articles = Article.all.includes(:tags).includes(:category).tagged_with(params[:tag]).paginate(:page => params[:page])
     else
-      @articles = Article.all.includes(:category).paginate(:page => params[:page])
+      @articles = Article.all.includes(:tags).includes(:category).paginate(:page => params[:page])
     end
   end
 

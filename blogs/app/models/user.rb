@@ -8,9 +8,12 @@ end
 
 class User < ActiveRecord::Base
 
+  validates :username, presence: true
   validates :email, :presence => true, :uniqueness => true, :email_format => true
 
   has_secure_password
+  validates :password, presence: true, length: { minimum: 6 }
+
   before_create { generate_token(:auth_token) }
 
   def self.authenticate(email, password)

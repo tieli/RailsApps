@@ -228,7 +228,6 @@ gem_group :development, :test do
   gem 'capybara', '~> 2.7', '>= 2.7.1'
   gem 'poltergeist', '~> 1.10'
   gem 'launchy-rails'
-  gem 'factory_girl_rails', '~> 4.7'
   gem 'rack-mini-profiler'
 end
 
@@ -255,6 +254,7 @@ case prefs[:test]
 when 'rspec'
   gem_group :development, :test do
     gem "rspec-rails"
+    gem 'factory_girl_rails', '~> 4.7'
   end
   
   run "bundle install"
@@ -262,7 +262,7 @@ when 'rspec'
 
   #Add config.include Capybara::DSL in spec/rails_helper.rb
   inject_into_file 'spec/rails_helper.rb', after: "RSpec.configure do |config|\n" do <<-'RUBY'
-  config.filter_run focus: true
+  #config.filter_run focus: true
   config.include FactoryGirl::Syntax::Methods
   config.include Capybara::DSL
   RUBY
@@ -476,7 +476,7 @@ when 'blogs'
   generate "controller", "sessions new" 
   generate "controller", "password_resets new" 
 
-  generate "model", "message:text starts_at:datetime ends_at:datetime" 
+  generate "model", "announcement message:text starts_at:datetime ends_at:datetime" 
 
   user_auth_token_migration = ["add_auth_token_to_users", 
                           { "auth_token" => "string" } ]
@@ -493,6 +493,7 @@ when 'blogs'
   generate get_gen_str("mailer", user_mailer)
 
   generate "integration_test", "password_reset" 
+  generate "integration_test", "users_signup" 
 
   route "root to: 'articles\#index'"
 
@@ -526,10 +527,16 @@ when 'blogs'
                'app/controllers/comments_controller.rb',
                'app/controllers/sessions_controller.rb',
                'app/controllers/password_resets_controller.rb',
+               'app/controllers/announcements_controller.rb',
                'app/mailers/user_mailer.rb',
                'app/helpers/application_helper.rb',
+               'test/mailers/user_mailer_test.rb',
+               'test/models/user_test.rb',
+               'test/fixtures/articles.yml',
+               'test/fixtures/categories.yml',
                'spec/factories/users.rb',
                'spec/models/user_spec.rb',
+               'spec/models/announcement_spec.rb',
                'spec/requests/password_resets_spec.rb',
                'spec/requests/announcements_spec.rb' ]
 
