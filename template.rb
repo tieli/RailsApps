@@ -204,19 +204,12 @@ prefs[:apps4] = multiple_choice "Build a Rails Apps?",
     ["Build a Simple Store App", "simple_store"],
     ["Build a Rails Blog App", "blogs"],
     ["Build a Rails Store App", "store"],
-    ["Build a Rails Todo List(Ajax) ", "todos"],
+    ["Build a Rails Todo List(Ajax)", "todos"],
     ["Build a Movies Review App", "movie_review"],
     ["Custom application (experimental)", "none"],
     ["Quit", "quit"]]
 
 exit if prefs[:apps4] == "quit"
-
-prefs[:test] = multiple_choice "Testing Framework?",
-    [["Test::Unit", "test_unit"],
-    ["Rspec", "rspec"],
-    ["Minitest::Test", "minitest"]]
-
-uncomment_lines 'Gemfile', /bcrypt/
 
 gem_group :development, :test do
   gem "bullet"
@@ -252,7 +245,51 @@ gem 'commands'
 gem 'faker', '~> 1.6', '>= 1.6.6'
 gem 'html2haml', '~> 2.0'
 
+uncomment_lines 'Gemfile', /bcrypt/
+
 run "bundle install"
+
+########################
+#  Common Rails Tasks  #
+########################
+
+common_files = [ 'lib/tasks/haml.rake', 
+                 'lib/tasks/populate.rake',
+                 'lib/tasks/list.rake']
+
+common_files.each do |from_file|
+  copy_from_repo "shared", from_file, :repo => repo
+end
+
+###############################
+#  Select Frontend Framework  #
+###############################
+
+prefs[:frontend] = multiple_choice "Front End Framework?",
+    [["No Frontend Framework", "basic"],
+    ["Twitter Bootstrap", "bootstrap"],
+    ["Zurb Foundation", "foundation"]]
+
+case prefs[:frontend]
+when 'basic'
+  app_files = [ scaffolds_css_scss, app_helpers_layout, app_erb ]
+when 'bootstrap'
+when 'foundation'
+end
+
+app_name = "frontend/" + prefs[:frontend]
+app_files.each do |from_file|
+  copy_from_repo app_name, from_file, :repo => repo
+end
+
+##############################
+#  Select Testing Framework  #
+##############################
+
+prefs[:test] = multiple_choice "Testing Framework?",
+    [["Test::Unit", "test_unit"],
+    ["Rspec", "rspec"],
+    ["Minitest::Test", "minitest"]]
 
 case prefs[:test]
 
@@ -286,21 +323,14 @@ when 'minitest'
 
 end
 
-common_files = [ 'lib/tasks/haml.rake', 
-                 'lib/tasks/populate.rake',
-                 'lib/tasks/list.rake']
-
-common_files.each do |from_file|
-  copy_from_repo "apps", from_file, :repo => repo
-end
-
 app_files = []
 app_name = prefs[:apps4]
 
 case prefs[:apps4]
 when 'basic'
 
-  app_files = [ scaffolds_css_scss, app_helpers_layout, app_erb ]
+  #app_files = [ scaffolds_css_scss, app_helpers_layout, app_erb ]
+  app_files = []
 
   generate "controller", "welcome home"
   route "root to: 'welcome\#home'"
@@ -420,8 +450,8 @@ when "simple_store"
                              {"category_id" => "integer"} ]
   generate get_gen_str("migration", product_category_migration)
 
-  app_files = ['db/seeds.rb',
-               scaffolds_css_scss, app_erb,
+  app_files = [ scaffolds_css_scss, app_erb,
+               'db/seeds.rb',
                'app/views/products/index.html.erb',
                'app/views/products/_form.html.erb',
                'app/views/products/show.html.erb',
