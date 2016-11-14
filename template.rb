@@ -204,6 +204,7 @@ prefs[:apps4] = multiple_choice "Build a Rails Apps?",
     ["Build a Simple Store App", "simple_store"],
     ["Build a Rails Blog App", "blogs"],
     ["Build a Rails Store App", "store"],
+    ["Build a Rails Todo List(Ajax) ", "todos"],
     ["Build a Movies Review App", "movie_review"],
     ["Custom application (experimental)", "none"],
     ["Quit", "quit"]]
@@ -217,11 +218,11 @@ prefs[:test] = multiple_choice "Testing Framework?",
 
 uncomment_lines 'Gemfile', /bcrypt/
 
-gem_group :development do
+gem_group :development, :test do
   gem "bullet"
-  gem "meta_request"
   gem "better_errors", "~> 2.1", ">= 2.1.1"
   gem "binding_of_caller", "~> 0.7.2"
+  gem "meta_request"
 end
 
 gem_group :development, :test do
@@ -237,6 +238,8 @@ gem 'will_paginate', '~> 3.1.0'
 gem 'acts_as_votable', '~> 0.10.0'
 gem 'jquery-ui-rails', '~> 5.0', '>= 5.0.5'
 
+gem 'ruby-prof'
+gem 'rails-perftest', '~> 0.0.6'
 gem 'hirb', '~> 0.7.3'
 gem 'awesome_print', '~> 1.7'
 gem 'methodfinder', '~> 2.0'
@@ -244,6 +247,7 @@ gem 'fancy_irb', '~> 0.6.0'
 
 gem 'pry', '~> 0.10.4'
 gem 'pry-doc', '~> 0.9.0'
+gem 'commands'
 
 gem 'faker', '~> 1.6', '>= 1.6.6'
 gem 'html2haml', '~> 2.0'
@@ -251,6 +255,9 @@ gem 'html2haml', '~> 2.0'
 run "bundle install"
 
 case prefs[:test]
+
+when 'test_unit'
+
 when 'rspec'
   gem_group :development, :test do
     gem "rspec-rails"
@@ -271,13 +278,12 @@ when 'rspec'
 when 'minitest'
 
   gem_group :development, :test do
-    gem 'minitest-rails', '~> 3.0'
+    gem 'minitest-rails', '~> 2.2', '>= 2.2.1'
   end
 
   run "bundle install"
   generate "minitest:install"
 
-when 'test_unit'
 end
 
 common_files = [ 'lib/tasks/haml.rake', 
@@ -494,6 +500,7 @@ when 'blogs'
 
   generate "integration_test", "password_reset" 
   generate "integration_test", "users_signup" 
+  generate "integration_test", "users_login" 
 
   route "root to: 'articles\#index'"
 
@@ -516,6 +523,7 @@ when 'blogs'
                'app/views/comments/_form.html.erb',
                'app/views/sessions/new.html.erb',
                'app/views/users/new.html.erb',
+               'app/views/users/show.html.erb',
                'app/views/user_mailer/password_reset.text.erb',
                'app/views/password_resets/edit.html.erb',
                'app/views/password_resets/new.html.erb',
@@ -532,6 +540,8 @@ when 'blogs'
                'app/helpers/application_helper.rb',
                'test/mailers/user_mailer_test.rb',
                'test/models/user_test.rb',
+               'test/integration/users_signup_test.rb',
+               'test/integration/users_login_test.rb',
                'test/fixtures/articles.yml',
                'test/fixtures/categories.yml',
                'spec/factories/users.rb',

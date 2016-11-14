@@ -1,6 +1,9 @@
 class Article < ActiveRecord::Base
   belongs_to :category
 
+  scope :hidden, -> { where("hidden != ? ", true) }
+  scope :published, lambda { where("published_at <= ?", Time.zone.now) }
+
   after_commit :flush_cache
 
   # for pagination
