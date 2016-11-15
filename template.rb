@@ -266,18 +266,82 @@ end
 ###############################
 
 prefs[:frontend] = multiple_choice "Front End Framework?",
-    [["No Frontend Framework", "basic"],
+    [["Baisc", "basic"],
     ["Twitter Bootstrap", "bootstrap"],
-    ["Zurb Foundation", "foundation"]]
+    ["Zurb Foundation", "foundation"],
+    ["No Frontend Framework", "no_frontend"]]
+
+##########################
+#  Select Authencation   #
+##########################
+
+prefs[:auth] = multiple_choice "Authentication?",
+    [["No Authentication", "no_auth"],
+    ["Devise", "devise"],
+    ["Customized Authentication", "scratch"]]
+
+app_files = [ scaffolds_css_scss, app_helpers_layout, app_erb ]
 
 case prefs[:frontend]
 when 'basic'
-  app_files = [ scaffolds_css_scss, app_helpers_layout, app_erb ]
+  app_name = "frontend/" + prefs[:frontend]
 when 'bootstrap'
 when 'foundation'
 end
 
-app_name = "frontend/" + prefs[:frontend]
+app_files.each do |from_file|
+  copy_from_repo app_name, from_file, :repo => repo
+end
+
+case prefs[:auth]
+when 'no_auth'
+  app_name = "frontend/" + prefs[:frontend]
+when 'devise'
+when 'scratch'
+  generate "resource", "user username email password_digest" 
+  generate "controller", "sessions new" 
+  generate "controller", "password_resets new" 
+
+  user_auth_token_migration = ["add_auth_token_to_users", 
+                          { "auth_token" => "string" } ]
+  generate get_gen_str("migration", user_auth_token_migration)
+
+  password_reset_migration = ["add_password_reset_token_to_users", 
+                          {"password_reset_token" => "string" ,
+                           "password_reset_sent_at" => "datetime" } ]
+  generate get_gen_str("migration", password_reset_migration)
+
+  user_mailer = ["user_mailer",
+                {"password_reset" => "string" }]
+
+  generate get_gen_str("mailer", user_mailer)
+
+  generate "integration_test", "password_reset" 
+  generate "integration_test", "users_signup" 
+  generate "integration_test", "users_login" 
+
+  app_files = ['app/models/user.rb',
+               'app/views/users/new.html.erb',
+               'app/views/users/show.html.erb',
+               'app/views/sessions/new.html.erb',
+               'app/views/user_mailer/password_reset.text.erb',
+               'app/views/password_resets/edit.html.erb',
+               'app/views/password_resets/new.html.erb',
+               'app/controllers/users_controller.rb',
+               'app/controllers/sessions_controller.rb',
+               'app/controllers/password_resets_controller.rb',
+               'app/mailers/user_mailer.rb',
+               'app/helpers/application_helper.rb',
+               'test/mailers/user_mailer_test.rb',
+               'test/models/user_test.rb',
+               'test/integration/users_signup_test.rb',
+               'test/integration/users_login_test.rb',
+               'spec/factories/users.rb',
+               'spec/models/user_spec.rb',
+               'spec/requests/password_resets_spec.rb']
+  app_name = "authentication/scratch"
+end
+
 app_files.each do |from_file|
   copy_from_repo app_name, from_file, :repo => repo
 end
@@ -508,29 +572,7 @@ when 'blogs'
 
   generate "controller", "comments" 
 
-  generate "resource", "user username email password_digest" 
-  generate "controller", "sessions new" 
-  generate "controller", "password_resets new" 
-
   generate "model", "announcement message:text starts_at:datetime ends_at:datetime" 
-
-  user_auth_token_migration = ["add_auth_token_to_users", 
-                          { "auth_token" => "string" } ]
-  generate get_gen_str("migration", user_auth_token_migration)
-
-  password_reset_migration = ["add_password_reset_token_to_users", 
-                          {"password_reset_token" => "string" ,
-                           "password_reset_sent_at" => "datetime" } ]
-  generate get_gen_str("migration", password_reset_migration)
-
-  user_mailer = ["user_mailer",
-                {"password_reset" => "string" }]
-
-  generate get_gen_str("mailer", user_mailer)
-
-  generate "integration_test", "password_reset" 
-  generate "integration_test", "users_signup" 
-  generate "integration_test", "users_login" 
 
   route "root to: 'articles\#index'"
 
@@ -542,7 +584,6 @@ when 'blogs'
                'app/models/announcement.rb',
                'app/models/article.rb',
                'app/models/comment.rb',
-               'app/models/user.rb',
                'app/models/tag.rb',
                'app/views/articles/new.html.erb',
                'app/views/articles/index.html.erb',
@@ -551,33 +592,15 @@ when 'blogs'
                'app/views/comments/_comment.html.erb',
                'app/views/comments/edit.html.erb',
                'app/views/comments/_form.html.erb',
-               'app/views/sessions/new.html.erb',
-               'app/views/users/new.html.erb',
-               'app/views/users/show.html.erb',
-               'app/views/user_mailer/password_reset.text.erb',
-               'app/views/password_resets/edit.html.erb',
-               'app/views/password_resets/new.html.erb',
                'app/views/layouts/application.html.erb',
                'app/views/layouts/mailer.text.erb',
                'app/controllers/application_controller.rb',
-               'app/controllers/users_controller.rb',
                'app/controllers/articles_controller.rb',
                'app/controllers/comments_controller.rb',
-               'app/controllers/sessions_controller.rb',
-               'app/controllers/password_resets_controller.rb',
                'app/controllers/announcements_controller.rb',
-               'app/mailers/user_mailer.rb',
-               'app/helpers/application_helper.rb',
-               'test/mailers/user_mailer_test.rb',
-               'test/models/user_test.rb',
-               'test/integration/users_signup_test.rb',
-               'test/integration/users_login_test.rb',
                'test/fixtures/articles.yml',
                'test/fixtures/categories.yml',
-               'spec/factories/users.rb',
-               'spec/models/user_spec.rb',
                'spec/models/announcement_spec.rb',
-               'spec/requests/password_resets_spec.rb',
                'spec/requests/announcements_spec.rb' ]
 
   [config_dev, config_test].each do |item|
