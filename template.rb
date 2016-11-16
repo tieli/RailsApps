@@ -7,7 +7,9 @@ app_css_scss       = 'app/assets/stylesheets/application.css.scss'
 forms_css_scss     = 'app/assets/stylesheets/forms.css.scss'
 
 app_erb            = 'app/views/layouts/application.html.erb'
+app_html_erb       = 'app/views/layouts/application.html.erb'
 app_haml           = 'app/views/layouts/application.html.haml'
+app_html_haml      = 'app/views/layouts/application.html.haml'
 
 app_helpers_layout = 'app/helpers/layout_helper.rb'
 
@@ -280,11 +282,62 @@ prefs[:auth] = multiple_choice "Authentication?",
     ["Basic Authentication", "basic"],
     ["Devise", "devise"]]
 
-app_files = [ scaffolds_css_scss, app_helpers_layout, app_erb ]
+##############################
+#  Select Testing Framework  #
+##############################
+
+prefs[:test] = multiple_choice "Testing Framework?",
+    [["Test::Unit", "test_unit"],
+    ["Rspec", "rspec"],
+    ["Minitest::Test", "minitest"]]
+
+case prefs[:test]
+
+when 'test_unit'
+
+when 'rspec'
+  gem_group :development, :test do
+    gem "rspec-rails"
+    gem 'factory_girl_rails', '~> 4.7'
+  end
+  
+  run "bundle install"
+  generate "rspec:install"
+
+  #Add config.include Capybara::DSL in spec/rails_helper.rb
+  inject_into_file 'spec/rails_helper.rb', after: "RSpec.configure do |config|\n" do <<-'RUBY'
+  #config.filter_run focus: true
+  config.include FactoryGirl::Syntax::Methods
+  config.include Capybara::DSL
+  RUBY
+  end
+
+when 'minitest'
+
+  gem_group :development, :test do
+    gem 'minitest-rails', '~> 2.2', '>= 2.2.1'
+  end
+
+  run "bundle install"
+  generate "minitest:install"
+
+end
+
+###################################
+#  Layout and Stylesheet files    #
+###################################
+
+app_files = [ scaffolds_css_scss, app_helpers_layout, app_html_erb ]
 
 case prefs[:frontend]
 when 'basic'
-  app_name = "frontend/" + prefs[:frontend]
+  if prefs[:auth] == 'no_auth'
+    app_name = "frontend/no_auth"
+  elsif prefs[:auth] == 'basic'
+    app_name = "frontend/basic_auth"
+  elsif prefs[:auth] == 'devise'
+    app_name = "frontend/devise"
+  end
 when 'bootstrap'
 when 'foundation'
 end
@@ -347,46 +400,6 @@ app_files.each do |from_file|
   copy_from_repo app_name, from_file, :repo => repo
 end
 
-##############################
-#  Select Testing Framework  #
-##############################
-
-prefs[:test] = multiple_choice "Testing Framework?",
-    [["Test::Unit", "test_unit"],
-    ["Rspec", "rspec"],
-    ["Minitest::Test", "minitest"]]
-
-case prefs[:test]
-
-when 'test_unit'
-
-when 'rspec'
-  gem_group :development, :test do
-    gem "rspec-rails"
-    gem 'factory_girl_rails', '~> 4.7'
-  end
-  
-  run "bundle install"
-  generate "rspec:install"
-
-  #Add config.include Capybara::DSL in spec/rails_helper.rb
-  inject_into_file 'spec/rails_helper.rb', after: "RSpec.configure do |config|\n" do <<-'RUBY'
-  #config.filter_run focus: true
-  config.include FactoryGirl::Syntax::Methods
-  config.include Capybara::DSL
-  RUBY
-  end
-
-when 'minitest'
-
-  gem_group :development, :test do
-    gem 'minitest-rails', '~> 2.2', '>= 2.2.1'
-  end
-
-  run "bundle install"
-  generate "minitest:install"
-
-end
 
 app_files = []
 app_name = prefs[:apps4]
