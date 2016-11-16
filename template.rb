@@ -25,6 +25,7 @@ devise_ses_new  = "app/views/devise/sessions/new.html.erb"
 
 config_dev         = 'config/environments/development.rb'
 config_test        = 'config/environments/test.rb'
+config_routes      = 'config/routes.rb'
 
 av = 'app/views/'
 am = 'app/models/'
@@ -37,9 +38,10 @@ aa = 'app/assets/'
 @diagnostics_prefs = []
 diagnostics = {}
 
-# --------------------------- 
-# templates/helpers.erb 
-# ---------------------------
+##########################
+#  templates/hepers.erb  #
+##########################
+
 def recipes 
   @recipes 
 end
@@ -200,8 +202,6 @@ end
 
 prefs[:apps4] = multiple_choice "Build a Rails Apps?",
     [["Build a Basic Rails App", "basic"],
-    ["Build a Rails App with Bootstrap", "basic_bootstrap"],
-    ["Build a Rails App with Zerb Foundation", "basic_foundation"],
     ["Build a Simple Blog App", "simple_blogs"],
     ["Build a Simple Store App", "simple_store"],
     ["Build a Rails Blog App", "blogs"],
@@ -337,7 +337,35 @@ when 'basic'
     app_name = "frontend/basic_auth"
   end
 when 'bootstrap'
+  abort("Auth method is required") if prefs[:auth] == 'no_auth'
+    app_name = "frontend/bootstrap"
+
+  gem 'simple_form', '~> 3.2', '>= 3.2.1'
+  gem 'bootstrap-sass', '~> 3.3', '>= 3.3.7'
+
+  run "bundle install"
+
+  generate "simple_form:install --bootstrap"
+
+  append_to_file app_js do <<-'RUBY'
+  //= require jquery-ui
+  //= require bootstrap-sprockets
+  RUBY
+  end
+
+  app_files = [ app_haml, app_css_scss ]
+
+  generate "controller", "welcome index" 
+  route "root to: 'welcome\#index'"
+
+  remove_file app_css
 when 'foundation'
+  abort("Auth method is required") if prefs[:auth] == 'no_auth'
+    app_name = "frontend/foundation"
+
+  gem 'zurb-foundation'
+  generate "foundation:install --force"
+
 end
 
 app_files.each do |from_file|
@@ -346,28 +374,25 @@ end
 
 case prefs[:auth]
 when 'no_auth'
-  app_files = []
-  app_name = "auth/no_auth"
 when 'devise'
   gem 'devise', '~> 4.2'
   generate "devise:install"
   generate "devise:views"
   generate "devise User"
 
-  inject_into_file config_dev, after: "Rails.application.configure do\n" do <<-'RUBY'
-  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
-  RUBY
-  end
-
-  inject_into_file config_test, after: "Rails.application.configure do\n" do <<-'RUBY'
-  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
-  RUBY
+  [config_dev, config_test].each do 
+    inject_into_file config_dev, after: "Rails.application.configure do\n" do <<-'RUBY'
+    config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+    RUBY
+    end
   end
 
   inject_into_file config_routes, after: "devise_for :users\n" do <<-'RUBY'
-  get '/sign_in', to: 'devise/sessions#new', as: 'login'
-  get '/sign_up', to: 'devise/registrations#new', as: 'signup'
-  delete '/sign_out', to: 'devise/sessions#destroy', as: 'logout'
+  devise_scope :user do
+    get '/sign_in', to: 'devise/sessions#new', as: 'login'
+    get '/sign_up', to: 'devise/registrations#new', as: 'signup'
+    delete '/sign_out', to: 'devise/sessions#destroy', as: 'logout'
+  end
   RUBY
   end
 
@@ -398,11 +423,12 @@ when 'basic'
   get 'login', to: 'sessions#new', as: 'login'
   get 'signup', to: 'users#new', as: 'signup'
   delete 'logout', to: 'sessions#destroy', as: 'logout'
+  resources :sessions
+  resources :password_resets
   RUBY
   end
 
-  app_files = [#'config/routes.rb',
-               'app/models/user.rb',
+  app_files = ['app/models/user.rb',
                'app/views/users/new.html.erb',
                'app/views/users/show.html.erb',
                'app/views/sessions/new.html.erb',
@@ -442,28 +468,6 @@ when 'basic'
   generate "controller", "welcome home"
   route "root to: 'welcome\#home'"
 
-when 'basic_bootstrap'
-
-  gem 'simple_form', '~> 3.2', '>= 3.2.1'
-  gem 'bootstrap-sass', '~> 3.3', '>= 3.3.7'
-
-  run "bundle install"
-
-  generate "simple_form:install --bootstrap"
-
-  append_to_file app_js do <<-'RUBY'
-  //= require jquery-ui
-  //= require bootstrap-sprockets
-  RUBY
-  end
-
-  app_files = [ app_haml, app_css_scss ]
-
-  generate "controller", "welcome index" 
-  route "root to: 'welcome\#index'"
-
-  remove_file app_css
-
 when 'basic_foundation'
 
   model = ["Product", { "name" => "string",
@@ -473,9 +477,6 @@ when 'basic_foundation'
   generate get_gen_str("scaffold", model) + " --skip-stylesheets"
 
   route "root to: 'products\#index'"
-
-  gem 'zurb-foundation'
-  generate "foundation:install --force"
 
 when 'simple_blogs'
 
