@@ -381,6 +381,7 @@ when 'basic'
                'app/views/user_mailer/password_reset.text.erb',
                'app/views/password_resets/edit.html.erb',
                'app/views/password_resets/new.html.erb',
+               'app/controllers/application_controller.rb',
                'app/controllers/users_controller.rb',
                'app/controllers/sessions_controller.rb',
                'app/controllers/password_resets_controller.rb',
