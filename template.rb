@@ -333,10 +333,8 @@ case prefs[:frontend]
 when 'basic'
   if prefs[:auth] == 'no_auth'
     app_name = "frontend/no_auth"
-  elsif prefs[:auth] == 'basic'
+  elsif prefs[:auth] == 'basic' or prefs[:auth] == 'devise'
     app_name = "frontend/basic_auth"
-  elsif prefs[:auth] == 'devise'
-    app_name = "frontend/devise"
   end
 when 'bootstrap'
 when 'foundation'
@@ -351,6 +349,28 @@ when 'no_auth'
   app_files = []
   app_name = "auth/no_auth"
 when 'devise'
+  gem 'devise', '~> 4.2'
+  generate "devise:install"
+  generate "devise:views"
+  generate "devise User"
+
+  inject_into_file config_dev, after: "Rails.application.configure do\n" do <<-'RUBY'
+  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+  RUBY
+  end
+
+  inject_into_file config_test, after: "Rails.application.configure do\n" do <<-'RUBY'
+  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+  RUBY
+  end
+
+  inject_into_file config_routes, after: "devise_for :users\n" do <<-'RUBY'
+  get '/sign_in', to: 'devise/sessions#new', as: 'login'
+  get '/sign_up', to: 'devise/registrations#new', as: 'signup'
+  delete '/sign_out', to: 'devise/sessions#destroy', as: 'logout'
+  RUBY
+  end
+
 when 'basic'
   generate "resource", "user username email password_digest" 
   generate "controller", "sessions new" 
@@ -374,7 +394,14 @@ when 'basic'
   generate "integration_test", "users_signup" 
   generate "integration_test", "users_login" 
 
-  app_files = ['config/routes.rb',
+  inject_into_file config_routes, after: "routes.draw do\n" do <<-'RUBY'
+  get 'login', to: 'sessions#new', as: 'login'
+  get 'signup', to: 'users#new', as: 'signup'
+  delete 'logout', to: 'sessions#destroy', as: 'logout'
+  RUBY
+  end
+
+  app_files = [#'config/routes.rb',
                'app/models/user.rb',
                'app/views/users/new.html.erb',
                'app/views/users/show.html.erb',
@@ -704,13 +731,14 @@ when 'movie_review'
 
   generate "controller", "directors" 
 
-  gem 'devise', '~> 4.2'
   gem 'bootstrap-sass', '~> 3.3', '>= 3.3.6'
   gem 'jquery-ui-rails', '~> 5.0', '>= 5.0.5'
 
+  gem 'devise', '~> 4.2'
   generate "devise:install"
   generate "devise:views"
   generate "devise User"
+
   generate "paperclip movie image"
 
   movie_user_migration = ["add_user_id_to_movies", 
