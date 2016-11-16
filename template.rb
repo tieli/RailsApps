@@ -277,8 +277,8 @@ prefs[:frontend] = multiple_choice "Front End Framework?",
 
 prefs[:auth] = multiple_choice "Authentication?",
     [["No Authentication", "no_auth"],
-    ["Devise", "devise"],
-    ["Customized Authentication", "scratch"]]
+    ["Basic Authentication", "basic"],
+    ["Devise", "devise"]]
 
 app_files = [ scaffolds_css_scss, app_helpers_layout, app_erb ]
 
@@ -295,9 +295,10 @@ end
 
 case prefs[:auth]
 when 'no_auth'
-  app_name = "frontend/" + prefs[:frontend]
+  app_files = []
+  app_name = "auth/no_auth"
 when 'devise'
-when 'scratch'
+when 'basic'
   generate "resource", "user username email password_digest" 
   generate "controller", "sessions new" 
   generate "controller", "password_resets new" 
@@ -339,7 +340,7 @@ when 'scratch'
                'spec/factories/users.rb',
                'spec/models/user_spec.rb',
                'spec/requests/password_resets_spec.rb']
-  app_name = "authentication/scratch"
+  app_name = "auth/basic"
 end
 
 app_files.each do |from_file|
@@ -445,20 +446,6 @@ when 'simple_blogs'
   generate "resource", "user email password_digest" 
   generate "controller", "sessions new" 
 
-  app_files = [ scaffolds_css_scss, app_erb,
-                forms_css_scss,
-                "config/routes.rb",
-                "app/views/users/new.html.erb",
-                "app/views/sessions/new.html.erb",
-                "app/views/articles/index.html.erb",
-                "app/models/user.rb",
-                "app/models/article.rb",
-                "app/controllers/application_controller.rb",
-                "app/controllers/articles_controller.rb",
-                "app/controllers/sessions_controller.rb",
-                "app/controllers/users_controller.rb"
-              ]
-
   article_user_migration = ["add_user_id_to_articles", 
                            {"user_id" => "integer"} ]
   generate get_gen_str("migration", article_user_migration)
@@ -472,6 +459,20 @@ when 'simple_blogs'
   has_many :articles
   RUBY
   end
+
+  app_files = [ scaffolds_css_scss, app_erb,
+                forms_css_scss,
+                "config/routes.rb",
+                "app/views/users/new.html.erb",
+                "app/views/sessions/new.html.erb",
+                "app/views/articles/index.html.erb",
+                "app/models/user.rb",
+                "app/models/article.rb",
+                "app/controllers/application_controller.rb",
+                "app/controllers/articles_controller.rb",
+                "app/controllers/sessions_controller.rb",
+                "app/controllers/users_controller.rb"
+              ]
 
   gem 'simple_form', '~> 3.2', '>= 3.2.1'
   generate "simple_form:install"
