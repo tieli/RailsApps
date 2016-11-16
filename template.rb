@@ -374,7 +374,8 @@ when 'basic'
   generate "integration_test", "users_signup" 
   generate "integration_test", "users_login" 
 
-  app_files = ['app/models/user.rb',
+  app_files = ['config/routes.rb',
+               'app/models/user.rb',
                'app/views/users/new.html.erb',
                'app/views/users/show.html.erb',
                'app/views/sessions/new.html.erb',
