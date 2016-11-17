@@ -18,16 +18,16 @@
             <%= link_to "Account", "#" %>
           </li>
           <li>
-            <%= link_to "Sign Out", "#", :method => :delete %>
+            <%= link_to "Sign Out", "logout_path", :method => :delete %>
           </li>
         </ul>
       <% else %>
         <ul class="nav navbar-nav navbar-right">
           <li>
-            <%= link_to "Sign Up", "#" %>
+            <%= link_to "Sign Up", "signup_path" %>
           </li>
           <li>
-            <%= link_to "Sign In", "#" %>
+            <%= link_to "Sign In", "login_path" %>
           </li>
         </ul>
       <% end %>

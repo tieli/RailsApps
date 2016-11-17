@@ -208,7 +208,7 @@ prefs[:apps4] = multiple_choice "Build a Rails Apps?",
     ["Build a Rails Store App", "store"],
     ["Build a Rails Todo List(Ajax)", "todos"],
     ["Build a Movies Review App", "movie_review"],
-    ["Custom application (experimental)", "none"],
+    ["Custom Application (experimental)", "none"],
     ["Quit", "quit"]]
 
 exit if prefs[:apps4] == "quit"
@@ -353,12 +353,10 @@ when 'bootstrap'
   RUBY
   end
 
-  app_files = [ app_haml, app_css_scss ]
-
-  generate "controller", "welcome index" 
-  route "root to: 'welcome\#index'"
+  app_files = [ app_html_erb, app_css_scss ]
 
   remove_file app_css
+
 when 'foundation'
   abort("Auth method is required") if prefs[:auth] == 'no_auth'
     app_name = "frontend/foundation"
@@ -427,6 +425,9 @@ when 'basic'
   resources :password_resets
   RUBY
   end
+
+  comment_lines config_routes, /password_resets\/new/
+  comment_lines config_routes, /sessionss\/new/
 
   app_files = ['app/models/user.rb',
                'app/views/users/new.html.erb',
