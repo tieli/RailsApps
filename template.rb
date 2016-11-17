@@ -32,6 +32,9 @@ am = 'app/models/'
 ac = 'app/controllers/'
 aa = 'app/assets/'
 
+user_rb    = 'app/models/user.rb'
+article_rb = 'app/models/article.rb'
+
 @prefs = {}
 @gems = []
 
@@ -255,7 +258,8 @@ run "bundle install"
 #  Common Rails Tasks  #
 ########################
 
-common_files = [ 'lib/tasks/haml.rake', 
+common_files = [ 'lib/tasks/setup.thor',
+                 'lib/tasks/haml.rake', 
                  'lib/tasks/populate.rake',
                  'lib/tasks/list.rake']
 
@@ -469,16 +473,6 @@ when 'basic'
   generate "controller", "welcome home"
   route "root to: 'welcome\#home'"
 
-when 'basic_foundation'
-
-  model = ["Product", { "name" => "string",
-                                "price" => "decimal",
-                                "released_on" => "date" }]
-
-  generate get_gen_str("scaffold", model) + " --skip-stylesheets"
-
-  route "root to: 'products\#index'"
-
 when 'simple_blogs'
 
   article_model = ["Article", {"title" => "string",
@@ -490,26 +484,30 @@ when 'simple_blogs'
   generate "resource", "user email password_digest" 
   generate "controller", "sessions new" 
 
-  article_user_migration = ["add_user_id_to_articles", 
-                           {"user_id" => "integer"} ]
-  generate get_gen_str("migration", article_user_migration)
+  if prefs[:auth] != "no_auth"
+    article_user_migration = ["add_user_id_to_articles", 
+                             {"user_id" => "integer"} ]
+    generate get_gen_str("migration", article_user_migration)
 
-  inject_into_file 'app/models/article.rb', before: "end" do <<-'RUBY'
-  belongs_to :user
-  RUBY
+    inject_into_file article_rb, before: "end" do <<-'RUBY'
+    belongs_to :user
+    RUBY
+    end
+
+    inject_into_file user_rb, before: "end" do <<-'RUBY'
+    has_many :articles
+    RUBY
+    end
   end
 
-  inject_into_file 'app/models/user.rb', before: "end" do <<-'RUBY'
-  has_many :articles
-  RUBY
-  end
-
-  app_files = [ scaffolds_css_scss, app_erb,
+  app_files = [ scaffolds_css_scss, app_html_erb,
                 forms_css_scss,
                 "config/routes.rb",
                 "app/views/users/new.html.erb",
                 "app/views/sessions/new.html.erb",
                 "app/views/articles/index.html.erb",
+                user_rb,
+                article_rb,
                 "app/models/user.rb",
                 "app/models/article.rb",
                 "app/controllers/application_controller.rb",
@@ -559,7 +557,7 @@ when "simple_store"
                              {"category_id" => "integer"} ]
   generate get_gen_str("migration", product_category_migration)
 
-  app_files = [ scaffolds_css_scss, app_erb,
+  app_files = [ #scaffolds_css_scss, app_html_erb,
                'db/seeds.rb',
                'app/views/products/index.html.erb',
                'app/views/products/_form.html.erb',
@@ -686,7 +684,7 @@ when 'store'
 
   app_files = ['db/seeds.rb',
                'config/routes.rb',
-               app_scss, app_erb, scaffolds_scss,
+               #app_scss, app_html_erb, scaffolds_scss,
                'app/assets/images/up_arrow.gif',
                'app/assets/images/down_arrow.gif',
                'app/models/product.rb',
@@ -743,8 +741,10 @@ when 'movie_review'
 
   generate "paperclip movie image"
 
-  movie_user_migration = ["add_user_id_to_movies", 
-                          { "user_id" => "integer" } ]
+  if prefs[:auth] != "no_auth"
+    movie_user_migration = ["add_user_id_to_movies", 
+                            { "user_id" => "integer" } ]
+  end
 
   generate get_gen_str("migration", movie_user_migration)
 
