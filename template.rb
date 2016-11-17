@@ -427,7 +427,7 @@ when 'basic'
   end
 
   comment_lines config_routes, /password_resets\/new/
-  comment_lines config_routes, /sessionss\/new/
+  comment_lines config_routes, /sessions\/new/
 
   app_files = ['app/models/user.rb',
                'app/views/users/new.html.erb',

@@ -12,22 +12,22 @@
       <div class="navbar-brand">
         <%= link_to "Apps", root_path %>
       </div>
-      <% if false %>
+      <% if current_user %>
         <ul class="nav navbar-nav navbar-right">
           <li>
             <%= link_to "Account", "#" %>
           </li>
           <li>
-            <%= link_to "Sign Out", "logout_path", :method => :delete %>
+            <%= link_to "Sign Out", logout_path, :method => :delete %>
           </li>
         </ul>
       <% else %>
         <ul class="nav navbar-nav navbar-right">
           <li>
-            <%= link_to "Sign Up", "signup_path" %>
+            <%= link_to "Sign Up", signup_path %>
           </li>
           <li>
-            <%= link_to "Sign In", "login_path" %>
+            <%= link_to "Sign In", login_path %>
           </li>
         </ul>
       <% end %>
