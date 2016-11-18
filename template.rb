@@ -259,6 +259,7 @@ run "bundle install"
 ########################
 
 common_files = [ 'lib/tasks/setup.thor',
+                 'lib/tasks/file.thor',
                  'lib/tasks/haml.rake', 
                  'lib/tasks/populate.rake',
                  'lib/tasks/list.rake']
