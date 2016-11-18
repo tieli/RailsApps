@@ -16,7 +16,7 @@ class Setup < Thor
   end
 
   desc "populate", "generate records"
-  method_options :count => 10
+  method_options :count => :numeric
   def populate
     require File.expand_path("config/environment.rb)"
     options[:count].times do |num|

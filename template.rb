@@ -481,8 +481,8 @@ when 'simple_blogs'
                                "published_at" => "datetime"}]
   generate get_gen_str("scaffold", article_model)
 
-  generate "resource", "user email password_digest" 
-  generate "controller", "sessions new" 
+#  generate "resource", "user email password_digest" 
+#  generate "controller", "sessions new" 
 
   if prefs[:auth] != "no_auth"
     article_user_migration = ["add_user_id_to_articles", 
@@ -494,26 +494,26 @@ when 'simple_blogs'
     RUBY
     end
 
-    inject_into_file user_rb, before: "end" do <<-'RUBY'
+    inject_into_file user_rb, after: "User < ActiveRecord::Base\n" do <<-'RUBY'
     has_many :articles
     RUBY
     end
   end
 
-  app_files = [ scaffolds_css_scss, app_html_erb,
+  app_files = [ #scaffolds_css_scss, app_html_erb,
                 forms_css_scss,
-                "config/routes.rb",
-                "app/views/users/new.html.erb",
-                "app/views/sessions/new.html.erb",
+                #"config/routes.rb",
+                #"app/views/users/new.html.erb",
+                #"app/views/sessions/new.html.erb",
                 "app/views/articles/index.html.erb",
-                user_rb,
+                #user_rb,
                 article_rb,
-                "app/models/user.rb",
+                #"app/models/user.rb",
                 "app/models/article.rb",
-                "app/controllers/application_controller.rb",
+                #"app/controllers/application_controller.rb",
                 "app/controllers/articles_controller.rb",
-                "app/controllers/sessions_controller.rb",
-                "app/controllers/users_controller.rb"
+                #"app/controllers/sessions_controller.rb",
+                #"app/controllers/users_controller.rb"
               ]
 
   gem 'simple_form', '~> 3.2', '>= 3.2.1'
