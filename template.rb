@@ -259,7 +259,6 @@ run "bundle install"
 ########################
 
 common_files = [ 'lib/tasks/setup.thor',
-                 'lib/tasks/file.thor',
                  'lib/tasks/haml.rake', 
                  'lib/tasks/populate.rake',
                  'lib/tasks/list.rake']
@@ -285,6 +284,7 @@ prefs[:frontend] = multiple_choice "Front End Framework?",
 prefs[:auth] = multiple_choice "Authentication?",
     [["No Authentication", "no_auth"],
     ["Basic Authentication", "basic"],
+    ["Omni Authentication", "omniauth"],
     ["Devise", "devise"]]
 
 ##############################
@@ -377,6 +377,9 @@ end
 
 case prefs[:auth]
 when 'no_auth'
+when 'omniauth'
+  gem 'omniauth-twitter', '~> 1.2', '>= 1.2.1'
+
 when 'devise'
   gem 'devise', '~> 4.2'
   generate "devise:install"

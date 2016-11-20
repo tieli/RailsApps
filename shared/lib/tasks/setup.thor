@@ -1,3 +1,5 @@
+require "find"
+
 class Setup < Thor
 
   desc "config", "Copy configuration files"
@@ -27,16 +29,15 @@ class Setup < Thor
   end
 
   desc "list", "List all files modified recently"
-  method_options :force => :boolean, :default => true
-  method_options :dest => :string
   def list()
     t0 = File.mtime("Rakefile")
     puts "List recent modified files"
-    ['app', 'test', 'lib'].each do |directory|
-      Dir.foreach(directory) { |source|
-        t = File.mtime(source)
-        if (t.min - t0.min > 5)
-          puts source
+    ['app', 'test', 'lib'].each do |dir|
+      Find.find(dir) { |src|
+        t = File.mtime(src)
+        #puts src + t.to_s + t0.to_s
+        if (t.to_i - t0.to_i > 5 * 60)
+          puts src
         end
       }
     end
@@ -44,20 +45,22 @@ class Setup < Thor
 
   desc "copy", "Copy all files modified recently"
   method_options :force => :boolean, :default => true
+  method_options :dest => :string
   def copy()
     t0 = File.mtime("Rakefile")
     puts "List recent modified files"
-    ['app', 'test', 'lib'].each do |directory|
-      Dir.foreach(directory) { |source|
-        t = File.mtime(source)
-        if (t.min - t0.min > 5)
-          destination = "options[:dest]/#{source}"
-          FileUtils.rm(destination) if options[:force] && File.exist?(destination)
-          if File.exist?(destination)
-            puts "Skipping #{destination} because it already exists"
+    ['app', 'test', 'lib'].each do |dir|
+      Find.find(dir) { |src|
+        t = File.mtime(src)
+        if (t.to_i - t0.to_i > 5 * 60 )
+          dst = "#{options[:dest]}/#{src}"
+          FileUtils.rm(dst) if options[:force] && File.exist?(dst)
+          if File.exist?(dst)
+            puts "Skipping #{dst} because it already exists"
           else
-            puts "Copying #{destination}"
-            FileUtils.cp_r(source, destination)
+            puts "Copying #{dst}"
+            #FileUtils.cp_r(src, options[:dest])
+            FileUtils.cp(src, dst)
           end
         end
       }
