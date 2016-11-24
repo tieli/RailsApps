@@ -442,6 +442,7 @@ when 'basic'
 when 'authlogic'
 
   gem 'authlogic', '~> 3.4', '>= 3.4.6'
+  run "bundle install"
 
   user_model = ["User", { "email" => "string",
                           "crypted_password" => "string",
@@ -456,6 +457,8 @@ when 'authlogic'
 
 when 'devise'
   gem 'devise', '~> 4.2'
+  run "bundle install"
+
   generate "devise:install"
   generate "devise:views"
   generate "devise User"
