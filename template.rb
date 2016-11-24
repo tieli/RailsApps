@@ -446,7 +446,8 @@ when 'authlogic'
 
   user_model = ["User", { "email" => "string",
                           "crypted_password" => "string",
-                          "password_salt" => "string" }]
+                          "password_salt" => "string",
+                          "persistence_token" => "string" }]
   generate get_gen_str("scaffold", user_model)
 
   inject_into_file user_rb, after: "class User < ActiveRecord::Base\n" do <<-'RUBY'
