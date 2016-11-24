@@ -1,6 +1,4 @@
 Rails.application.routes.draw do
-  root to: 'articles#index'
-  resources :articles
   resources :users
 
   #resources :users, only: [:new, :create]
