@@ -18,7 +18,7 @@
 	<div id="container">
 		<div id="user_header">
 				<%-# link_to "New Article", new_article_path %>
-			<% if false %>
+			<% if current_user %>
 					Logged in as <%= current_user.email %>.
 				<%= link_to "Log Out", sign_out_path, method: "delete" %>
 			<% else %>
