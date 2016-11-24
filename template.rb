@@ -482,6 +482,25 @@ when 'sorcery'
   options = { "migration" => "false" }
   generate get_gen_str("scaffold", user_model, options)
 
+  inject_into_file user_rb, after: "class User < ActiveRecord::Base\n" do <<-'RUBY'
+  authenticates_with_sorcery!
+
+  validates :password, length: { minimum: 3 }, if: -> { new_record? || changes[:crypted_password] }
+  validates :password, confirmation: true, if: -> { new_record? || changes[:crypted_password] }
+  validates :password_confirmation, presence: true, if: -> { new_record? || changes[:crypted_password] }
+
+  validates :email, uniqueness: true
+  RUBY
+  end
+
+  app_files = ['app/views/users/_form.html.erb',
+               'app/views/user_sessions/new.html.erb',
+               'app/views/user_sessions/_form.html.erb',
+               config_routes,
+               'app/controllers/user_sessions_controller.rb',
+               'app/controllers/users_controller.rb']
+  app_name = "auth/sorcery"
+
 when 'devise'
   gem 'devise', '~> 4.2'
   run "bundle install"

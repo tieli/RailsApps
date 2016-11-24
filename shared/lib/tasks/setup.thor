@@ -32,7 +32,7 @@ class Setup < Thor
   def list()
     t0 = File.mtime("Rakefile")
     puts "List recent modified files"
-    ['app', 'test', 'lib'].each do |dir|
+    ['app', 'test', 'lib', 'config'].each do |dir|
       Find.find(dir) { |src|
         t = File.mtime(src)
         #puts src + t.to_s + t0.to_s
@@ -49,7 +49,7 @@ class Setup < Thor
   def copy()
     t0 = File.mtime("Rakefile")
     puts "List recent modified files"
-    ['app', 'test', 'lib'].each do |dir|
+    ['app', 'test', 'lib', 'config'].each do |dir|
       Find.find(dir) { |src|
         t = File.mtime(src)
         if (t.to_i - t0.to_i > 5 * 60 )
