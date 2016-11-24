@@ -288,6 +288,7 @@ prefs[:auth] = multiple_choice "Authentication?",
     ["Basic Authentication", "basic"],
     ["Authlogic", "authlogic"],
     ["Sorcery", "sorcery"],
+    ["Warden", "warden"],
     ["Omni Authentication", "omniauth"],
     ["Devise", "devise"]]
 
@@ -346,6 +347,8 @@ when 'basic'
     app_name = "frontend/authlogic"
   elsif prefs[:auth] == 'sorcery'
     app_name = "frontend/sorcery"
+  elsif prefs[:auth] == 'warden'
+    app_name = "frontend/warden"
   elsif prefs[:auth] == 'omni'
     app_name = "frontend/omni"
   else
@@ -501,6 +504,18 @@ when 'sorcery'
                'app/controllers/users_controller.rb']
   app_name = "auth/sorcery"
 
+when 'warden'
+  gem 'warden', '~> 1.2', '>= 1.2.6'
+  run "bundle install"
+
+  generate "resource", "user username email password_digest" 
+  generate "controller", "sessions new" 
+
+when 'omniauth'
+  gem 'omniauth-twitter', '~> 1.2', '>= 1.2.1'
+  app_files = ['config/initializers/omniauth.rb']
+  app_name = "auth/omni"
+
 when 'devise'
   gem 'devise', '~> 4.2'
   run "bundle install"
@@ -524,13 +539,6 @@ when 'devise'
   end
   RUBY
   end
-
-when 'sorcery'
-when 'warden'
-when 'omniauth'
-  gem 'omniauth-twitter', '~> 1.2', '>= 1.2.1'
-  app_files = ['config/initializers/omniauth.rb']
-  app_name = "auth/omni"
 
 end
 
