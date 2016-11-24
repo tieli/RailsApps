@@ -455,6 +455,14 @@ when 'authlogic'
   RUBY
   end
 
+  app_files = ['app/views/users/_form.html.erb',
+               'app/views/shared/_errors.html.erb',
+               'app/views/user_sessions/new.html.erb',
+               'app/models/user_session.rb',
+               'app/controllers/user_sessions_controller.rb',
+               'app/controllers/application_controller.rb',
+               'app/controllers/users_controller.rb']
+  app_name = "auth/authlogic"
 
 when 'devise'
   gem 'devise', '~> 4.2'
