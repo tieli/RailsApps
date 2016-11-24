@@ -184,8 +184,9 @@ def copy_from_repo(app_name, file_name, opts = {})
 
 end
 
-def get_gen_str(type, res_desc)
+def get_gen_str(type, res_desc, options = {})
   name = res_desc[0]
+  fields = res_desc[1]
   str = " " + type + " "
   case type
   when 'scaffold'
@@ -199,7 +200,8 @@ def get_gen_str(type, res_desc)
   when 'mailer'
     str = str + name
   end
-  res_desc[1].each { |k,v| str << " " << k << ":" << v }
+  fields.each { |k,v| str << " " << k << ":" << v }
+  options.each { |k,v| str << " " << "--" + k << " " << v }
   str
 end
 
@@ -285,6 +287,7 @@ prefs[:auth] = multiple_choice "Authentication?",
     [["No Authentication", "no_auth"],
     ["Basic Authentication", "basic"],
     ["Authlogic", "authlogic"],
+    ["Sorcery", "sorcery"],
     ["Omni Authentication", "omniauth"],
     ["Devise", "devise"]]
 
@@ -341,6 +344,8 @@ when 'basic'
     app_name = "frontend/no_auth"
   elsif prefs[:auth] == 'authlogic'
     app_name = "frontend/authlogic"
+  elsif prefs[:auth] == 'sorcery'
+    app_name = "frontend/sorcery"
   elsif prefs[:auth] == 'omni'
     app_name = "frontend/omni"
   else
@@ -464,6 +469,18 @@ when 'authlogic'
                'app/controllers/application_controller.rb',
                'app/controllers/users_controller.rb']
   app_name = "auth/authlogic"
+
+when 'sorcery'
+  gem 'sorcery', '~> 0.9.1'
+  run "bundle install"
+
+  run "rails g sorcery:install"
+
+  user_model = ["User", { "email" => "string",
+                          "crypted_password" => "string",
+                          "salt" => "string" }]
+  options = { "migration" => "false" }
+  generate get_gen_str("scaffold", user_model, options)
 
 when 'devise'
   gem 'devise', '~> 4.2'
