@@ -511,6 +511,20 @@ when 'warden'
   generate "resource", "user username email password_digest" 
   generate "controller", "sessions new" 
 
+  inject_into_file user_rb, after: "class User < ActiveRecord::Base\n" do <<-'RUBY'
+  has_secure_password
+  RUBY
+  end
+
+  app_files = [ config_routes,
+               'app/models/user.rb',
+               'app/views/users/new.html.erb',
+               'app/views/sessions/create.html.erb',
+               'app/views/sessions/new.html.erb',
+               'app/controllers/user_sessions_controller.rb',
+               'app/controllers/users_controller.rb']
+  app_name = "auth/warden"
+
 when 'omniauth'
   gem 'omniauth-twitter', '~> 1.2', '>= 1.2.1'
   app_files = ['config/initializers/omniauth.rb']
