@@ -297,8 +297,8 @@ prefs[:auth] = multiple_choice "Authentication?",
 ##############################
 
 prefs[:test] = multiple_choice "Testing Framework?",
-    [["Test::Unit", "test_unit"],
-    ["Rspec", "rspec"],
+    [["Rspec", "rspec"],
+    ["Test::Unit", "test_unit"],
     ["Minitest::Test", "minitest"]]
 
 case prefs[:test]
@@ -586,7 +586,7 @@ when 'simple_blogs'
 #  generate "resource", "user email password_digest" 
 #  generate "controller", "sessions new" 
 
-  if prefs[:auth] != "no_auth"
+  if prefs[:auth] != "no_auth" or prefs[:auth] == "omni"
     article_user_migration = ["add_user_id_to_articles", 
                              {"user_id" => "integer"} ]
     generate get_gen_str("migration", article_user_migration)
