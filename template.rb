@@ -349,8 +349,8 @@ when 'basic'
     app_name = "frontend/sorcery"
   elsif prefs[:auth] == 'warden'
     app_name = "frontend/warden"
-  elsif prefs[:auth] == 'omni'
-    app_name = "frontend/omni"
+  elsif prefs[:auth] == 'omniauth'
+    app_name = "frontend/omniauth"
   else
     app_name = "frontend/basic_auth"
   end
@@ -530,7 +530,7 @@ when 'warden'
 when 'omniauth'
   gem 'omniauth-twitter', '~> 1.2', '>= 1.2.1'
   app_files = ['config/initializers/omniauth.rb']
-  app_name = "auth/omni"
+  app_name = "auth/omniauth"
 
 when 'devise'
   gem 'devise', '~> 4.2'
@@ -586,7 +586,7 @@ when 'simple_blogs'
 #  generate "resource", "user email password_digest" 
 #  generate "controller", "sessions new" 
 
-  if prefs[:auth] != "no_auth" or prefs[:auth] == "omni"
+  if prefs[:auth] != "no_auth" or prefs[:auth] == "omniauth"
     article_user_migration = ["add_user_id_to_articles", 
                              {"user_id" => "integer"} ]
     generate get_gen_str("migration", article_user_migration)
