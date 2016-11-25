@@ -522,7 +522,8 @@ when 'warden'
                'app/views/sessions/create.html.erb',
                'app/views/sessions/new.html.erb',
                'app/controllers/user_sessions_controller.rb',
-               'app/controllers/users_controller.rb']
+               'app/controllers/users_controller.rb',
+               'app/controllers/application_controller.rb']
   app_name = "auth/warden"
 
 when 'omniauth'
