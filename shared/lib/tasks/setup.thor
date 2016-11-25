@@ -34,10 +34,12 @@ class Setup < Thor
     puts "List recent modified files"
     ['app', 'test', 'lib', 'config'].each do |dir|
       Find.find(dir) { |src|
-        t = File.mtime(src)
-        #puts src + t.to_s + t0.to_s
-        if (t.to_i - t0.to_i > 5 * 60)
-          puts src
+        if FileTest.file?(src)
+          t = File.mtime(src)
+          #puts src + t.to_s + t0.to_s
+          if (t.to_i - t0.to_i > 5 * 60)
+            puts src
+          end
         end
       }
     end

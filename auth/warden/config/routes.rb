@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   resources :sessions
   resources :users
 
-  delete "logout" => "sessions#destroy", :as => "logout"
+  get "logout" => "sessions#destroy", :as => "logout"
   get "login" => "sessions#new", :as => "login"
   get "signup" => "users#new", :as => "signup"
 

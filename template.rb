@@ -517,6 +517,7 @@ when 'warden'
   end
 
   app_files = [ config_routes,
+               'config/initializers/warden.rb',
                'app/models/user.rb',
                'app/views/users/new.html.erb',
                'app/views/sessions/create.html.erb',
