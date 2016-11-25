@@ -586,7 +586,7 @@ when 'simple_blogs'
 #  generate "resource", "user email password_digest" 
 #  generate "controller", "sessions new" 
 
-  if prefs[:auth] != "no_auth" or prefs[:auth] == "omniauth"
+  if prefs[:auth] != "no_auth" and prefs[:auth] != "omniauth"
     article_user_migration = ["add_user_id_to_articles", 
                              {"user_id" => "integer"} ]
     generate get_gen_str("migration", article_user_migration)
