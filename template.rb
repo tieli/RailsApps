@@ -438,6 +438,7 @@ when 'basic'
   generate "integration_test", "users_signup" 
   generate "integration_test", "password_reset" 
 
+=begin
   inject_into_file config_routes, after: "routes.draw do\n" do <<-'RUBY'
   get 'login', to: 'sessions#new', as: 'login'
   get 'signup', to: 'users#new', as: 'signup'
@@ -445,10 +446,10 @@ when 'basic'
   resources :sessions
   resources :password_resets
   RUBY
-  end
 
   comment_lines config_routes, /password_resets\/new/
   comment_lines config_routes, /sessions\/new/
+=end
 
   app_files += ['app/models/user.rb',
                'app/views/users/new.html.erb',

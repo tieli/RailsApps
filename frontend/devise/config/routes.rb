@@ -1,12 +1,10 @@
 Rails.application.routes.draw do
-  root to: 'welcome#home'
-  get 'welcome/home'
 
-  devise_for :users
-
-  get 'login', to: 'devise/sessions#new', as: 'login'
-  get 'signup', to: 'devise/registrations#new', as: 'signup'
-  delete 'logout', to: 'devise/sessions#destroy', as: 'logout'
+  devise_scope :user do
+    get '/sign_in', to: 'devise/sessions#new', as: 'login'
+    get '/sign_up', to: 'devise/registrations#new', as: 'signup'
+    delete '/sign_out', to: 'devise/sessions#destroy', as: 'logout'
+  end
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
