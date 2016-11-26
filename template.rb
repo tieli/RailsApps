@@ -472,7 +472,6 @@ when 'authlogic'
   run "bundle install"
 
   user_model = ["User", { "email" => "string",
-                          "username" => "string",
                           "crypted_password" => "string",
                           "password_salt" => "string",
                           "persistence_token" => "string" }]
@@ -486,7 +485,6 @@ when 'authlogic'
   app_files += ['app/views/users/_form.html.erb',
                'app/views/shared/_errors.html.erb',
                'app/views/user_sessions/new.html.erb',
-               #config_routes,
                'app/models/user_session.rb',
                'app/controllers/application_controller.rb',
                'app/controllers/user_sessions_controller.rb',
