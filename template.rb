@@ -114,6 +114,20 @@ def ask_wizard(question)
   ask cyan(("choose").rjust(10)) + "  #{question}" 
 end
 
+def yes_wizard?(question)
+  answer = ask_wizard(question + " \033[33m(y/n)\033[0m")
+  case answer.downcase
+    when "yes", "y"
+      true
+    when "no", "n"
+      false
+    else
+      yes_wizard?(question)
+  end
+end
+
+def no_wizard?(question); !yes_wizard?(question) end
+
 def multiple_choice(question, choices)
   say_custom('option', question)
   values = {}
@@ -301,6 +315,8 @@ prefs[:test] = multiple_choice "Testing Framework?",
     ["Test::Unit", "test_unit"],
     ["Minitest::Test", "minitest"]]
 
+prefs[:announcement] = yes_wizard?("Add sitewise announcement?")
+
 case prefs[:test]
 
 when 'test_unit'
@@ -345,6 +361,7 @@ when 'basic'
     app_name = "frontend/no_auth"
   elsif prefs[:auth] == 'authlogic'
     app_name = "frontend/authlogic"
+    app_files += [ config_routes ]
   elsif prefs[:auth] == 'sorcery'
     app_name = "frontend/sorcery"
   elsif prefs[:auth] == 'warden'
@@ -388,6 +405,8 @@ app_files.each do |from_file|
   copy_from_repo app_name, from_file, :repo => repo
 end
 
+app_files = [ ]
+
 case prefs[:auth]
 when 'no_auth'
 when 'basic'
@@ -425,7 +444,7 @@ when 'basic'
   comment_lines config_routes, /password_resets\/new/
   comment_lines config_routes, /sessions\/new/
 
-  app_files = ['app/models/user.rb',
+  app_files += ['app/models/user.rb',
                'app/views/users/new.html.erb',
                'app/views/users/show.html.erb',
                'app/views/sessions/new.html.erb',
@@ -463,13 +482,13 @@ when 'authlogic'
   RUBY
   end
 
-  app_files = ['app/views/users/_form.html.erb',
+  app_files += ['app/views/users/_form.html.erb',
                'app/views/shared/_errors.html.erb',
                'app/views/user_sessions/new.html.erb',
-               config_routes,
+               #config_routes,
                'app/models/user_session.rb',
-               'app/controllers/user_sessions_controller.rb',
                'app/controllers/application_controller.rb',
+               'app/controllers/user_sessions_controller.rb',
                'app/controllers/users_controller.rb']
   app_name = "auth/authlogic"
 
@@ -496,7 +515,7 @@ when 'sorcery'
   RUBY
   end
 
-  app_files = ['app/views/users/_form.html.erb',
+  app_files += ['app/views/users/_form.html.erb',
                'app/views/user_sessions/new.html.erb',
                'app/views/user_sessions/_form.html.erb',
                config_routes,
@@ -516,15 +535,15 @@ when 'warden'
   RUBY
   end
 
-  app_files = [ config_routes,
+  app_files += [ config_routes,
                'config/initializers/warden.rb',
                'app/models/user.rb',
                'app/views/users/new.html.erb',
                'app/views/sessions/create.html.erb',
                'app/views/sessions/new.html.erb',
+               'app/controllers/application_controller.rb',
                'app/controllers/sessions_controller.rb',
-               'app/controllers/users_controller.rb',
-               'app/controllers/application_controller.rb']
+               'app/controllers/users_controller.rb']
   app_name = "auth/warden"
 
 when 'omniauth'
@@ -569,7 +588,6 @@ app_name = prefs[:apps4]
 case prefs[:apps4]
 when 'basic'
 
-  #app_files = [ scaffolds_css_scss, app_helpers_layout, app_erb ]
   app_files = []
 
   generate "controller", "welcome home"
@@ -582,9 +600,6 @@ when 'simple_blogs'
                                "content" => "text",
                                "published_at" => "datetime"}]
   generate get_gen_str("scaffold", article_model)
-
-#  generate "resource", "user email password_digest" 
-#  generate "controller", "sessions new" 
 
   if prefs[:auth] != "no_auth" and prefs[:auth] != "omniauth"
     article_user_migration = ["add_user_id_to_articles", 
@@ -602,20 +617,10 @@ when 'simple_blogs'
     end
   end
 
-  app_files = [ #scaffolds_css_scss, app_html_erb,
-                forms_css_scss,
-                #"config/routes.rb",
-                #"app/views/users/new.html.erb",
-                #"app/views/sessions/new.html.erb",
+  app_files = [ forms_css_scss,
                 "app/views/articles/index.html.erb",
-                #user_rb,
                 article_rb,
-                #"app/models/user.rb",
-                "app/models/article.rb",
-                #"app/controllers/application_controller.rb",
                 "app/controllers/articles_controller.rb",
-                #"app/controllers/sessions_controller.rb",
-                #"app/controllers/users_controller.rb"
               ]
 
   gem 'simple_form', '~> 3.2', '>= 3.2.1'
