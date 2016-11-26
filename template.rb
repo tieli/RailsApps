@@ -412,7 +412,7 @@ app_files = [ ]
 case prefs[:auth]
 when 'no_auth'
 when 'basic'
-  generate "resource", "user username email password_digest" 
+  generate "resource", "user email password_digest" 
   generate "controller", "sessions new" 
   generate "controller", "password_resets new" 
 
