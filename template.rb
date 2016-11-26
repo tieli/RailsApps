@@ -278,6 +278,10 @@ common_files = [ 'lib/tasks/setup.thor',
                  'lib/tasks/haml.rake', 
                  'lib/tasks/populate.rake',
                  'lib/tasks/list.rake',
+                 'test/fixtures/articles.yml',
+                 'test/integration/users_login_test.rb',
+                 'test/integration/users_signup_test.rb',
+                 'spec/factories/users.rb',
                  'spec/requests/users_signups_spec.rb',
                  'spec/requests/users_logins_spec.rb']
 
