@@ -364,6 +364,7 @@ when 'basic'
     app_files += [ config_routes ]
   elsif prefs[:auth] == 'sorcery'
     app_name = "frontend/sorcery"
+    app_files += [ config_routes ]
   elsif prefs[:auth] == 'warden'
     app_name = "frontend/warden"
   elsif prefs[:auth] == 'omniauth'
@@ -517,7 +518,6 @@ when 'sorcery'
   app_files += ['app/views/users/_form.html.erb',
                'app/views/user_sessions/new.html.erb',
                'app/views/user_sessions/_form.html.erb',
-               config_routes,
                'app/controllers/user_sessions_controller.rb',
                'app/controllers/users_controller.rb']
   app_name = "auth/sorcery"
