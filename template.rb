@@ -277,7 +277,9 @@ run "bundle install"
 common_files = [ 'lib/tasks/setup.thor',
                  'lib/tasks/haml.rake', 
                  'lib/tasks/populate.rake',
-                 'lib/tasks/list.rake']
+                 'lib/tasks/list.rake',
+                 'spec/requests/users_signups_spec.rb',
+                 'spec/requests/users_logins_spec.rb']
 
 common_files.each do |from_file|
   copy_from_repo "shared", from_file, :repo => repo
@@ -438,19 +440,6 @@ when 'basic'
   generate "integration_test", "users_signup" 
   generate "integration_test", "password_reset" 
 
-=begin
-  inject_into_file config_routes, after: "routes.draw do\n" do <<-'RUBY'
-  get 'login', to: 'sessions#new', as: 'login'
-  get 'signup', to: 'users#new', as: 'signup'
-  delete 'logout', to: 'sessions#destroy', as: 'logout'
-  resources :sessions
-  resources :password_resets
-  RUBY
-
-  comment_lines config_routes, /password_resets\/new/
-  comment_lines config_routes, /sessions\/new/
-=end
-
   app_files += ['app/models/user.rb',
                'app/views/users/new.html.erb',
                'app/views/users/show.html.erb',
@@ -571,17 +560,6 @@ when 'devise'
     RUBY
     end
   end
-
-=begin
-  inject_into_file config_routes, after: "devise_for :users\n" do <<-'RUBY'
-  devise_scope :user do
-    get '/sign_in', to: 'devise/sessions#new', as: 'login'
-    get '/sign_up', to: 'devise/registrations#new', as: 'signup'
-    delete '/sign_out', to: 'devise/sessions#destroy', as: 'logout'
-  end
-  RUBY
-  end
-=end
 
 end
 
