@@ -368,10 +368,14 @@ when 'basic'
   elsif prefs[:auth] == 'warden'
     app_name = "frontend/warden"
     app_files += [ config_routes ]
+  elsif prefs[:auth] == 'devise'
+    app_name = "frontend/devise"
+    app_files += [ config_routes ]
   elsif prefs[:auth] == 'omniauth'
     app_name = "frontend/omniauth"
   else
     app_name = "frontend/basic_auth"
+    app_files += [ config_routes ]
   end
 when 'bootstrap'
   abort("Auth method is required") if prefs[:auth] == 'no_auth'
@@ -430,9 +434,9 @@ when 'basic'
 
   generate get_gen_str("mailer", user_mailer)
 
-  generate "integration_test", "password_reset" 
-  generate "integration_test", "users_signup" 
   generate "integration_test", "users_login" 
+  generate "integration_test", "users_signup" 
+  generate "integration_test", "password_reset" 
 
   inject_into_file config_routes, after: "routes.draw do\n" do <<-'RUBY'
   get 'login', to: 'sessions#new', as: 'login'
@@ -459,13 +463,14 @@ when 'basic'
                'app/controllers/password_resets_controller.rb',
                'app/mailers/user_mailer.rb',
                'app/helpers/application_helper.rb',
-               'test/mailers/user_mailer_test.rb',
-               'test/models/user_test.rb',
-               'test/integration/users_signup_test.rb',
-               'test/integration/users_login_test.rb',
-               'spec/factories/users.rb',
-               'spec/models/user_spec.rb',
-               'spec/requests/password_resets_spec.rb']
+               #'test/mailers/user_mailer_test.rb',
+               #'test/models/user_test.rb',
+               #'test/integration/users_signup_test.rb',
+               #'test/integration/users_login_test.rb',
+               #'spec/factories/users.rb',
+               #'spec/models/user_spec.rb',
+               #'spec/requests/password_resets_spec.rb'
+               ]
   app_name = "auth/basic"
 
 when 'authlogic'
@@ -618,8 +623,8 @@ when 'simple_blogs'
   end
 
   app_files = [ forms_css_scss,
-                "app/views/articles/index.html.erb",
                 article_rb,
+                "app/views/articles/index.html.erb",
                 "app/controllers/articles_controller.rb",
               ]
 
@@ -672,20 +677,22 @@ when "simple_store"
                'app/views/products/labeled_form_builder.rb',
                'app/controllers/products_controller.rb' ]
 
-  product_model_file = 'app/models/product.rb'
-  inject_into_file product_model_file, after: "class Product < ActiveRecord::Base\n" do <<-'RUBY'
+  product_rb = 'app/models/product.rb'
+  inject_into_file product_rb, after: "class Product < ActiveRecord::Base\n" do <<-'RUBY'
   belongs_to :category
   has_many :taggings
   has_many :tags, through: :taggings
   RUBY
   end
 
-  inject_into_file 'app/models/category.rb', before: "end" do <<-'RUBY'
+  category_rb = 'app/models/category.rb'
+  inject_into_file category_rb, before: "end" do <<-'RUBY'
   has_many :products
   RUBY
   end
 
-  inject_into_file 'app/models/tag.rb', before: "end" do <<-'RUBY'
+  tag_rb = 'app/models/tag.rb'
+  inject_into_file tag_rb, before: "end" do <<-'RUBY'
   has_many :taggings
   has_many :products, through: :taggings
   RUBY
@@ -862,8 +869,8 @@ when 'movie_review'
   RUBY
   end
 
-  movie_model_file = 'app/models/movie.rb'
-  inject_into_file movie_model_file, after: "class Movie < ActiveRecord::Base\n" do <<-'RUBY'
+  movie_rb = 'app/models/movie.rb'
+  inject_into_file movie_rb, after: "class Movie < ActiveRecord::Base\n" do <<-'RUBY'
   belongs_to :user
   belongs_to :director
   has_many :actings
@@ -879,27 +886,27 @@ when 'movie_review'
   RUBY
   end
 
-  review_model_file = 'app/models/review.rb'
-  inject_into_file review_model_file, after: "class Review < ActiveRecord::Base\n" do <<-'RUBY'
+  review_rb = 'app/models/review.rb'
+  inject_into_file review_rb, after: "class Review < ActiveRecord::Base\n" do <<-'RUBY'
   belongs_to :movie
   RUBY
   end
 
-  actor_model_file = 'app/models/actor.rb'
-  inject_into_file actor_model_file, after: "class Actor < ActiveRecord::Base\n" do <<-'RUBY'
+  actor_rb = 'app/models/actor.rb'
+  inject_into_file actor_rb, after: "class Actor < ActiveRecord::Base\n" do <<-'RUBY'
   has_many :actings
   has_many :movies, through: :actings
   RUBY
   end
 
-  user_model_file = 'app/models/user.rb'
-  inject_into_file user_model_file, after: "class User < ActiveRecord::Base\n" do <<-'RUBY'
+  user_rb = 'app/models/user.rb'
+  inject_into_file user_rb, after: "class User < ActiveRecord::Base\n" do <<-'RUBY'
   has_many :movies
   RUBY
   end
 
-  director_model_file = 'app/models/director.rb'
-  inject_into_file director_model_file, after: "class Director < ActiveRecord::Base\n" do <<-'RUBY'
+  director_rb = 'app/models/director.rb'
+  inject_into_file director_rb, after: "class Director < ActiveRecord::Base\n" do <<-'RUBY'
   has_many :movies
   RUBY
   end
