@@ -367,6 +367,7 @@ when 'basic'
     app_files += [ config_routes ]
   elsif prefs[:auth] == 'warden'
     app_name = "frontend/warden"
+    app_files += [ config_routes ]
   elsif prefs[:auth] == 'omniauth'
     app_name = "frontend/omniauth"
   else
@@ -501,7 +502,8 @@ when 'sorcery'
   user_model = ["User", { "email" => "string",
                           "crypted_password" => "string",
                           "salt" => "string" }]
-  options = { "migration" => "false" }
+  options = { "migration" => "false",
+              "force" => "" }
   generate get_gen_str("scaffold", user_model, options)
 
   inject_into_file user_rb, after: "class User < ActiveRecord::Base\n" do <<-'RUBY'
@@ -534,8 +536,7 @@ when 'warden'
   RUBY
   end
 
-  app_files += [ config_routes,
-               'config/initializers/warden.rb',
+  app_files += ['config/initializers/warden.rb',
                'app/models/user.rb',
                'app/views/users/new.html.erb',
                'app/views/sessions/create.html.erb',
