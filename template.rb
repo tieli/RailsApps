@@ -283,7 +283,8 @@ common_files = [ 'lib/tasks/setup.thor',
                  'test/integration/users_signup_test.rb',
                  'spec/factories/users.rb',
                  'spec/requests/users_signups_spec.rb',
-                 'spec/requests/users_logins_spec.rb']
+                 'spec/requests/users_logins_spec.rb',
+                 'test/integration/password_reset_test.rb']
 
 common_files.each do |from_file|
   copy_from_repo "shared", from_file, :repo => repo
