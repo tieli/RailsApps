@@ -12,7 +12,7 @@ app_haml           = 'app/views/layouts/application.html.haml'
 app_html_haml      = 'app/views/layouts/application.html.haml'
 
 app_helpers_layout = 'app/helpers/layout_helper.rb'
-
+app_controller     = 'app/controllers/application_controller.rb',
 
 scaffolds_css      = 'app/assets/stylesheets/scaffolds.css'
 scaffolds_scss     = 'app/assets/stylesheets/scaffolds.scss'
@@ -270,26 +270,6 @@ uncomment_lines 'Gemfile', /bcrypt/
 
 run "bundle install"
 
-########################
-#  Common Rails Tasks  #
-########################
-
-common_files = [ 'lib/tasks/setup.thor',
-                 'lib/tasks/haml.rake', 
-                 'lib/tasks/populate.rake',
-                 'lib/tasks/list.rake',
-                 'test/fixtures/users.yml',
-                 'test/integration/users_login_test.rb',
-                 'test/integration/users_signup_test.rb',
-                 'spec/factories/users.rb',
-                 'spec/requests/users_signups_spec.rb',
-                 'spec/requests/users_logins_spec.rb',
-                 'test/integration/password_reset_test.rb']
-
-common_files.each do |from_file|
-  copy_from_repo "shared", from_file, :repo => repo
-end
-
 ###############################
 #  Select Frontend Framework  #
 ###############################
@@ -441,10 +421,6 @@ when 'basic'
 
   generate get_gen_str("mailer", user_mailer)
 
-  generate "integration_test", "users_login" 
-  generate "integration_test", "users_signup" 
-  generate "integration_test", "password_reset" 
-
   app_files += ['app/models/user.rb',
                'app/views/users/new.html.erb',
                'app/views/users/show.html.erb',
@@ -458,13 +434,6 @@ when 'basic'
                'app/controllers/password_resets_controller.rb',
                'app/mailers/user_mailer.rb',
                'app/helpers/application_helper.rb',
-               #'test/mailers/user_mailer_test.rb',
-               #'test/models/user_test.rb',
-               #'test/integration/users_signup_test.rb',
-               #'test/integration/users_login_test.rb',
-               #'spec/factories/users.rb',
-               #'spec/models/user_spec.rb',
-               #'spec/requests/password_resets_spec.rb'
                ]
   app_name = "auth/basic"
 
@@ -715,8 +684,6 @@ when 'blogs'
 
   generate "controller", "comments" 
 
-  generate "model", "announcement message:text starts_at:datetime ends_at:datetime" 
-
   route "root to: 'articles\#index'"
 
   app_files = ['config/routes.rb',
@@ -784,7 +751,6 @@ when 'store'
 
   app_files = ['db/seeds.rb',
                'config/routes.rb',
-               #app_scss, app_html_erb, scaffolds_scss,
                'app/assets/images/up_arrow.gif',
                'app/assets/images/down_arrow.gif',
                'app/models/product.rb',
@@ -965,6 +931,62 @@ end
 
 app_files.each do |from_file|
   copy_from_repo app_name, from_file, :repo => repo
+end
+
+########################
+#  Common Rails Tasks  #
+########################
+
+common_files = [ 'lib/tasks/setup.thor',
+                 'lib/tasks/haml.rake', 
+                 'lib/tasks/populate.rake',
+                 'lib/tasks/list.rake',
+                 'test/fixtures/users.yml',
+                 'test/integration/users_login_test.rb',
+                 'test/integration/users_signup_test.rb',
+                 'spec/factories/users.rb',
+                 'spec/requests/users_signups_spec.rb',
+                 'spec/requests/users_logins_spec.rb',
+                 'test/integration/password_reset_test.rb']
+
+common_files.each do |from_file|
+  copy_from_repo "shared", from_file, :repo => repo
+end
+
+#######################
+#  Site-announcement  #
+#######################
+
+if prefs[:announcement]
+  generate "model", "announcement message:text starts_at:datetime ends_at:datetime" 
+
+  app_files = ['app/assets/stylesheets/announcements.scss',
+               'app/models/announcement.rb',
+               'app/controllers/announcements_controller.rb',
+               'spec/models/announcement_spec.rb',
+               'spec/requests/announcements_spec.rb' ]
+
+  inject_into_file app_controller, after: "ActionController::Base\n" do <<-'RUBY'
+  def enable_site_announcement?
+    return true
+  end
+  RUBY
+  end
+
+  app_name = "announcement"
+  app_files.each do |from_file|
+    copy_from_repo app_name, from_file, :repo => repo
+  end
+
+else
+
+  inject_into_file app_controller, after: "ActionController::Base\n" do <<-'RUBY'
+  def enable_site_announcement?
+    return false
+  end
+  RUBY
+  end
+
 end
 
 remove_file "README.rdoc"
