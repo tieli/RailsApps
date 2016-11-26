@@ -572,6 +572,7 @@ when 'devise'
     end
   end
 
+=begin
   inject_into_file config_routes, after: "devise_for :users\n" do <<-'RUBY'
   devise_scope :user do
     get '/sign_in', to: 'devise/sessions#new', as: 'login'
@@ -580,6 +581,7 @@ when 'devise'
   end
   RUBY
   end
+=end
 
 end
 
