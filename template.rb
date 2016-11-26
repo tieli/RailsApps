@@ -472,6 +472,7 @@ when 'authlogic'
   run "bundle install"
 
   user_model = ["User", { "email" => "string",
+                          "username" => "string",
                           "crypted_password" => "string",
                           "password_salt" => "string",
                           "persistence_token" => "string" }]
