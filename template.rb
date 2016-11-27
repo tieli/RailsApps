@@ -26,6 +26,7 @@ devise_ses_new  = "app/views/devise/sessions/new.html.erb"
 config_dev         = 'config/environments/development.rb'
 config_test        = 'config/environments/test.rb'
 config_routes      = 'config/routes.rb'
+routes_file        = 'config/routes.rb'
 
 av = 'app/views/'
 am = 'app/models/'
@@ -244,6 +245,7 @@ gem_group :development, :test do
   gem 'poltergeist', '~> 1.10'
   gem 'launchy-rails'
   gem 'rack-mini-profiler'
+  gem 'selenium-webdriver', '~> 2.53', '>= 2.53.4'
 end
 
 gem 'paperclip', '~> 5.1'
@@ -324,6 +326,14 @@ when 'rspec'
   config.include Capybara::DSL
   RUBY
   end
+
+=begin
+  inject_into_file 'spec/spec_helper.rb', before: "RSpec.configure" do <<-'RUBY'
+  require 'capybara/poltergeist'
+  Capybara.javascript_driver = :poltergeist
+  RUBY
+  end
+=end
 
 when 'minitest'
 
@@ -966,10 +976,15 @@ if prefs[:announcement]
                'spec/models/announcement_spec.rb',
                'spec/requests/announcements_spec.rb' ]
 
-  inject_into_file app_controller, after: "ActionController::Base\n" do <<-'RUBY'
+  inject_into_file 'app/controllers/application_controller.rb', after: "ActionController::Base\n" do <<-'RUBY'
   def enable_site_announcement?
     return true
   end
+  RUBY
+  end
+
+  inject_into_file routes_file, after: "Rails.application.routes.draw do\n" do <<-'RUBY'
+  get "announcements/:id/hide", to: 'announcements#hide', as: 'hide_announcement'
   RUBY
   end
 
@@ -980,12 +995,16 @@ if prefs[:announcement]
 
 else
 
-  inject_into_file app_controller, after: "ActionController::Base\n" do <<-'RUBY'
+  inject_into_file 'app/controllers/application_controller.rb', after: "protect_from_forgery with: :exception\n" do <<-'RUBY'
+
   def enable_site_announcement?
     return false
   end
+  helper_method :enable_site_announcement?
   RUBY
   end
+
+  rake "db:migrate"
 
 end
 
