@@ -323,6 +323,18 @@ when 'rspec'
   inject_into_file 'spec/rails_helper.rb', after: "RSpec.configure do |config|\n" do <<-'RUBY'
   #config.filter_run focus: true
   config.include FactoryGirl::Syntax::Methods
+
+  config.before(:suite) do
+    begin
+      DatabaseCleaner[:active_record].strategy = :transaction
+      DatabaseCleaner.clean_with(:truncation)
+      DatabaseCleaner.start
+      FactoryGirl.lint
+    ensure
+      DatabaseCleaner.clean
+    end
+  end
+
   config.include Capybara::DSL
   RUBY
   end
@@ -430,6 +442,13 @@ when 'basic'
                 {"password_reset" => "string" }]
 
   generate get_gen_str("mailer", user_mailer)
+
+  [config_dev, config_test].each do 
+    inject_into_file config_dev, after: "Rails.application.configure do\n" do <<-'RUBY'
+    config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+    RUBY
+    end
+  end
 
   app_files += ['app/models/user.rb',
                'app/views/users/new.html.erb',
@@ -957,6 +976,7 @@ common_files = [ 'lib/tasks/setup.thor',
                  'spec/factories/users.rb',
                  'spec/requests/users_signups_spec.rb',
                  'spec/requests/users_logins_spec.rb',
+                 'spec/requests/password_resets_spec.rb',
                  'test/integration/password_reset_test.rb']
 
 common_files.each do |from_file|
@@ -976,10 +996,12 @@ if prefs[:announcement]
                'spec/models/announcement_spec.rb',
                'spec/requests/announcements_spec.rb' ]
 
-  inject_into_file 'app/controllers/application_controller.rb', after: "ActionController::Base\n" do <<-'RUBY'
+  inject_into_file 'app/controllers/application_controller.rb', after: "protect_from_forgery with: :exception\n" do <<-'RUBY'
+
   def enable_site_announcement?
     return true
   end
+  helper_method :enable_site_announcement?
   RUBY
   end
 
@@ -993,6 +1015,8 @@ if prefs[:announcement]
     copy_from_repo app_name, from_file, :repo => repo
   end
 
+  rake "db:migrate"
+
 else
 
   inject_into_file 'app/controllers/application_controller.rb', after: "protect_from_forgery with: :exception\n" do <<-'RUBY'
@@ -1004,7 +1028,6 @@ else
   RUBY
   end
 
-  rake "db:migrate"
 
 end
 
