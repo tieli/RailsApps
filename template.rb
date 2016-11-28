@@ -269,6 +269,7 @@ gem 'faker', '~> 1.6', '>= 1.6.6'
 gem 'html2haml', '~> 2.0'
 
 uncomment_lines 'Gemfile', /bcrypt/
+uncomment_lines 'Gemfile', /'therubyracer'/
 
 run "bundle install"
 
@@ -314,6 +315,7 @@ when 'rspec'
   gem_group :development, :test do
     gem "rspec-rails"
     gem 'factory_girl_rails', '~> 4.7'
+    gem 'database_cleaner', '~> 1.5', '>= 1.5.3' 
   end
   
   run "bundle install"
@@ -335,9 +337,21 @@ when 'rspec'
     end
   end
 
+=begin
+  config.before(:each) do
+    DatabaseCleaner.start
+  end
+
+  config.after(:each) do
+    DatabaseCleaner.clean
+  end
+=end
+
   config.include Capybara::DSL
   RUBY
   end
+
+  comment_lines 'spec/rails_helper.rb', /config.use_transactional_fixtures/
 
 =begin
   inject_into_file 'spec/spec_helper.rb', before: "RSpec.configure" do <<-'RUBY'
