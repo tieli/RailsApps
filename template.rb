@@ -245,7 +245,7 @@ gem_group :development, :test do
   gem 'poltergeist', '~> 1.10'
   gem 'launchy-rails'
   gem 'rack-mini-profiler'
-  gem 'selenium-webdriver', '~> 2.53', '>= 2.53.4'
+  gem 'selenium-webdriver'
 end
 
 gem 'paperclip', '~> 5.1'
@@ -1015,6 +1015,7 @@ common_files = [ 'lib/tasks/setup.thor',
                  'spec/requests/users_signups_spec.rb',
                  'spec/requests/users_logins_spec.rb',
                  'spec/requests/password_resets_spec.rb',
+                 'spec/mailers/user_mailer_spec.rb',
                  'test/integration/password_reset_test.rb']
 
 common_files.each do |from_file|

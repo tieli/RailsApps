@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe "UsersLogins", type: :request do
   describe "GET /users_logins" do
     it "works! (now write some real specs)", js: true do
-      user = FactoryGirl.create(:user)
+      user = FactoryGirl.build(:user)
       get signup_path
       expect(response).to have_http_status(200)
       visit signup_path
@@ -12,7 +12,7 @@ RSpec.describe "UsersLogins", type: :request do
       fill_in "Password confirmation", :with => user.password
       click_button "Sign up"
       expect(current_path).to eq(root_path)
-      expect(page).to have_content("signed up successfully")
+      expect(page).to have_content("signed up successfully.")
     end
   end
 end
