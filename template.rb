@@ -327,6 +327,31 @@ when 'rspec'
   config.include FactoryGirl::Syntax::Methods
 
   config.before(:suite) do
+    DatabaseCleaner.clean_with(:truncation)
+  end
+
+  config.before(:each) do
+    DatabaseCleaner.strategy = :transaction
+  end
+
+  config.before(:each, :js => true) do
+    DatabaseCleaner.strategy = :truncation
+  end
+
+  config.before(:each) do
+    DatabaseCleaner.start
+  end
+
+  config.after(:each) do
+    DatabaseCleaner.clean
+  end
+
+  config.after(:each) do
+    ActionMailer::Base.deliveries = []
+  end
+
+=begin
+  config.before(:suite) do
     begin
       DatabaseCleaner[:active_record].strategy = :transaction
       DatabaseCleaner.clean_with(:truncation)
@@ -337,7 +362,6 @@ when 'rspec'
     end
   end
 
-=begin
   config.before(:each) do
     DatabaseCleaner.start
   end
@@ -571,8 +595,8 @@ when 'devise'
   generate "devise:views"
   generate "devise User"
 
-  [config_dev, config_test].each do 
-    inject_into_file config_dev, after: "Rails.application.configure do\n" do <<-'RUBY'
+  [config_dev, config_test].each do |file|
+    inject_into_file file, after: "Rails.application.configure do\n" do <<-'RUBY'
     config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
     RUBY
     end

@@ -4,22 +4,22 @@ describe "PasswordResets" do
   it "emails user when requesting password reset" do
     user = FactoryGirl.create(:user)
     visit login_path
-    click_link "password"
+    click_link "Forgotten Password"
     fill_in "Email", :with => user.email
     click_button "Reset Password"
-    current_path.should eq(root_path)
+    expect(current_path).to eq(root_path)
     expect(page).to have_content("Email sent")
-    expect(last_email.to).to include(user.email)
+    expect(ActionMailer::Base.deliveries.last.to).to include(user.email)
   end
 
   it "does not email invalid user when requesting password reset" do
     visit login_path
-    click_link "password"
+    click_link "Forgotten Password"
     fill_in "Email", :with => "nobody@example.com"
     click_button "Reset Password"
-    current_path.should eq(root_path)
+    expect(current_path).to eq(root_path)
     expect(page).to have_content("Email sent")
-    expect(last_email).to be_nil
+    expect(ActionMailer::Base.deliveries.last).to be_nil
   end
 
   it "updates the user password when confirmation matches" do
