@@ -8,7 +8,7 @@ class UsersController < ApplicationController
     @user = User.create(user_params)
     if @user.save
       warden.set_user(@user)
-      redirect_to root_url, :notic => "User registration successfully"
+      redirect_to root_url, :notice => "User registration successfully"
     else
       render "new"
     end
