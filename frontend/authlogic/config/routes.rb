@@ -1,11 +1,7 @@
 Rails.application.routes.draw do
-  root to: 'welcome#home'
-  get 'welcome/home'
 
   resources :users
-  resources :users
 
-  #resources :users, only: [:new, :create]
   resources :user_sessions, only: [:create, :destroy]
 
   delete 'logout', to: 'user_sessions#destroy', as: :logout
