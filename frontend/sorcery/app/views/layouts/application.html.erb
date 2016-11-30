@@ -7,7 +7,7 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
-<% if false %>
+<% if enable_site_announcement? %>
   <% Announcement.current(cookies.signed[:hidden_announcement_ids]).each do |announcement| %>
 		<%= div_for announcement do %>
 			<%= announcement.message %>

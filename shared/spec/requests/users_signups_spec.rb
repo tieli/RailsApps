@@ -11,8 +11,9 @@ RSpec.describe "UsersLogins", type: :request do
       fill_in "Password", :with => user.password
       fill_in "Password confirmation", :with => user.password
       click_button "Sign up"
+      sleep 5
       expect(current_path).to eq(root_path)
-      expect(page).to have_content("signed up successfully.")
+      expect(page).to have_content("signed up successfully")
     end
   end
 end
