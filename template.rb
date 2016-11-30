@@ -223,8 +223,8 @@ end
 prefs[:apps4] = multiple_choice "Build a Rails Apps?",
     [["Build a Basic Rails App", "basic"],
     ["Build a Simple Blog App", "simple_blogs"],
-    ["Build a Simple Store App", "simple_store"],
     ["Build a Rails Blog App", "blogs"],
+    ["Build a Simple Store App", "simple_store"],
     ["Build a Rails Store App", "store"],
     ["Build a Rails Todo List(Ajax)", "todos"],
     ["Build a Movies Review App", "movie_review"],
@@ -589,6 +589,7 @@ when 'warden'
 
 when 'omniauth'
   gem 'omniauth-twitter', '~> 1.2', '>= 1.2.1'
+  gem 'omniauth-facebook', '~> 3.0'
   app_files = ['config/initializers/omniauth.rb']
   app_name = "auth/omniauth"
 
@@ -627,6 +628,9 @@ when 'basic'
 
 when 'simple_blogs'
 
+  gem 'simple_form', '~> 3.2', '>= 3.2.1'
+  generate "simple_form:install"
+
   article_model = ["Article", {"title" => "string",
                                "hidden" => "boolean",
                                "content" => "text",
@@ -654,18 +658,11 @@ when 'simple_blogs'
                 "app/views/articles/index.html.erb",
                 "app/controllers/articles_controller.rb",
               ]
-
-  gem 'simple_form', '~> 3.2', '>= 3.2.1'
-  generate "simple_form:install"
-
-  inject_into_file config_dev, after: "Rails.application.configure do\n" do <<-'RUBY'
-  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
-  RUBY
-  end
-
-  inject_into_file config_test, after: "Rails.application.configure do\n" do <<-'RUBY'
-  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
-  RUBY
+  [config_dev, config_test].each do |config_file| 
+    inject_into_file config_file, after: "Rails.application.configure do\n" do <<-'RUBY'
+    config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+    RUBY
+    end
   end
 
   route "root to: 'articles\#index'"
@@ -758,12 +755,12 @@ when 'blogs'
 
   route "root to: 'articles\#index'"
 
-  app_files = ['config/routes.rb',
+  app_files = [#'config/routes.rb',
                'db/seeds.rb',
-               app_css_scss, scaffolds_scss, app_erb,
+               #app_css_scss, scaffolds_scss, app_erb,
                'app/assets/stylesheets/articles.scss',
-               'app/assets/stylesheets/announcements.scss',
-               'app/models/announcement.rb',
+               #'app/assets/stylesheets/announcements.scss',
+               #'app/models/announcement.rb',
                'app/models/article.rb',
                'app/models/comment.rb',
                'app/models/tag.rb',
@@ -774,22 +771,33 @@ when 'blogs'
                'app/views/comments/_comment.html.erb',
                'app/views/comments/edit.html.erb',
                'app/views/comments/_form.html.erb',
-               'app/views/layouts/application.html.erb',
+               #'app/views/layouts/application.html.erb',
                'app/views/layouts/mailer.text.erb',
-               'app/controllers/application_controller.rb',
+               #'app/controllers/application_controller.rb',
                'app/controllers/articles_controller.rb',
                'app/controllers/comments_controller.rb',
-               'app/controllers/announcements_controller.rb',
+               #'app/controllers/announcements_controller.rb',
                'test/fixtures/articles.yml',
                'test/fixtures/categories.yml',
-               'spec/models/announcement_spec.rb',
-               'spec/requests/announcements_spec.rb' ]
+               #'spec/models/announcement_spec.rb',
+               #'spec/requests/announcements_spec.rb' 
+               ]
 
   [config_dev, config_test].each do |item|
     inject_into_file item, after: "Rails.application.configure do\n" do <<-'RUBY'
     config.action_mailer.default_url_options = { :host => "http://127.0.0.1:23000" }
     RUBY
     end
+  end
+
+  inject_into_file routes_file, after: "Rails.application.routes.draw do\n" do <<-'RUBY'
+  get 'tags/:tag', to: 'articles#index', as: :tag
+
+  resources :articles  do
+    resources :comments
+  end
+
+  RUBY
   end
 
 when 'store'
