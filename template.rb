@@ -525,9 +525,9 @@ when 'authlogic'
   RUBY
   end
 
-  app_files += ['app/views/users/_form.html.erb',
-               'app/views/shared/_errors.html.erb',
+  app_files += ['app/views/users/new.html.erb',
                'app/views/user_sessions/new.html.erb',
+               'app/views/shared/_errors.html.erb',
                'app/models/user_session.rb',
                'app/controllers/application_controller.rb',
                'app/controllers/user_sessions_controller.rb',
