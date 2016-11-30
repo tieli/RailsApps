@@ -242,10 +242,8 @@ end
 
 gem_group :development, :test do
   gem 'capybara', '~> 2.7', '>= 2.7.1'
-  #gem 'poltergeist', '~> 1.10'
   gem 'launchy-rails'
   gem 'rack-mini-profiler'
-  gem 'selenium-webdriver'
 end
 
 gem 'paperclip', '~> 5.1'
@@ -304,6 +302,8 @@ prefs[:test] = multiple_choice "Testing Framework?",
     [["Rspec", "rspec"],
     ["Test::Unit", "test_unit"],
     ["Minitest::Test", "minitest"]]
+
+prefs[:javascript_driver] = yes_wizard?("Using PhantomJs as Javascript driver?")
 
 prefs[:announcement] = yes_wizard?("Add sitewise announcement?")
 
@@ -377,9 +377,8 @@ when 'rspec'
 
   comment_lines 'spec/rails_helper.rb', /config.use_transactional_fixtures/
 
-  prefs[:js_driver] = yes_wizard?("Using PhantomJs as Javascript driver?")
 
-  if prefs[:js_driver] then
+  if prefs[:javascript_driver] then
     gem "poltergeist", group: ["test", "development"]
 
     inject_into_file 'spec/spec_helper.rb', before: "RSpec.configure" do <<-'RUBY'
@@ -387,6 +386,8 @@ when 'rspec'
     Capybara.javascript_driver = :poltergeist
     RUBY
     end
+  else
+    gem "selenium-webdriver", group: ["test", "development"]
   end
 
 when 'minitest'
