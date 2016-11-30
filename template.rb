@@ -242,7 +242,7 @@ end
 
 gem_group :development, :test do
   gem 'capybara', '~> 2.7', '>= 2.7.1'
-  gem 'poltergeist', '~> 1.10'
+  #gem 'poltergeist', '~> 1.10'
   gem 'launchy-rails'
   gem 'rack-mini-profiler'
   gem 'selenium-webdriver'
@@ -377,13 +377,17 @@ when 'rspec'
 
   comment_lines 'spec/rails_helper.rb', /config.use_transactional_fixtures/
 
-=begin
-  inject_into_file 'spec/spec_helper.rb', before: "RSpec.configure" do <<-'RUBY'
-  require 'capybara/poltergeist'
-  Capybara.javascript_driver = :poltergeist
-  RUBY
+  prefs[:js_driver] = yes_wizard?("Using PhantomJs as Javascript driver?")
+
+  if prefs[:js_driver] then
+    gem "poltergeist", group: ["test", "development"]
+
+    inject_into_file 'spec/spec_helper.rb', before: "RSpec.configure" do <<-'RUBY'
+    require 'capybara/poltergeist'
+    Capybara.javascript_driver = :poltergeist
+    RUBY
+    end
   end
-=end
 
 when 'minitest'
 
