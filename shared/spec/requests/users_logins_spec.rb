@@ -8,8 +8,6 @@ RSpec.describe "UsersLogins", type: :request do
       get login_path
       expect(response).to have_http_status(200)
       visit login_path
-      puts user.email
-      puts user.password
       fill_in "Email", :with => user.email
       fill_in "Password", :with => user.password
       click_button "Log in"
