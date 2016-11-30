@@ -1011,12 +1011,13 @@ common_files = [ 'lib/tasks/setup.thor',
                  'test/fixtures/users.yml',
                  'test/integration/users_login_test.rb',
                  'test/integration/users_signup_test.rb',
+                 'test/integration/password_reset_test.rb',
                  'spec/factories/users.rb',
+                 'spec/models/user_spec.rb',
                  'spec/requests/users_signups_spec.rb',
                  'spec/requests/users_logins_spec.rb',
                  'spec/requests/password_resets_spec.rb',
-                 'spec/mailers/user_mailer_spec.rb',
-                 'test/integration/password_reset_test.rb']
+                 'spec/mailers/user_mailer_spec.rb']
 
 common_files.each do |from_file|
   copy_from_repo "shared", from_file, :repo => repo
