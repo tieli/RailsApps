@@ -1088,7 +1088,7 @@ remove_file "README.rdoc"
 remove_file "public/index.html"
 
 append_file ".gitignore", "config/database.yml"
-#copy_file "config/database.yml", "config/example_database.yml"
+copy_file "config/database.yml", "config/example_database.yml"
 
 git :init
 git add: ".", commit: "-m 'initial commit'"
