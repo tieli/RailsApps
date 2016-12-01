@@ -651,19 +651,18 @@ when 'simple_blogs'
     has_many :articles
     RUBY
     end
+
+
   end
 
-  app_files = [ forms_css_scss,
-                article_rb,
-                "app/views/articles/index.html.erb",
-                "app/controllers/articles_controller.rb",
-              ]
   [config_dev, config_test].each do |config_file| 
     inject_into_file config_file, after: "Rails.application.configure do\n" do <<-'RUBY'
     config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
     RUBY
     end
   end
+
+  app_files = [ 'spec/requests/articles_spec.rb' ]
 
   route "root to: 'articles\#index'"
 
@@ -781,6 +780,7 @@ when 'blogs'
                'test/fixtures/categories.yml',
                #'spec/models/announcement_spec.rb',
                #'spec/requests/announcements_spec.rb' 
+               'spec/requests/articles_spec.rb'
                ]
 
   [config_dev, config_test].each do |item|
@@ -1030,7 +1030,6 @@ common_files = [ 'lib/tasks/setup.thor',
                  'spec/requests/users_signups_spec.rb',
                  'spec/requests/users_logins_spec.rb',
                  'spec/requests/password_resets_spec.rb',
-                 'spec/requests/articles_spec.rb',
                  'spec/mailers/user_mailer_spec.rb']
 
 common_files.each do |from_file|
