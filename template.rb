@@ -223,7 +223,7 @@ end
 prefs[:apps4] = multiple_choice "Build a Rails Apps?",
     [["Build a Basic Rails App", "basic"],
     ["Build a Simple Blog App", "simple_blogs"],
-    ["Build a Rails Blog App", "blogs"],
+    ["Build a Blog App", "blogs"],
     ["Build a Simple Store App", "simple_store"],
     ["Build a Rails Store App", "store"],
     ["Build a Rails Todo List(Ajax)", "todos"],
@@ -277,7 +277,7 @@ run "bundle install"
 
 prefs[:frontend] = multiple_choice "Front End Framework?",
     [["Baisc", "basic"],
-    ["Twitter Bootstrap", "bootstrap"],
+    ["Bootstrap", "bootstrap"],
     ["Zurb Foundation", "foundation"],
     ["No Frontend Framework", "no_frontend"]]
 
@@ -434,7 +434,7 @@ when 'bootstrap'
     app_name = "frontend/bootstrap"
 
   gem 'simple_form', '~> 3.2', '>= 3.2.1'
-  gem 'bootstrap-sass', '~> 3.3', '>= 3.3.7'
+  gem 'bootstrap-sass'
 
   run "bundle install"
 
@@ -446,7 +446,7 @@ when 'bootstrap'
   RUBY
   end
 
-  app_files = [ app_html_erb, app_css_scss ]
+  app_files = [ app_html_erb, app_css_scss, config_routes ]
 
   remove_file app_css
 
@@ -1088,7 +1088,7 @@ remove_file "README.rdoc"
 remove_file "public/index.html"
 
 append_file ".gitignore", "config/database.yml"
-copy_file "config/database.yml", "config/example_database.yml"
+#copy_file "config/database.yml", "config/example_database.yml"
 
 git :init
 git add: ".", commit: "-m 'initial commit'"

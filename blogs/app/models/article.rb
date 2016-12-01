@@ -5,6 +5,9 @@ class Article < ActiveRecord::Base
   scope :published, lambda { where("published_at <= ?", Time.zone.now) }
 
   after_commit :flush_cache
+  before_save :create_category
+
+  attr_accessor :new_category
 
   # for pagination
   self.per_page = 10
@@ -46,6 +49,10 @@ class Article < ActiveRecord::Base
 
   def cached_comments
     Rails.cache.fetch([self, "comments"]) { comments.to_a }
+  end
+
+  def create_category
+    self.category = Category.create(name: new_category) if new_category.present?
   end
 
 end
