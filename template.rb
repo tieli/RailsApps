@@ -1030,6 +1030,7 @@ common_files = [ 'lib/tasks/setup.thor',
                  'spec/requests/users_signups_spec.rb',
                  'spec/requests/users_logins_spec.rb',
                  'spec/requests/password_resets_spec.rb',
+                 'spec/requests/articles_spec.rb',
                  'spec/mailers/user_mailer_spec.rb']
 
 common_files.each do |from_file|
