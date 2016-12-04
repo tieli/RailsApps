@@ -668,60 +668,7 @@ when 'simple_blogs'
 
   rake "db:migrate"
 
-when "simple_store"
-
-  product_model = ["Product", { "name" => "string",
-                                "stock" => "integer",
-                                "description" => "text",
-                                "price_in_cents" => "decimal",
-                                "released_at" => "datetime",
-                                "discontinued" => "boolean" }]
-  generate get_gen_str("scaffold", product_model)
-
-  tag_model     = ["tag", {"name" => "string" } ]
-  generate get_gen_str("model", tag_model)
-
-  tagging_model = ["tagging", {"tag" => "belongs_to",
-                            "product" => "belongs_to" } ]
-  generate get_gen_str("model", tagging_model)
-
-  category_model = ["Category", { "name" => "string" } ]
-  generate get_gen_str("model", category_model)
-
-  product_category_migration = ["add_category_id_to_products", 
-                             {"category_id" => "integer"} ]
-  generate get_gen_str("migration", product_category_migration)
-
-  app_files = [ #scaffolds_css_scss, app_html_erb,
-               'db/seeds.rb',
-               'app/views/products/index.html.erb',
-               'app/views/products/_form.html.erb',
-               'app/views/products/show.html.erb',
-               'app/views/products/labeled_form_builder.rb',
-               'app/controllers/products_controller.rb' ]
-
-  product_rb = 'app/models/product.rb'
-  inject_into_file product_rb, after: "class Product < ActiveRecord::Base\n" do <<-'RUBY'
-  belongs_to :category
-  has_many :taggings
-  has_many :tags, through: :taggings
-  RUBY
-  end
-
-  category_rb = 'app/models/category.rb'
-  inject_into_file category_rb, before: "end" do <<-'RUBY'
-  has_many :products
-  RUBY
-  end
-
-  tag_rb = 'app/models/tag.rb'
-  inject_into_file tag_rb, before: "end" do <<-'RUBY'
-  has_many :taggings
-  has_many :products, through: :taggings
-  RUBY
-  end
-
-  route "root to: 'products\#index'"
+when "store"
 
 when 'blogs'
 
@@ -800,7 +747,7 @@ when 'blogs'
   RUBY
   end
 
-when 'store'
+when 'simple_store'
 
   model = ["Product", { "name" => "string",
                         "price" => "decimal",

@@ -7,6 +7,16 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
+<% if enable_site_announcement? %>
+  <% Announcement.current(cookies.signed[:hidden_announcement_ids]).each do |announcement| %>
+  <div class="nav navbar navbar-default">
+		<%= div_for announcement do %>
+			<%= announcement.message %>
+			<%= link_to "hide announcement", hide_announcement_path(announcement) %>
+		<% end %>
+	<% end %>
+	</div>
+<% end %>
   <div class="nav navbar navbar-default">
     <div class="container">
       <div class="navbar-brand">
