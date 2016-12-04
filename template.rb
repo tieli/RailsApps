@@ -686,8 +686,11 @@ when "store"
                'app/assets/images/rtp.jpg',
                'app/assets/images/ruby.jpg',
                'app/models/product.rb',
+               'app/views/store/index.html.erb',
                'app/views/products/index.html.erb',
-               'test/fixtures/products.yml'
+               'test/controllers/store_controller_test.rb',
+               'app/controllers/store_controller.rb',
+               'test/fixtures/products.yml',
                'test/models/product_test.rb',
                'test/controllers/products_controller_test.rb',
                ]
