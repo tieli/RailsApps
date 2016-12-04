@@ -1,38 +1,45 @@
-# encoding: UTF-8
+#---
+# Excerpted from "Agile Web Development with Rails",
+# published by The Pragmatic Bookshelf.
+# Copyrights apply to this code. It may not be used to create training material,
+# courses, books, articles, and the like. Contact us if you are in doubt.
+# We make no guarantees that this code is fit for any purpose.
+# Visit http://www.pragmaticprogrammer.com/titles/rails4 for more book information.
+#---
+# encoding: utf-8
+Product.delete_all
+Product.create!(title: 'CoffeeScript',
+  description: 
+    %{<p>
+        CoffeeScript is JavaScript done right. It provides all of JavaScript's
+	functionality wrapped in a cleaner, more succinct syntax. In the first
+	book on this exciting new language, CoffeeScript guru Trevor Burnham
+	shows you how to hold onto all the power and flexibility of JavaScript
+	while writing clearer, cleaner, and safer code.
+      </p>},
+  image_url:   'cs.jpg',    
+  price: 36.00)
+# . . .
+Product.create!(title: 'Programming Ruby 1.9 & 2.0',
+  description:
+    %{<p>
+        Ruby is the fastest growing and most exciting dynamic language
+        out there. If you need to get working programs delivered fast,
+        you should add Ruby to your toolbox.
+      </p>},
+  image_url: 'ruby.jpg',
+  price: 49.95)
+# . . .
 
-categories = %w|card dice party board strategy sports action casual|
-category_list = categories.map { |category| Category.create! name: category } 
-
-publishers = %w|days_of_wonder mayfair rio zman asmodee czech thames ea
-                    true_axis allentony akadem elex miniclip|
-publisher_list = publishers.map { |publisher| Publisher.create! name: publisher }
-
-products = ["Settlers of Catan", "Agricola", "Stone Age", "Puerto Rico",
-            "Bohnanza", "Ticket to Ride", "Patchwork Board Game",
-            "7 Wonders Duel Board Game", "Codenames", "Dungeon Lords Game",
-            "Roll for The Galaxy Board Game", "Dominion", "Clash of Kings",
-            "8 Ball Pool", "Bowling King", "Mini Pets", "Soccer Stars",
-            "Dino Pets", "Rail Rush", "Madden NFL Mobile", "True Skate",
-            "Scrabble", "Clash In Space", "HandyCopter 3D Pro"]
-
-products.each do |name|
-  Product.create! name: name,
-    price: rand(1.0...100.0),
-    stock: rand(1..10),
-    publisher: Publisher.find(rand(1..Publisher.count())),
-    categories: category_list.sample(rand(1..Category.count())),
-    released_on: rand(1..90).days.ago,
-    discontinued: rand() < 0.2 ? true : false,
-    rating: rand(1..5)
-end
-
-Order.delete_all
-generator = proc do |start_time, end_time, shipping|
-  time = Time.at(rand(end_time.to_i - start_time.to_i) + start_time.to_i)
-  dollars = rand(200) + 10
-  Order.create!(price: dollars, purchased_at: time, shipping: rand(shipping))
-end
-200.times { generator.call(10.days.ago, Time.zone.now.end_of_day, 1) }
-500.times { generator.call(1.month.ago, Time.zone.now.end_of_day, 2) }
-Order.create!(price: 10, purchased_at: 1.month.ago.beginning_of_day, shipping: true)
-
+Product.create!(title: 'Rails Test Prescriptions',
+  description: 
+    %{<p>
+        <em>Rails Test Prescriptions</em> is a comprehensive guide to testing
+        Rails applications, covering Test-Driven Development from both a
+        theoretical perspective (why to test) and from a practical perspective
+        (how to test effectively). It covers the core Rails testing tools and
+        procedures for Rails 2 and Rails 3, and introduces popular add-ons,
+        including Cucumber, Shoulda, Machinist, Mocha, and Rcov.
+      </p>},
+  image_url: 'rtp.jpg',
+  price: 34.95)

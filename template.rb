@@ -225,7 +225,7 @@ prefs[:apps4] = multiple_choice "Build a Rails Apps?",
     ["Build a Simple Blog App", "simple_blogs"],
     ["Build a Blog App", "blogs"],
     ["Build a Simple Store App", "simple_store"],
-    ["Build a Rails Store App", "store"],
+    ["Build a Store App", "store"],
     ["Build a Rails Todo List(Ajax)", "todos"],
     ["Build a Movies Review App", "movie_review"],
     ["Custom Application (experimental)", "none"],
@@ -246,7 +246,7 @@ gem_group :development, :test do
   gem 'rack-mini-profiler'
 end
 
-gem 'paperclip', '~> 5.1'
+gem 'paperclip'
 gem "haml", version: ">= 4.0.7"
 gem 'will_paginate', '~> 3.1.0'
 gem 'acts_as_votable', '~> 0.10.0'
@@ -669,6 +669,30 @@ when 'simple_blogs'
   rake "db:migrate"
 
 when "store"
+
+  generate "controller", "store index"
+  route "root to: 'store\#index', as: 'store'"
+
+  model = ["Product", { "title" => "string",
+                        "description" => "text",
+                        "image_url" => "string",
+                        "price" => "decimal" } ]
+
+  generate get_gen_str("scaffold", model)
+
+  app_files = [#'config/routes.rb',
+               'db/seeds.rb',
+               'app/assets/images/cs.jpg',
+               'app/assets/images/rtp.jpg',
+               'app/assets/images/ruby.jpg',
+               'app/models/product.rb',
+               'app/views/products/index.html.erb',
+               'test/fixtures/products.yml'
+               'test/models/product_test.rb',
+               'test/controllers/products_controller_test.rb',
+               ]
+
+  rake "db:migrate"
 
 when 'blogs'
 
