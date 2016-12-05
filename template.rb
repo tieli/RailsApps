@@ -13,6 +13,7 @@ app_html_haml      = 'app/views/layouts/application.html.haml'
 
 app_helpers_layout = 'app/helpers/layout_helper.rb'
 app_controller     = 'app/controllers/application_controller.rb',
+app_ctrl           = 'app/controllers/application_controller.rb',
 
 scaffolds_css      = 'app/assets/stylesheets/scaffolds.css'
 scaffolds_scss     = 'app/assets/stylesheets/scaffolds.scss'
@@ -33,8 +34,11 @@ am = 'app/models/'
 ac = 'app/controllers/'
 aa = 'app/assets/'
 
-user_rb    = 'app/models/user.rb'
-article_rb = 'app/models/article.rb'
+user_rb      = 'app/models/user.rb'
+cart_rb      = 'app/models/cart.rb'
+line_item    = 'app/models/line_item.rb'
+line_item_rb = 'app/models/line_item.rb'
+article_rb   = 'app/models/article.rb'
 
 @prefs = {}
 @gems = []
@@ -671,14 +675,45 @@ when 'simple_blogs'
 when "store"
 
   generate "controller", "store index"
-  route "root to: 'store\#index', as: 'store'"
+  route "root to: 'store\#index'"
 
-  model = ["Product", { "title" => "string",
+  product = ["Product", { "title" => "string",
                         "description" => "text",
                         "image_url" => "string",
                         "price" => "decimal" } ]
+  generate get_gen_str("scaffold", product)
 
-  generate get_gen_str("scaffold", model)
+  cart = ["Cart", {}]
+  generate get_gen_str("scaffold", cart)
+
+  line_item = ["Line_item", { "product_id" => "integer",
+                        "cart_id" => "integer" } ]
+  generate get_gen_str("scaffold", line_item)
+
+  inject_into_file app_ctrl, after: "protect_from_forgery with: :exception\n" do <<-'RUBY'
+
+  private
+    def current_cart
+      Cart.find(session[:cart_id])
+    rescue ActiveRecord::RecordNotFound
+      cart = Cart.create
+      session[:cart_id] = cart.id
+      cart
+    end
+  end
+  RUBY
+  end
+
+  inject_into_file cart_rb, after: "< ActiveRecord::Base\n" do <<-'RUBY'
+    has_many :line_items, :dependent => :destroy
+  RUBY
+  end
+
+  inject_into_file line_item, after: "< ActiveRecord::Base\n" do <<-'RUBY'
+    belongs_to :product
+    belongs_to :cart
+  RUBY
+  end
 
   app_files = [#'config/routes.rb',
                'db/seeds.rb',
@@ -687,11 +722,14 @@ when "store"
                'app/assets/images/ruby.jpg',
                'app/models/product.rb',
                'app/views/store/index.html.erb',
+               'app/views/carts/show.html.erb',
                'app/views/products/index.html.erb',
-               'test/controllers/store_controller_test.rb',
                'app/controllers/store_controller.rb',
+               'app/controllers/line_items_controller.rb',
                'test/fixtures/products.yml',
                'test/models/product_test.rb',
+               'test/controllers/store_controller_test.rb',
+               'test/controllers/line_items_controller_test.rb',
                'test/controllers/products_controller_test.rb',
                ]
 
