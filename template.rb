@@ -724,6 +724,9 @@ when "store"
 
 when 'simple_blogs'
 
+  generate "controller", "welcome home"
+  route "root to: 'welcome\#home'"
+
   article_model = ["Article", {"title" => "string",
                                "content" => "text",
                                "hidden" => "boolean",
@@ -750,8 +753,6 @@ when 'simple_blogs'
   generate get_gen_str("model", tagging_model)
 
   generate "controller", "comments" 
-
-  route "root to: 'articles\#index'"
 
   app_files = [#'config/routes.rb',
                'db/seeds.rb',
