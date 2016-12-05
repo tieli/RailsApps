@@ -743,6 +743,7 @@ when "store"
                'app/models/product.rb',
                'app/views/store/index.html.erb',
                'app/views/carts/show.html.erb',
+               'app/views/line_items/index.html.erb',
                'app/views/products/index.html.erb',
                'app/controllers/carts_controller.rb',
                'app/controllers/store_controller.rb',
