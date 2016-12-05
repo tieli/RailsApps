@@ -679,7 +679,6 @@ when "store"
   product = ["Product", { "title" => "string",
                         "description" => "text",
                         "image_url" => "string",
-                        "quantity" => "integer",
                         "price" => "decimal" } ]
   generate get_gen_str("scaffold", product)
 
@@ -687,6 +686,7 @@ when "store"
   generate get_gen_str("scaffold", cart)
 
   line_item = ["Line_item", { "product_id" => "integer",
+                        "quantity" => "integer",
                         "cart_id" => "integer" } ]
   generate get_gen_str("scaffold", line_item)
 
