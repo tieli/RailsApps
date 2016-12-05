@@ -629,43 +629,7 @@ when 'basic'
   generate "controller", "welcome home"
   route "root to: 'welcome\#home'"
 
-when 'simple_blogs'
-
-  gem 'simple_form', '~> 3.2', '>= 3.2.1'
-  generate "simple_form:install"
-
-  article_model = ["Article", {"title" => "string",
-                               "hidden" => "boolean",
-                               "content" => "text",
-                               "published_at" => "datetime"}]
-  generate get_gen_str("scaffold", article_model)
-
-  if prefs[:auth] != "no_auth" and prefs[:auth] != "omniauth"
-    article_user_migration = ["add_user_id_to_articles", 
-                             {"user_id" => "integer"} ]
-    generate get_gen_str("migration", article_user_migration)
-
-    inject_into_file article_rb, before: "end" do <<-'RUBY'
-    belongs_to :user
-    RUBY
-    end
-
-    inject_into_file user_rb, after: "User < ActiveRecord::Base\n" do <<-'RUBY'
-    has_many :articles
-    RUBY
-    end
-
-
-  end
-
-  [config_dev, config_test].each do |config_file| 
-    inject_into_file config_file, after: "Rails.application.configure do\n" do <<-'RUBY'
-    config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
-    RUBY
-    end
-  end
-
-  app_files = [ 'spec/requests/articles_spec.rb' ]
+when 'blogs'
 
   route "root to: 'articles\#index'"
 
@@ -758,7 +722,7 @@ when "store"
 
   rake "db:migrate"
 
-when 'blogs'
+when 'simple_blogs'
 
   article_model = ["Article", {"title" => "string",
                                "content" => "text",
@@ -791,10 +755,7 @@ when 'blogs'
 
   app_files = [#'config/routes.rb',
                'db/seeds.rb',
-               #app_css_scss, scaffolds_scss, app_erb,
                'app/assets/stylesheets/articles.scss',
-               #'app/assets/stylesheets/announcements.scss',
-               #'app/models/announcement.rb',
                'app/models/article.rb',
                'app/models/comment.rb',
                'app/models/tag.rb',
@@ -805,16 +766,11 @@ when 'blogs'
                'app/views/comments/_comment.html.erb',
                'app/views/comments/edit.html.erb',
                'app/views/comments/_form.html.erb',
-               #'app/views/layouts/application.html.erb',
                'app/views/layouts/mailer.text.erb',
-               #'app/controllers/application_controller.rb',
                'app/controllers/articles_controller.rb',
                'app/controllers/comments_controller.rb',
-               #'app/controllers/announcements_controller.rb',
                'test/fixtures/articles.yml',
                'test/fixtures/categories.yml',
-               #'spec/models/announcement_spec.rb',
-               #'spec/requests/announcements_spec.rb' 
                'spec/requests/articles_spec.rb'
                ]
 
