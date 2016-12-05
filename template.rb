@@ -36,9 +36,8 @@ aa = 'app/assets/'
 
 user_rb      = 'app/models/user.rb'
 cart_rb      = 'app/models/cart.rb'
-line_item    = 'app/models/line_item.rb'
-line_item_rb = 'app/models/line_item.rb'
 article_rb   = 'app/models/article.rb'
+line_item_rb = 'app/models/line_item.rb'
 
 @prefs = {}
 @gems = []
@@ -693,25 +692,45 @@ when "store"
   inject_into_file app_ctrl, after: "protect_from_forgery with: :exception\n" do <<-'RUBY'
 
   private
-    def current_cart
-      Cart.find(session[:cart_id])
-    rescue ActiveRecord::RecordNotFound
-      cart = Cart.create
-      session[:cart_id] = cart.id
-      cart
-    end
+  def current_cart
+    Cart.find(session[:cart_id])
+  rescue ActiveRecord::RecordNotFound
+    cart = Cart.create
+    session[:cart_id] = cart.id
+    cart
   end
   RUBY
   end
 
   inject_into_file cart_rb, after: "< ActiveRecord::Base\n" do <<-'RUBY'
     has_many :line_items, :dependent => :destroy
+
+    def add_product(product_id)
+    current_item = line_items.find_by(product_id: product_id)
+    if current_item
+      current_item.quantity += 1
+    else
+      current_item = line_items.build(product_id: product_id)
+      current_item.price = current_item.product.price
+    end
+    current_item
+    end
+
+    def total_price
+      line_items.to_a.sum { |item| item.total_price }
+    end
+
   RUBY
   end
 
-  inject_into_file line_item, after: "< ActiveRecord::Base\n" do <<-'RUBY'
+  inject_into_file line_item_rb, after: "< ActiveRecord::Base\n" do <<-'RUBY'
     belongs_to :product
     belongs_to :cart
+
+    def total_price
+      product.price * quantity
+    end
+
   RUBY
   end
 
@@ -724,8 +743,10 @@ when "store"
                'app/views/store/index.html.erb',
                'app/views/carts/show.html.erb',
                'app/views/products/index.html.erb',
+               'app/controllers/carts_controller.rb',
                'app/controllers/store_controller.rb',
                'app/controllers/line_items_controller.rb',
+               'app/controllers/concerns/current_cart.rb',
                'test/fixtures/products.yml',
                'test/models/product_test.rb',
                'test/controllers/store_controller_test.rb',
