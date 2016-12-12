@@ -1,33 +1,6 @@
 <p id="notice"><%= notice %></p>
 
-<p>
-  <strong>Title:</strong>
-  <%= @article.title %>
-</p>
-
-<p>
-	Tags: <%= raw @article.tags.map(&:name).map {|t| link_to t, tag_path(t)}.join(', ') %>
-</p>
-
-<p>
-  <strong>Content:</strong>
-  <%= simple_format(@article.content) %>
-</p>
-
-<p>
-  <strong>Published at:</strong>
-  <%= @article.published_at %>
-</p>
-
-<p>
-  <strong>Hidden:</strong>
-  <%= @article.hidden %>
-</p>
-
-<p>
-  <strong>Category:</strong>
-  <%= @article.category.name %>
-</p>
+<%= render :partial => @article %>
 
 <h2><%= pluralize(@article.cached_comments_count, "Comment") %></h2>
 

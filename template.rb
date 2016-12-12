@@ -1,4 +1,20 @@
 
+
+comments_filers = ["# Bundle edge Rails",
+                   "# Use sqlite3 as the",
+                   "# Use SCSS for stylesheets",
+                   "# Use Uglifier as compressor",
+                   "# Use CoffeeScript",
+                   "# See https://github.com/rails",
+                   "# Use jquery as the",
+                   "# Turbolinks makes",
+                   "# Build JSON APIs",
+                   "# bundle exec rake doc:rails",
+                   "# Use ActiveModel",
+                   "# Call 'byebug' anywhere",
+                   "# Access an IRB console ",
+                   "# Spring speeds up development"]
+
 repo = "https://raw.githubusercontent.com/tieli/rails-apps/master/"
 
 app_css            = 'app/assets/stylesheets/application.css'
@@ -580,6 +596,8 @@ when 'warden'
   RUBY
   end
 
+  initializer "warden.rb", "#puts 'this is the beginning'"
+
   app_files += ['config/initializers/warden.rb',
                'app/models/user.rb',
                'app/views/users/new.html.erb',
@@ -593,6 +611,7 @@ when 'warden'
 when 'omniauth'
   gem 'omniauth-twitter', '~> 1.2', '>= 1.2.1'
   gem 'omniauth-facebook', '~> 3.0'
+
   app_files = ['config/initializers/omniauth.rb']
   app_name = "auth/omniauth"
 
@@ -632,7 +651,6 @@ when 'basic'
 when 'blogs'
 
   route "root to: 'articles\#index'"
-
   rake "db:migrate"
 
 when "store"
@@ -763,6 +781,7 @@ when 'simple_blogs'
                'app/views/articles/new.html.erb',
                'app/views/articles/index.html.erb',
                'app/views/articles/show.html.erb',
+               'app/views/articles/_article.html.erb',
                'app/views/articles/_form.html.erb',
                'app/views/comments/_comment.html.erb',
                'app/views/comments/edit.html.erb',
@@ -780,6 +799,11 @@ when 'simple_blogs'
     config.action_mailer.default_url_options = { :host => "http://127.0.0.1:23000" }
     RUBY
     end
+  end
+
+  inject_into_file "app/views/welcome/home.html.erb", before: "<h1>Welcome#home</h1>\n" do <<-'RUBY'
+  <% provide(:title, "Home") %>
+  RUBY
   end
 
   inject_into_file routes_file, after: "Rails.application.routes.draw do\n" do <<-'RUBY'
@@ -1014,6 +1038,7 @@ common_files = [ 'lib/tasks/setup.thor',
                  'lib/tasks/populate.rake',
                  'lib/tasks/list.rake',
                  'test/fixtures/users.yml',
+                 'test/models/user_test.rb',
                  'test/integration/users_login_test.rb',
                  'test/integration/users_signup_test.rb',
                  'test/integration/password_reset_test.rb',
@@ -1022,10 +1047,25 @@ common_files = [ 'lib/tasks/setup.thor',
                  'spec/requests/users_signups_spec.rb',
                  'spec/requests/users_logins_spec.rb',
                  'spec/requests/password_resets_spec.rb',
+                 'test/controllers/welcome_controller_test.rb',
                  'spec/mailers/user_mailer_spec.rb']
 
 common_files.each do |from_file|
   copy_from_repo "shared", from_file, :repo => repo
+end
+
+gsub_file('Gemfile', /^\s*#.*\n/, '') 
+
+inject_into_file 'Gemfile', after: "source 'https://rubygems.org'\n" do <<-'RUBY'
+#
+
+RUBY
+end
+
+append_to_file 'Gemfile' do <<-'RUBY'
+#
+
+RUBY
 end
 
 #######################
